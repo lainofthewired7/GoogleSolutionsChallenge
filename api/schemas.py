@@ -36,6 +36,10 @@ class UserCreate(BaseModel):
     display_name: str
 
 
+class UserUpdate(BaseModel):
+    display_name: str
+
+
 class UserResponse(BaseModel):
     id: int
     email: str

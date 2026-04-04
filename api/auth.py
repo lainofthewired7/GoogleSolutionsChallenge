@@ -117,6 +117,14 @@ def create_user(email: str, password: str, display_name: str) -> UserRecord:
     return user
 
 
+def update_user(email: str, display_name: str) -> Optional[UserRecord]:
+    """Update user profile."""
+    user = users_db.get(email)
+    if user:
+        user.display_name = display_name
+    return user
+
+
 def create_or_get_oauth_user(email: str, display_name: str, provider: str) -> UserRecord:
     """Find an existing user by email, or create a new one for OAuth sign-in.
 

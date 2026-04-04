@@ -76,9 +76,9 @@ export default function Header() {
               <button className="text-on-surface/70 hover:text-primary transition-all active:scale-95" title="Notifications">
                 <span className="material-symbols-outlined">notifications</span>
               </button>
-              <button className="text-on-surface/70 hover:text-primary transition-all active:scale-95" title="Settings">
+              <Link to="/settings" className="text-on-surface/70 hover:text-primary transition-all active:scale-95" title="Settings">
                 <span className="material-symbols-outlined">settings</span>
-              </button>
+              </Link>
               <UserMenu />
             </>
           )}

@@ -64,6 +64,22 @@ export async function register(
   return res.json();
 }
 
+export async function updateProfile(displayName: string): Promise<User> {
+  const res = await fetch(`${API_BASE}/update`, {
+    method: 'PUT',
+    headers: { 
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    },
+    body: JSON.stringify({ display_name: displayName }),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.detail || 'Failed to update profile');
+  }
+  return res.json();
+}
+
 export async function getMe(): Promise<User> {
   const res = await fetch(`${API_BASE}/me`, {
     headers: getAuthHeaders(),

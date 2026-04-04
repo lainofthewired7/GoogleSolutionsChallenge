@@ -9,6 +9,7 @@ import MapContainer from './components/MapContainer';
 import ComparisonView from './components/ComparisonView';
 import LandingPage from './components/LandingPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import SettingsPage from './components/SettingsPage';
 import { useAuth } from './context/AuthContext';
 import { useAppContext } from './context/AppContext';
 import './App.css';
@@ -56,6 +57,7 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/compare" element={<ComparisonView />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
         </Routes>
       </div>

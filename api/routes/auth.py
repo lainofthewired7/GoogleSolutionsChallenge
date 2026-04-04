@@ -7,10 +7,10 @@ from fastapi.responses import RedirectResponse
 from authlib.integrations.starlette_client import OAuth
 from api.auth import (
     create_user, authenticate_user, create_access_token,
-    create_or_get_oauth_user,
+    create_or_get_oauth_user, update_user
 )
 from api.deps import get_current_user, UserRecord
-from api.schemas import UserCreate, UserResponse, TokenResponse
+from api.schemas import UserCreate, UserUpdate, UserResponse, TokenResponse
 
 router = APIRouter()
 
@@ -94,6 +94,21 @@ async def get_me(current_user: UserRecord = Depends(get_current_user)):
         display_name=current_user.display_name,
         is_active=current_user.is_active,
         created_at=current_user.created_at,
+    )
+
+
+@router.put("/update", response_model=UserResponse)
+async def update_profile(data: UserUpdate, current_user: UserRecord = Depends(get_current_user)):
+    """Update the authenticated user's profile."""
+    user = update_user(current_user.email, data.display_name)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return UserResponse(
+        id=user.id,
+        email=user.email,
+        display_name=user.display_name,
+        is_active=user.is_active,
+        created_at=user.created_at,
     )
 
 
