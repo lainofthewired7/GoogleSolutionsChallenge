@@ -74,4 +74,12 @@
       background: radial-gradient(circle at 40% 50%, rgba(0, 229, 255, 0.15) 0%, transparent 60%),
                   radial-gradient(circle at 60% 30%, rgba(166, 140, 255, 0.1) 0%, transparent 50%);
   }
+  .obsidian-glow {
+      box-shadow: 0 0 40px -10px rgba(129, 236, 255, 0.15);
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
 }

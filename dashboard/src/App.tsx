@@ -15,6 +15,7 @@ import './App.css';
 
 import MetricCards from './components/MetricCards';
 import PermitDataView from './components/PermitDataView';
+import JobGrowthView from './components/JobGrowthView';
 
 function Dashboard() {
   const { activeView } = useAppContext();
@@ -30,6 +31,7 @@ function Dashboard() {
           </>
         )}
         {activeView === 'permits' && <PermitDataView />}
+        {activeView === 'jobs' && <JobGrowthView />}
       </main>
     </div>
   );

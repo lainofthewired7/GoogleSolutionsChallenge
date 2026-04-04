@@ -8,7 +8,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
-from api.routes import markets, metrics, geojson, auth, watchlist
+from api.routes import markets, metrics, geojson, auth, watchlist, fred
 
 # === Rate limiter ===
 limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
@@ -42,6 +42,7 @@ app.include_router(metrics.router, prefix="/api/metrics", tags=["Metrics"])
 app.include_router(geojson.router, prefix="/api/geojson", tags=["GeoJSON"])
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 app.include_router(watchlist.router, prefix="/api/watchlist", tags=["Watchlist"])
+app.include_router(fred.router, prefix="/api/fred", tags=["FRED Data"])
 
 @app.get("/health")
 async def health_check():
@@ -50,4 +51,5 @@ async def health_check():
 
 # Serve dashboard static files (Vite production build)
 # NOTE: This must be LAST — it catches all unmatched routes.
-app.mount("/", StaticFiles(directory="dashboard/dist", html=True), name="dashboard")
+if os.path.exists("dashboard/dist"):
+    app.mount("/", StaticFiles(directory="dashboard/dist", html=True), name="dashboard")
