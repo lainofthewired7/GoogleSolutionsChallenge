@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Obsidian | Projectr Analytics Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#ffa8a3",
+                        "background": "#060e20",
+                        "on-error": "#490006",
+                        "outline-variant": "#40485d",
+                        "primary": "#81ecff",
+                        "on-primary-container": "#004d57",
+                        "primary-fixed-dim": "#00d4ec",
+                        "surface-container": "#0f1930",
+                        "surface-tint": "#81ecff",
+                        "tertiary-dim": "#7e51ff",
+                        "tertiary-fixed": "#b8a3ff",
+                        "error": "#ff716c",
+                        "secondary-fixed": "#d8e3fb",
+                        "surface-container-high": "#141f38",
+                        "on-secondary": "#475266",
+                        "secondary-dim": "#cad5ed",
+                        "on-primary-fixed": "#003840",
+                        "tertiary-fixed-dim": "#ab93ff",
+                        "on-secondary-container": "#c5d1e8",
+                        "surface": "#060e20",
+                        "on-secondary-fixed": "#354053",
+                        "inverse-on-surface": "#4d556b",
+                        "on-surface-variant": "#a3aac4",
+                        "on-secondary-fixed-variant": "#515c70",
+                        "surface-bright": "#1f2b49",
+                        "secondary-fixed-dim": "#cad5ed",
+                        "on-tertiary-fixed": "#1c0055",
+                        "error-container": "#9f0519",
+                        "surface-container-highest": "#192540",
+                        "tertiary-container": "#7c4dff",
+                        "surface-container-low": "#091328",
+                        "tertiary": "#a68cff",
+                        "surface-variant": "#192540",
+                        "on-primary-fixed-variant": "#005762",
+                        "on-tertiary-fixed-variant": "#4000ad",
+                        "on-background": "#dee5ff",
+                        "secondary-container": "#3c475a",
+                        "secondary": "#d8e3fb",
+                        "surface-container-lowest": "#000000",
+                        "on-tertiary": "#25006b",
+                        "inverse-surface": "#faf8ff",
+                        "primary-dim": "#00d4ec",
+                        "surface-dim": "#060e20",
+                        "on-surface": "#dee5ff",
+                        "on-tertiary-container": "#ffffff",
+                        "outline": "#6d758c",
+                        "error-dim": "#d7383b",
+                        "primary-container": "#00e3fd",
+                        "primary-fixed": "#00e3fd",
+                        "inverse-primary": "#006976",
+                        "on-primary": "#005762"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Manrope"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .glass-panel {
+            background: rgba(15, 25, 48, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .ghost-border {
+            border: 1px solid rgba(64, 72, 93, 0.15);
+        }
+        .map-overlay {
+            background: radial-gradient(circle at center, transparent 0%, #060e20 85%);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col overflow-x-hidden">
+<!-- Background Layer -->
+<div class="fixed inset-0 z-0">
+<div class="absolute inset-0 opacity-20 filter grayscale contrast-125" data-alt="Detailed geospatial satellite map view of Austin Texas with urban grid patterns and glowing blue data overlays in a dark aesthetic" data-location="Austin, Texas" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBiXJ4PO0WsEIzTr4gcWap-AehZcGk-3g6yPzbM5_Qh2ZM_J3buQ9gtXd8EXv467jvoffq2mZKkkQoJTF3BkjYb2mdZELR_KpFL-mkulmIgQZOsP5RpXcVZmifO55Ixm60eVIR6DVHDvyITndmMWoKuothtXBcLDOs8CDyr0Uj3ROdufDJ487vIdYhBjRVyckRlmO1610jgHrUbpBWZ5jXrd0lGMC_YfItZ6yf9U8H1W_BumsYEj0uIE2ZyTwgLzSvdDzLNcuEW5GI'); background-size: cover; background-position: center;">
+</div>
+<div class="absolute inset-0 map-overlay"></div>
+</div>
+<!-- Login Container -->
+<main class="flex-grow flex items-center justify-center p-6 relative z-10">
+<div class="w-full max-auto max-w-[480px]">
+<!-- Brand Logo -->
+<div class="mb-10 text-center">
+<h1 class="text-3xl font-headline font-black tracking-widest text-on-background">OBSIDIAN</h1>
+<p class="text-primary font-label text-xs tracking-[0.2em] mt-2 uppercase">Projectr Analytics v4.0</p>
+</div>
+<!-- Login Card -->
+<div class="glass-panel p-8 md:p-12 rounded-xl ghost-border shadow-2xl">
+<div class="mb-8">
+<h2 class="text-2xl font-headline font-bold text-on-surface mb-2">Welcome Back</h2>
+<p class="text-on-surface-variant font-body text-sm">Access your high-fidelity property intelligence suite.</p>
+</div>
+<form class="space-y-6">
+<!-- Email Field -->
+<div class="space-y-2">
+<label class="block font-label text-[10px] font-bold tracking-widest text-primary-fixed-dim uppercase" for="email">Institutional Email</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-lg group-focus-within:text-primary transition-colors">mail</span>
+<input class="w-full bg-surface-container-highest border-none text-on-surface placeholder:text-outline py-4 pl-12 pr-4 rounded-lg focus:ring-1 focus:ring-primary/50 transition-all font-body text-sm" id="email" placeholder="name@firm.com" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<label class="block font-label text-[10px] font-bold tracking-widest text-primary-fixed-dim uppercase" for="password">Password</label>
+<a class="text-primary-dim font-label text-[10px] hover:underline transition-all" href="#">RECOVER ACCESS</a>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-lg group-focus-within:text-primary transition-colors">lock</span>
+<input class="w-full bg-surface-container-highest border-none text-on-surface placeholder:text-outline py-4 pl-12 pr-12 rounded-lg focus:ring-1 focus:ring-primary/50 transition-all font-body text-sm" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</button>
+</div>
+</div>
+<!-- JWT Action Button -->
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline font-bold py-4 rounded-lg active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(129,236,255,0.2)]" type="submit">
+                        Initialize Session
+                    </button>
+</form>
+<div class="relative my-10">
+<div class="absolute inset-0 flex items-center"><div class="w-full border-t border-outline-variant/30"></div></div>
+<div class="relative flex justify-center text-xs uppercase"><span class="bg-surface-container px-4 text-outline font-label tracking-widest">or integrate via</span></div>
+</div>
+<!-- Social Authentication -->
+<div class="grid grid-cols-3 gap-4">
+<button class="flex items-center justify-center p-3 rounded-lg bg-surface-container-high ghost-border hover:bg-surface-container-highest transition-colors active:scale-95">
+<img alt="" class="w-5 h-5 opacity-80" data-alt="Google colorful G logo icon on dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpZUjOdzsB2RfvKJD5zBMINzzaWAAZMGbdZrlhDkDr7sYVJhmvr9tKsdztoDLI3ae9R2oCx4HFvwuokIw4ehMJvCJWqTTrP8kodXEbaJMhHUtLy58XQhVcisPNRJC34dl-uj3BKRowPQQMPdYWIqzuXmWMAGR-7APqR-IEngjuieZNadU7wLnC48IZW2btgvvmrm6EqZXqO1J9WMWfqIYhdHe15LCdkuKbFWXElgGtstA50C4F9uN9CShMqRWVKvtj0NEhT9x4mUE"/>
+</button>
+<button class="flex items-center justify-center p-3 rounded-lg bg-surface-container-high ghost-border hover:bg-surface-container-highest transition-colors active:scale-95">
+<span class="material-symbols-outlined text-on-surface opacity-80" data-weight="fill">terminal</span>
+</button>
+<button class="flex items-center justify-center p-3 rounded-lg bg-surface-container-high ghost-border hover:bg-surface-container-highest transition-colors active:scale-95">
+<span class="material-symbols-outlined text-on-surface opacity-80" data-weight="fill">grid_view</span>
+</button>
+</div>
+</div>
+<!-- Footer Links -->
+<p class="text-center mt-8 text-on-surface-variant font-body text-xs">
+                New analyst? <a class="text-primary-dim font-bold hover:underline" href="#">Apply for credentials</a>
+</p>
+</div>
+</main>
+<!-- Global Footer with SDGs -->
+<footer class="relative z-10 w-full px-8 py-10 flex flex-col md:flex-row justify-between items-center gap-8 bg-surface-container-lowest/50 backdrop-blur-sm">
+<div class="flex flex-col gap-2">
+<p class="font-headline font-bold text-on-surface-variant text-sm">Projectr Analytics Ecosystem</p>
+<p class="font-label text-[10px] text-outline tracking-widest uppercase">© 2024 Obsidian Technologies Group</p>
+</div>
+<!-- SDG Logos Section -->
+<div class="flex items-center gap-12 opacity-40 hover:opacity-80 transition-opacity duration-500">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-[#4C9F38] flex items-center justify-center rounded-sm text-white font-black text-lg">8</div>
+<div class="flex flex-col">
+<span class="font-label text-[8px] font-bold text-on-surface leading-none">UN SDG 8</span>
+<span class="font-label text-[7px] text-outline uppercase tracking-tighter">Decent Work &amp; Growth</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-[#F99D26] flex items-center justify-center rounded-sm text-white font-black text-lg">11</div>
+<div class="flex flex-col">
+<span class="font-label text-[8px] font-bold text-on-surface leading-none">UN SDG 11</span>
+<span class="font-label text-[7px] text-outline uppercase tracking-tighter">Sustainable Communities</span>
+</div>
+</div>
+</div>
+<nav class="flex gap-6">
+<a class="text-outline hover:text-primary transition-colors font-label text-[10px] uppercase tracking-widest" href="#">Compliance</a>
+<a class="text-outline hover:text-primary transition-colors font-label text-[10px] uppercase tracking-widest" href="#">Security</a>
+<a class="text-outline hover:text-primary transition-colors font-label text-[10px] uppercase tracking-widest" href="#">API Docs</a>
+</nav>
+</footer>
+<!-- Decorative Corner Accents -->
+<div class="fixed top-0 right-0 p-4 z-0 pointer-events-none opacity-20">
+<div class="w-32 h-32 border-t border-r border-primary-dim rounded-tr-full"></div>
+</div>
+<div class="fixed bottom-0 left-0 p-4 z-0 pointer-events-none opacity-20">
+<div class="w-48 h-48 border-b border-l border-primary-dim rounded-bl-full"></div>
+</div>
+</body></html>

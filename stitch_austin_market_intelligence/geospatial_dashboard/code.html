@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-primary": "#006976",
+                    "outline": "#6d758c",
+                    "tertiary": "#a68cff",
+                    "on-secondary-container": "#c5d1e8",
+                    "secondary-container": "#3c475a",
+                    "surface-bright": "#1f2b49",
+                    "error-container": "#9f0519",
+                    "surface-tint": "#81ecff",
+                    "tertiary-dim": "#7e51ff",
+                    "on-surface-variant": "#a3aac4",
+                    "on-secondary-fixed": "#354053",
+                    "outline-variant": "#40485d",
+                    "on-primary-fixed-variant": "#005762",
+                    "primary-fixed-dim": "#00d4ec",
+                    "on-surface": "#dee5ff",
+                    "background": "#060e20",
+                    "secondary": "#d8e3fb",
+                    "surface-container-low": "#091328",
+                    "surface": "#060e20",
+                    "primary-dim": "#00d4ec",
+                    "error": "#ff716c",
+                    "surface-container-highest": "#192540",
+                    "on-error": "#490006",
+                    "tertiary-fixed-dim": "#ab93ff",
+                    "on-error-container": "#ffa8a3",
+                    "surface-variant": "#192540",
+                    "surface-container-lowest": "#000000",
+                    "primary-container": "#00e3fd",
+                    "tertiary-container": "#7c4dff",
+                    "inverse-surface": "#faf8ff",
+                    "on-primary-container": "#004d57",
+                    "on-primary-fixed": "#003840",
+                    "on-primary": "#005762",
+                    "tertiary-fixed": "#b8a3ff",
+                    "secondary-dim": "#cad5ed",
+                    "on-secondary": "#475266",
+                    "inverse-on-surface": "#4d556b",
+                    "on-tertiary-fixed": "#1c0055",
+                    "surface-dim": "#060e20",
+                    "on-tertiary-fixed-variant": "#4000ad",
+                    "surface-container-high": "#141f38",
+                    "primary-fixed": "#00e3fd",
+                    "secondary-fixed": "#d8e3fb",
+                    "on-tertiary": "#25006b",
+                    "on-background": "#dee5ff",
+                    "error-dim": "#d7383b",
+                    "on-tertiary-container": "#ffffff",
+                    "secondary-fixed-dim": "#cad5ed",
+                    "surface-container": "#0f1930",
+                    "on-secondary-fixed-variant": "#515c70",
+                    "primary": "#81ecff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "body": ["Manrope"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(60, 71, 90, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-glow {
+            box-shadow: 0 0 15px rgba(129, 236, 255, 0.15);
+        }
+        .heatmap-overlay {
+            background: radial-gradient(circle at 40% 50%, rgba(0, 229, 255, 0.15) 0%, transparent 60%),
+                        radial-gradient(circle at 60% 30%, rgba(166, 140, 255, 0.1) 0%, transparent 50%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body overflow-hidden">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#060e20] flex justify-between items-center px-6 h-16 w-full font-plus-jakarta-sans tracking-tight">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-[#dee5ff]">Projectr Analytics</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-[#00E5FF] border-b-2 border-[#00E5FF] pb-1 transition-colors duration-300" href="#">Market Overview</a>
+<a class="text-[#dee5ff]/70 hover:text-[#00E5FF] transition-colors duration-300" href="#">Comparison View</a>
+<a class="text-[#dee5ff]/70 hover:text-[#00E5FF] transition-colors duration-300" href="#">Reports</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-sm">search</span>
+</div>
+<input class="bg-surface-container-highest border-none rounded-xl py-2 pl-10 pr-4 text-sm w-64 focus:ring-1 focus:ring-primary/50 placeholder:text-outline" placeholder="Search Austin submarkets..." type="text"/>
+</div>
+<button class="text-[#dee5ff]/70 hover:text-[#00E5FF] transition-all scale-95 active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-[#dee5ff]/70 hover:text-[#00E5FF] transition-all scale-95 active:opacity-80">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="professional headshot of a data analyst in a dark studio setting with soft cyan backlighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpVRg2I9KnpPWzOM_L3oaqvxWJgMktF3U18gwx3bomIQ8tDx_m-UCe6W6D0fC3bM25qQJGoFKC9czbNAwAAsBB_WakXJtRu_V-_yn7piGCYBKL592hvGLYC6u48mCf_5ZdVVzhwxyHETuwkS2GIzwYvyU94o_EPU1Xcwb0IGgxdiixOqsCZuS1lTObUGJSHp7NgyTXnPmFUKH5yEx7XYMRxAHWkb02jEzK1Olb5ItfIZnnKJMBDBOToH6qBBvUEkHejX1Qe3ccjuM"/>
+</div>
+</div>
+</nav>
+<div class="flex h-screen pt-16">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-[#091328] flex flex-col py-6 shadow-[4px_0_24px_rgba(129,236,255,0.06)] font-manrope text-sm font-medium">
+<div class="px-6 mb-8">
+<h3 class="text-[#dee5ff] font-bold text-xs uppercase tracking-widest opacity-60">Map Controls</h3>
+<p class="text-[#81ecff] text-[10px] font-bold tracking-tighter">Obsidian Lens Engine</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 py-3 px-4 border-l-2 border-[#00E5FF] bg-[#141f38] text-[#00E5FF] transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Rent Analytics</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-[#dee5ff]/60 hover:bg-[#192540] hover:text-[#dee5ff] transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="architecture">architecture</span>
+<span>Permit Data</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-[#dee5ff]/60 hover:bg-[#192540] hover:text-[#dee5ff] transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+<span>Job Growth</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-[#dee5ff]/60 hover:bg-[#192540] hover:text-[#dee5ff] transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="layers">layers</span>
+<span>Market Layers</span>
+</a>
+</nav>
+<div class="px-4 mb-6">
+<button class="w-full bg-primary text-on-primary py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                    Apply Filters
+                </button>
+</div>
+<div class="mt-auto border-t border-outline-variant/10 pt-4">
+<a class="flex items-center gap-3 py-2 px-6 text-[#dee5ff]/60 hover:text-[#dee5ff]" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Help</span>
+</a>
+<a class="flex items-center gap-3 py-2 px-6 text-[#dee5ff]/60 hover:text-error" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area (Geospatial Map) -->
+<main class="ml-64 w-full relative">
+<!-- Google Maps Simulation -->
+<div class="absolute inset-0 z-0 bg-surface-container-lowest">
+<div class="absolute inset-0 heatmap-overlay z-10 opacity-60"></div>
+<img alt="Austin Map" class="w-full h-full object-cover grayscale opacity-40" data-alt="top-down high-contrast dark satellite map of Austin Texas with neon blue and purple glowing lines representing major transit arteries" data-location="Austin, Texas" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpRWUvdNYt-HB3CcR0EPatOKOR1-FdBJ_aBMTFNqcEHw40fgaZzFmyl7ABW1eiMVxQo61TYswqzVm4jHwGwBWxmhnz818xd9a4dtP9wposD4o1I9Wm4v58h2YMfxUkjxFNbS4dXBjAgQGxJXupxmTvgja431ramLVvf53h91TAtWNo6woGp9NPm0UglE0dpuI1ZxxqJDhwxJw34uUwjJFgirClnw9Cahp_L0u1cFx0j7iwBEBqiswIA8Ih21_7EGxkdAVumTEhzVw"/>
+</div>
+<!-- Floating Overlay: Legend & Market Info -->
+<div class="absolute top-6 left-6 z-20 glass-panel p-4 rounded-xl border border-outline-variant/10 active-glow">
+<div class="flex items-center justify-between gap-12 mb-4">
+<div>
+<h2 class="font-headline font-bold text-lg text-on-surface">Austin–Round Rock</h2>
+<p class="text-xs font-label text-outline uppercase tracking-widest">Market Status: High Growth</p>
+</div>
+<div class="bg-primary/10 px-3 py-1 rounded-full">
+<span class="text-primary text-xs font-bold tracking-tighter">LIVE DATA</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between text-xs">
+<span class="text-outline">Median Rent</span>
+<span class="text-on-surface font-bold">$2,140/mo</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-tertiary w-[75%]"></div>
+</div>
+</div>
+</div>
+<!-- Bento Grid of Metrics (Bottom Panel) -->
+<div class="absolute bottom-6 left-6 right-6 z-20 grid grid-cols-1 md:grid-cols-4 gap-4">
+<!-- Metric Card 1 -->
+<div class="glass-panel p-5 rounded-xl border border-outline-variant/10 flex flex-col justify-between h-32">
+<div>
+<span class="text-[10px] font-label text-outline uppercase tracking-wider mb-1 block">Current Vacancy Rate</span>
+<h3 class="text-2xl font-headline font-extrabold text-on-surface">5.2%</h3>
+</div>
+<div class="flex items-end justify-between">
+<span class="text-xs text-error font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+                            +0.4%
+                        </span>
+<div class="h-8 w-24 flex items-end gap-0.5">
+<div class="w-full bg-outline-variant/30 h-[20%] rounded-t-sm"></div>
+<div class="w-full bg-outline-variant/30 h-[40%] rounded-t-sm"></div>
+<div class="w-full bg-outline-variant/30 h-[30%] rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-[60%] rounded-t-sm"></div>
+<div class="w-full bg-primary h-[80%] rounded-t-sm"></div>
+</div>
+</div>
+</div>
+<!-- Metric Card 2 -->
+<div class="glass-panel p-5 rounded-xl border border-outline-variant/10 flex flex-col justify-between h-32">
+<div>
+<span class="text-[10px] font-label text-outline uppercase tracking-wider mb-1 block">Job Growth %</span>
+<h3 class="text-2xl font-headline font-extrabold text-on-surface">3.8%</h3>
+</div>
+<div class="flex items-end justify-between">
+<span class="text-xs text-primary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+                            Above Avg
+                        </span>
+<div class="h-8 w-24 flex items-end gap-0.5">
+<div class="w-full bg-primary/20 h-[30%] rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-[50%] rounded-t-sm"></div>
+<div class="w-full bg-primary/60 h-[45%] rounded-t-sm"></div>
+<div class="w-full bg-primary/80 h-[70%] rounded-t-sm"></div>
+<div class="w-full bg-primary h-[90%] rounded-t-sm"></div>
+</div>
+</div>
+</div>
+<!-- Metric Card 3 -->
+<div class="glass-panel p-5 rounded-xl border border-outline-variant/10 flex flex-col justify-between h-32">
+<div>
+<span class="text-[10px] font-label text-outline uppercase tracking-wider mb-1 block">New Permits Issued</span>
+<h3 class="text-2xl font-headline font-extrabold text-on-surface">1,402</h3>
+</div>
+<div class="flex items-end justify-between">
+<span class="text-xs text-outline font-medium">Monthly Vol</span>
+<div class="h-8 w-24 flex items-end gap-0.5">
+<div class="w-full bg-tertiary/20 h-[50%] rounded-t-sm"></div>
+<div class="w-full bg-tertiary/40 h-[60%] rounded-t-sm"></div>
+<div class="w-full bg-tertiary/60 h-[40%] rounded-t-sm"></div>
+<div class="w-full bg-tertiary/80 h-[55%] rounded-t-sm"></div>
+<div class="w-full bg-tertiary h-[65%] rounded-t-sm"></div>
+</div>
+</div>
+</div>
+<!-- Metric Card 4: Forecast -->
+<div class="bg-primary/10 p-5 rounded-xl border border-primary/20 flex flex-col justify-between h-32 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2 opacity-20">
+<span class="material-symbols-outlined text-4xl text-primary">auto_graph</span>
+</div>
+<div>
+<span class="text-[10px] font-label text-primary uppercase tracking-wider mb-1 block">Forecast Rent (Q4)</span>
+<h3 class="text-2xl font-headline font-extrabold text-on-surface">$2,215</h3>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-primary">+2.4% Predicted</span>
+</div>
+</div>
+</div>
+<!-- Map Tools (Right Floating) -->
+<div class="absolute right-6 top-6 z-20 flex flex-col gap-2">
+<button class="glass-panel w-10 h-10 rounded-lg flex items-center justify-center text-on-surface hover:bg-surface-container-highest transition-colors border border-outline-variant/10">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="glass-panel w-10 h-10 rounded-lg flex items-center justify-center text-on-surface hover:bg-surface-container-highest transition-colors border border-outline-variant/10">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<div class="h-px bg-outline-variant/20 my-1"></div>
+<button class="glass-panel w-10 h-10 rounded-lg flex items-center justify-center text-primary hover:bg-surface-container-highest transition-colors border border-outline-variant/10">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+<button class="glass-panel w-10 h-10 rounded-lg flex items-center justify-center text-on-surface hover:bg-surface-container-highest transition-colors border border-outline-variant/10">
+<span class="material-symbols-outlined">3d_rotation</span>
+</button>
+</div>
+</main>
+</div>
+</body></html>

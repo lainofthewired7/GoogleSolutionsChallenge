@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Obsidian | Watchlist Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Manrope:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error-container": "#ffa8a3",
+                      "background": "#060e20",
+                      "on-error": "#490006",
+                      "outline-variant": "#40485d",
+                      "primary": "#81ecff",
+                      "on-primary-container": "#004d57",
+                      "primary-fixed-dim": "#00d4ec",
+                      "surface-container": "#0f1930",
+                      "surface-tint": "#81ecff",
+                      "tertiary-dim": "#7e51ff",
+                      "tertiary-fixed": "#b8a3ff",
+                      "error": "#ff716c",
+                      "secondary-fixed": "#d8e3fb",
+                      "surface-container-high": "#141f38",
+                      "on-secondary": "#475266",
+                      "secondary-dim": "#cad5ed",
+                      "on-primary-fixed": "#003840",
+                      "tertiary-fixed-dim": "#ab93ff",
+                      "on-secondary-container": "#c5d1e8",
+                      "surface": "#060e20",
+                      "on-secondary-fixed": "#354053",
+                      "inverse-on-surface": "#4d556b",
+                      "on-surface-variant": "#a3aac4",
+                      "on-secondary-fixed-variant": "#515c70",
+                      "surface-bright": "#1f2b49",
+                      "secondary-fixed-dim": "#cad5ed",
+                      "on-tertiary-fixed": "#1c0055",
+                      "error-container": "#9f0519",
+                      "surface-container-highest": "#192540",
+                      "tertiary-container": "#7c4dff",
+                      "surface-container-low": "#091328",
+                      "tertiary": "#a68cff",
+                      "surface-variant": "#192540",
+                      "on-primary-fixed-variant": "#005762",
+                      "on-tertiary-fixed-variant": "#4000ad",
+                      "on-background": "#dee5ff",
+                      "secondary-container": "#3c475a",
+                      "secondary": "#d8e3fb",
+                      "surface-container-lowest": "#000000",
+                      "on-tertiary": "#25006b",
+                      "inverse-surface": "#faf8ff",
+                      "primary-dim": "#00d4ec",
+                      "surface-dim": "#060e20",
+                      "on-surface": "#dee5ff",
+                      "on-tertiary-container": "#ffffff",
+                      "outline": "#6d758c",
+                      "error-dim": "#d7383b",
+                      "primary-container": "#00e3fd",
+                      "primary-fixed": "#00e3fd",
+                      "inverse-primary": "#006976",
+                      "on-primary": "#005762"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Plus Jakarta Sans"],
+                      "body": ["Manrope"],
+                      "label": ["Inter"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(20, 31, 56, 0.4);
+            backdrop-filter: blur(12px);
+        }
+        .asymmetric-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#091328]/80 backdrop-blur-lg flex justify-between items-center px-8 h-20 w-full shadow-none">
+<div class="flex items-center gap-12">
+<div class="text-2xl font-black text-[#dee5ff] tracking-widest font-headline">OBSIDIAN</div>
+<nav class="hidden md:flex gap-8 items-center text-sm">
+<a class="text-[#dee5ff]/60 hover:text-[#dee5ff] pb-1 transition-all font-headline font-bold" href="#">Market Map</a>
+<a class="text-[#dee5ff]/60 hover:text-[#dee5ff] pb-1 transition-all font-headline font-bold" href="#">Insights</a>
+<a class="text-cyan-400 font-bold border-b-2 border-cyan-400 pb-1 font-headline" href="#">Watchlist</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center bg-surface-container-high px-4 py-2 rounded-lg gap-3 focus-within:ring-1 focus-within:ring-primary/50 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 placeholder:text-on-surface-variant" placeholder="Search markets..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors p-2 hover:bg-[#141f38] rounded-lg">notifications</button>
+<div class="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-tertiary p-[1px]">
+<img alt="User profile avatar" class="h-full w-full rounded-full object-cover" data-alt="professional headshot of a businessman in a dark suit with a neutral background and clean lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNfoMnCeQ3OmOdoqqynvkZPt02P67iTrbOmKxCZwVzHkcKAx5vHvAt_lShzWQnde_F-gB1KeHWkqyInuBbdDDwEvsClNuGWyMjoHw_JsaffUCYCtUrAkSJUz1KJUiBDbRyynfzHNmDtFqatisPCuVYR5UG1ZV4hxfhG6hf0oESIEymRsFdN3ZVEXrMS1pZ1nrgT12VmmsPH_VyTAkn1XRV-yigBwwMaZU7q3Ygopp4V4hJh8ILi_0IO-DY5E81q9v5SHaeKenjl8o"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-72 z-40 bg-[#091328] border-r border-[#40485d]/15 flex flex-col pt-24 pb-8 h-full shadow-[4px_0_24px_rgba(0,229,255,0.03)]">
+<div class="px-8 mb-10">
+<div class="text-lg font-bold text-cyan-400 font-headline uppercase tracking-wider">Analytics</div>
+<div class="text-xs text-on-surface-variant font-label tracking-tighter">Premium Tier Access</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 text-[#dee5ff]/50 px-6 py-4 hover:text-[#dee5ff] hover:bg-[#141f38] transition-all duration-300 group" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">map</span>
+<span class="font-medium text-sm">Market Map</span>
+</a>
+<a class="flex items-center gap-4 text-[#dee5ff]/50 px-6 py-4 hover:text-[#dee5ff] hover:bg-[#141f38] transition-all duration-300 group" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">analytics</span>
+<span class="font-medium text-sm">Insights</span>
+</a>
+<a class="flex items-center gap-4 bg-gradient-to-r from-cyan-400/10 to-transparent text-cyan-400 border-l-2 border-cyan-400 px-6 py-4 group" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">visibility</span>
+<span class="font-medium text-sm">Watchlist</span>
+</a>
+<a class="flex items-center gap-4 text-[#dee5ff]/50 px-6 py-4 hover:text-[#dee5ff] hover:bg-[#141f38] transition-all duration-300 group" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">compare_arrows</span>
+<span class="font-medium text-sm">Saved Comparisons</span>
+</a>
+<a class="flex items-center gap-4 text-[#dee5ff]/50 px-6 py-4 hover:text-[#dee5ff] hover:bg-[#141f38] transition-all duration-300 group" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-6 space-y-1">
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-3 rounded-lg font-bold text-sm mb-6 active:scale-95 transition-transform">
+                New Analysis
+            </button>
+<a class="flex items-center gap-4 text-[#dee5ff]/50 px-6 py-3 hover:text-[#dee5ff] transition-all text-sm group" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">help</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-4 text-[#dee5ff]/50 px-6 py-3 hover:text-[#dee5ff] transition-all text-sm group" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-72 pt-32 px-12 pb-12">
+<header class="mb-12">
+<h1 class="text-4xl font-extrabold font-headline tracking-tight mb-2">Watchlist Dashboard</h1>
+<p class="text-on-surface-variant font-body">Curated performance metrics for your saved submarkets and high-interest comparisons.</p>
+</header>
+<div class="grid grid-cols-12 gap-8">
+<!-- My Saved Submarkets: Bento Grid Style -->
+<section class="col-span-12 lg:col-span-8">
+<div class="flex items-end justify-between mb-6">
+<h2 class="text-xl font-bold font-headline text-on-surface">My Saved Submarkets</h2>
+<button class="text-primary text-sm font-bold hover:underline">View All Submarkets</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Submarket Card 1 -->
+<div class="bg-gradient-to-br from-surface-container-high to-surface-container-low p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary">more_vert</span>
+</div>
+<div class="mb-8">
+<span class="text-xs font-label uppercase tracking-widest text-primary mb-1 block">AUSTIN, TX</span>
+<h3 class="text-2xl font-bold font-headline">Downtown Austin</h3>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<div class="text-[10px] uppercase font-label text-on-surface-variant mb-1">Avg Rent Growth</div>
+<div class="text-xl font-bold text-primary">+8.4%</div>
+<!-- Sparkline SVG Mockup -->
+<svg class="w-full h-8 mt-2 opacity-50" viewbox="0 0 100 20">
+<path class="text-primary" d="M0 15 Q 10 12, 20 18 T 40 10 T 60 14 T 80 5 T 100 8" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="text-[10px] uppercase font-label text-on-surface-variant mb-1">Job Creation</div>
+<div class="text-xl font-bold text-tertiary">+4.2k</div>
+<svg class="w-full h-8 mt-2 opacity-50" viewbox="0 0 100 20">
+<path class="text-tertiary" d="M0 18 Q 15 15, 30 10 T 60 5 T 90 2 T 100 5" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Submarket Card 2 -->
+<div class="bg-gradient-to-br from-surface-container-high to-surface-container-low p-6 rounded-xl relative overflow-hidden group border border-outline-variant/10">
+<div class="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary">more_vert</span>
+</div>
+<div class="mb-8">
+<span class="text-xs font-label uppercase tracking-widest text-primary mb-1 block">AUSTIN, TX</span>
+<h3 class="text-2xl font-bold font-headline">Round Rock North</h3>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<div class="text-[10px] uppercase font-label text-on-surface-variant mb-1">Avg Rent Growth</div>
+<div class="text-xl font-bold text-primary">+5.1%</div>
+<svg class="w-full h-8 mt-2 opacity-50" viewbox="0 0 100 20">
+<path class="text-primary" d="M0 10 Q 20 8, 40 12 T 70 15 T 100 12" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<div class="text-[10px] uppercase font-label text-on-surface-variant mb-1">Job Creation</div>
+<div class="text-xl font-bold text-tertiary">+1.8k</div>
+<svg class="w-full h-8 mt-2 opacity-50" viewbox="0 0 100 20">
+<path class="text-tertiary" d="M0 15 Q 30 18, 60 12 T 100 15" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Market Comparison Teaser -->
+<div class="col-span-1 md:col-span-2 bg-surface-container-high p-8 rounded-xl flex items-center gap-12 overflow-hidden relative">
+<div class="flex-1 z-10">
+<h3 class="text-xl font-bold font-headline mb-3">Saved Comparison: Austin Central vs. Domain</h3>
+<p class="text-on-surface-variant text-sm mb-6 max-w-md">Multi-family yield delta has increased by 15bps in the last quarter. View the full architectural breakdown of asset classes.</p>
+<button class="bg-surface-variant text-on-surface px-6 py-2 rounded-lg text-sm font-bold border border-outline-variant/30 hover:bg-surface-bright transition-all">Launch Comparison</button>
+</div>
+<div class="hidden md:block w-48 h-48 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-3xl absolute -right-12 -bottom-12"></div>
+<div class="hidden md:flex gap-4 z-10">
+<div class="w-24 h-32 bg-surface-container-low rounded-lg border border-outline-variant/20 flex flex-col items-center justify-center p-4">
+<div class="text-xs text-on-surface-variant mb-2">Central</div>
+<div class="w-4 h-16 bg-primary rounded-full"></div>
+</div>
+<div class="w-24 h-32 bg-surface-container-low rounded-lg border border-outline-variant/20 flex flex-col items-center justify-center p-4">
+<div class="text-xs text-on-surface-variant mb-2">Domain</div>
+<div class="w-4 h-12 bg-tertiary rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Alerts & Notifications Side Panel -->
+<aside class="col-span-12 lg:col-span-4">
+<div class="glass-panel p-8 rounded-2xl h-full border border-outline-variant/10 shadow-2xl">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-xl font-bold font-headline">Market Shifts</h2>
+<span class="flex h-2 w-2 rounded-full bg-error animate-pulse"></span>
+</div>
+<div class="space-y-6">
+<!-- Alert Item 1 -->
+<div class="group cursor-pointer">
+<div class="flex items-start gap-4">
+<div class="p-2 bg-error/10 rounded-lg">
+<span class="material-symbols-outlined text-error text-lg" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h4 class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">Rent Spike Detected</h4>
+<span class="text-[10px] font-label text-on-surface-variant">2H AGO</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 leading-relaxed">Downtown Austin luxury tier rents increased by 1.2% in 30 days, exceeding historical volatility.</p>
+</div>
+</div>
+</div>
+<!-- Alert Item 2 -->
+<div class="group cursor-pointer">
+<div class="flex items-start gap-4">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h4 class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">Permit Surge</h4>
+<span class="text-[10px] font-label text-on-surface-variant">5H AGO</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 leading-relaxed">Round Rock North reports a 45% increase in commercial development permits for Q3.</p>
+</div>
+</div>
+</div>
+<!-- Alert Item 3 -->
+<div class="group cursor-pointer">
+<div class="flex items-start gap-4">
+<div class="p-2 bg-tertiary/10 rounded-lg">
+<span class="material-symbols-outlined text-tertiary text-lg" style="font-variation-settings: 'FILL' 1;">group</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h4 class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">Job Growth Update</h4>
+<span class="text-[10px] font-label text-on-surface-variant">1D AGO</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 leading-relaxed">New tech headquarters announced in Austin outskirts. Predicted impact on local yields: +40bps.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-10 pt-10 border-t border-outline-variant/10">
+<div class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4">Market Watch Score</div>
+<div class="flex items-end gap-2">
+<div class="text-5xl font-black font-headline text-primary">82</div>
+<div class="text-sm text-primary-dim font-bold mb-2">/100</div>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full mt-4">
+<div class="bg-primary h-full rounded-full w-[82%]"></div>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-3 italic">"Institutional demand in your watchlist is currently High."</p>
+</div>
+</div>
+</aside>
+</div>
+<!-- Quick Metrics Row -->
+<section class="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5">
+<div class="text-xs text-on-surface-variant uppercase mb-2">Total Managed Value</div>
+<div class="text-2xl font-bold font-headline">$1.4B</div>
+<div class="text-xs text-primary mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">arrow_upward</span> 12.5% vs Prev Year
+                </div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5">
+<div class="text-xs text-on-surface-variant uppercase mb-2">Watchlist Volatility</div>
+<div class="text-2xl font-bold font-headline">Low</div>
+<div class="text-xs text-on-surface-variant mt-1">Stable across 4/5 markets</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5">
+<div class="text-xs text-on-surface-variant uppercase mb-2">Top Performer</div>
+<div class="text-2xl font-bold font-headline">Austin DT</div>
+<div class="text-xs text-primary mt-1">Yielding 5.8% cap rate</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5">
+<div class="text-xs text-on-surface-variant uppercase mb-2">Under Review</div>
+<div class="text-2xl font-bold font-headline">Round Rock</div>
+<div class="text-xs text-error mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">info</span> 2 Pending Shifts
+                </div>
+</div>
+</section>
+</main>
+<!-- Map Contextual Floating Card -->
+<div class="fixed bottom-8 right-8 z-50">
+<div class="glass-panel p-4 rounded-2xl border border-outline-variant/20 shadow-2xl flex items-center gap-4 group cursor-pointer hover:scale-105 transition-transform">
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-highest">
+<img alt="Austin City Map" class="w-full h-full object-cover" data-alt="stylized dark mode topographic map of a modern city with glowing blue data points and sharp geometry" data-location="Austin, Texas" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzOe_QA5OFFy0xSyKt-xIc2eVqDuY1d9XVG62bR7b3n47I-pdAtdSQDLGI6s_NGIdAUt0GCm470OCrDayzwgdRSBXGwtWfUHEJ36jcj-w-3RGO-y-cfzzFx24Y3lEbXRwpKnCb6wZZ0fVP6A6b_rGBS4xBdMAMwoyw0AKv1VaXSKnBLNTxT3feYNg1obajsjo_W6JBWqylqe6NvnU1FE86rhGEle9q7mSIS3DTtH60yCZFydfowQlDOrnlu2B6Z5NYl7TG2IJLt04"/>
+</div>
+<div>
+<div class="text-xs font-bold text-primary mb-0.5">Explore Map Mode</div>
+<div class="text-sm font-headline font-bold">Austin Metropolitan</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">open_in_new</span>
+</div>
+</div>
+</body></html>

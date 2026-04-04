@@ -1,7 +1,9 @@
 import { useAuth } from '../context/AuthContext';
+import { useMapLayers } from '../hooks/useMapLayers';
 
 export default function Sidebar() {
   const { logout } = useAuth();
+  const { layers, toggleLayer } = useMapLayers();
 
   return (
     <aside className="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-surface-container-low flex flex-col py-6 shadow-[4px_0_24px_rgba(129,236,255,0.06)] font-body text-sm font-medium z-40">
@@ -11,30 +13,46 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-1">
-        <a className="flex items-center gap-3 py-3 px-4 border-l-2 border-primary bg-surface-container-high text-primary transition-all duration-200 ease-in-out cursor-pointer">
+        <button 
+          onClick={() => toggleLayer('heatmap')}
+          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${layers.heatmap ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
+        >
           <span className="material-symbols-outlined">payments</span>
-          <span>Rent Analytics</span>
-        </a>
-        <a className="flex items-center gap-3 py-3 px-4 text-on-surface/60 hover:bg-surface-variant hover:text-on-surface transition-all duration-200 ease-in-out cursor-pointer">
+          <span>Rent Heatmap</span>
+        </button>
+
+        <button 
+          onClick={() => toggleLayer('permits')}
+          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${layers.permits ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
+        >
           <span className="material-symbols-outlined">architecture</span>
           <span>Permit Data</span>
-        </a>
-        <a className="flex items-center gap-3 py-3 px-4 text-on-surface/60 hover:bg-surface-variant hover:text-on-surface transition-all duration-200 ease-in-out cursor-pointer">
+        </button>
+
+        <button 
+          onClick={() => toggleLayer('jobs')}
+          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${layers.jobs ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
+        >
           <span className="material-symbols-outlined">trending_up</span>
           <span>Job Growth</span>
-        </a>
-        <a className="flex items-center gap-3 py-3 px-4 text-on-surface/60 hover:bg-surface-variant hover:text-on-surface transition-all duration-200 ease-in-out cursor-pointer">
-          <span className="material-symbols-outlined">layers</span>
-          <span>Market Layers</span>
-        </a>
-      </nav>
-
-      <div className="px-4 mb-6">
-        <button className="w-full bg-primary text-on-primary py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95">
-          <span className="material-symbols-outlined text-sm">filter_list</span>
-          Apply Filters
         </button>
-      </div>
+
+        <button 
+          onClick={() => toggleLayer('vacancy')}
+          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${layers.vacancy ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
+        >
+          <span className="material-symbols-outlined">apartment</span>
+          <span>Vacancy Rates</span>
+        </button>
+
+        <button 
+          onClick={() => toggleLayer('boundaries')}
+          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${layers.boundaries ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
+        >
+          <span className="material-symbols-outlined">layers</span>
+          <span>Geospatial Boundaries</span>
+        </button>
+      </nav>
 
       <div className="mt-auto border-t border-outline-variant/10 pt-4">
         <a className="flex items-center gap-3 py-2 px-6 text-on-surface/60 hover:text-on-surface cursor-pointer">
@@ -43,7 +61,7 @@ export default function Sidebar() {
         </a>
         <button
           onClick={logout}
-          className="w-full flex items-center gap-3 py-2 px-6 text-on-surface/60 hover:text-error cursor-pointer"
+          className="w-full flex items-center gap-3 py-2 px-6 text-on-surface/60 hover:text-error cursor-pointer transition-colors"
         >
           <span className="material-symbols-outlined">logout</span>
           <span>Logout</span>

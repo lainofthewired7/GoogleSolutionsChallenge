@@ -32,22 +32,18 @@ export default function Header() {
             >
               Market Overview
             </Link>
-            <Link
-              to="/compare"
-              className={`transition-colors duration-300 pb-1 ${
-                location.pathname === '/compare'
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-on-surface/70 hover:text-primary'
-              }`}
-            >
-              Comparison View
-            </Link>
-            <Link
-              to="#"
-              className="text-on-surface/70 hover:text-primary transition-colors duration-300 pb-1 opacity-50 cursor-not-allowed"
-            >
-              Reports
-            </Link>
+            {isAuthenticated && (
+              <Link
+                to="/compare"
+                className={`transition-colors duration-300 pb-1 ${
+                  location.pathname === '/compare'
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-on-surface/70 hover:text-primary'
+                }`}
+              >
+                Comparison View
+              </Link>
+            )}
           </div>
         </div>
 
@@ -62,17 +58,18 @@ export default function Header() {
               type="text"
             />
           </div>
-
-          <button className="text-on-surface/70 hover:text-primary transition-all active:scale-95">
-            <span className="material-symbols-outlined">notifications</span>
-          </button>
-          <button className="text-on-surface/70 hover:text-primary transition-all active:scale-95">
-            <span className="material-symbols-outlined">settings</span>
-          </button>
-
-          {isAuthenticated ? (
-            <UserMenu />
-          ) : (
+          {isAuthenticated && (
+            <>
+              <button className="text-on-surface/70 hover:text-primary transition-all active:scale-95" title="Notifications">
+                <span className="material-symbols-outlined">notifications</span>
+              </button>
+              <button className="text-on-surface/70 hover:text-primary transition-all active:scale-95" title="Settings">
+                <span className="material-symbols-outlined">settings</span>
+              </button>
+              <UserMenu />
+            </>
+          )}
+          {!isAuthenticated && (
             <button
               className="bg-primary/10 text-primary hover:bg-primary/20 px-4 py-1.5 rounded-lg font-bold text-sm transition-colors border border-primary/20"
               onClick={() => setShowLogin(true)}

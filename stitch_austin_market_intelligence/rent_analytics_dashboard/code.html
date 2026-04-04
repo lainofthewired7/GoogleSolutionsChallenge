@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Projectr Analytics | Rent Performance Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Manrope:wght@400;500;600&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#cad5ed",
+                        "secondary": "#d8e3fb",
+                        "background": "#060e20",
+                        "on-primary-fixed-variant": "#005762",
+                        "on-tertiary-fixed": "#1c0055",
+                        "tertiary": "#a68cff",
+                        "surface-variant": "#192540",
+                        "on-secondary-fixed": "#354053",
+                        "on-secondary-fixed-variant": "#515c70",
+                        "inverse-on-surface": "#4d556b",
+                        "outline": "#6d758c",
+                        "surface-container-high": "#141f38",
+                        "surface-container-highest": "#192540",
+                        "on-tertiary-fixed-variant": "#4000ad",
+                        "error": "#ff716c",
+                        "secondary-dim": "#cad5ed",
+                        "primary-container": "#00e3fd",
+                        "inverse-primary": "#006976",
+                        "tertiary-container": "#7c4dff",
+                        "surface-container-low": "#091328",
+                        "on-primary": "#005762",
+                        "on-tertiary": "#25006b",
+                        "on-error-container": "#ffa8a3",
+                        "surface-bright": "#1f2b49",
+                        "on-primary-container": "#004d57",
+                        "inverse-surface": "#faf8ff",
+                        "on-background": "#dee5ff",
+                        "secondary-container": "#3c475a",
+                        "primary": "#81ecff",
+                        "surface-dim": "#060e20",
+                        "on-primary-fixed": "#003840",
+                        "surface": "#060e20",
+                        "on-error": "#490006",
+                        "error-dim": "#d7383b",
+                        "on-surface-variant": "#a3aac4",
+                        "surface-container": "#0f1930",
+                        "on-tertiary-container": "#ffffff",
+                        "tertiary-fixed": "#b8a3ff",
+                        "primary-fixed-dim": "#00d4ec",
+                        "outline-variant": "#40485d",
+                        "tertiary-dim": "#7e51ff",
+                        "surface-tint": "#81ecff",
+                        "on-secondary-container": "#c5d1e8",
+                        "tertiary-fixed-dim": "#ab93ff",
+                        "on-surface": "#dee5ff",
+                        "surface-container-lowest": "#000000",
+                        "on-secondary": "#475266",
+                        "secondary-fixed": "#d8e3fb",
+                        "primary-dim": "#00d4ec",
+                        "error-container": "#9f0519",
+                        "primary-fixed": "#00e3fd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Manrope"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(60, 71, 90, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #060e20;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #192540;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/30 selection:text-primary">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-[#060e20] dark:bg-[#060e20] flex justify-between items-center px-6 h-16 w-full font-plus-jakarta-sans tracking-tight">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-[#dee5ff]">Projectr Analytics</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-[#00E5FF] border-b-2 border-[#00E5FF] pb-1 hover:text-[#00E5FF] transition-colors duration-300" href="#">Market Overview</a>
+<a class="text-[#dee5ff]/70 hover:text-[#00E5FF] transition-colors duration-300" href="#">Comparison View</a>
+<a class="text-[#dee5ff]/70 hover:text-[#00E5FF] transition-colors duration-300" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-[#dee5ff]/70 hover:text-[#00E5FF] transition-all scale-95 active:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-[#dee5ff]/70 hover:text-[#00E5FF] transition-all scale-95 active:opacity-80">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest border border-outline-variant/20">
+<img alt="User profile" data-alt="professional portrait of a tech executive with glasses and a friendly expression, minimalist clean background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6kaJCyMOisTPCziZBeqx78i1eElXhFQHjlfDf0ZXOhq5OHGErOi4qHU2m5jVP3lMwjwe9k7GKhb7EHXUTPYFYkIjJZxjrK_Gb268NpJlhf_ZeCJYcg-PJFClNoSUwTVW5GPjwA9f6h-o7Bh2OXZ4BkVILuVRPhZLvSNlqtj7hkOb8WpdKzrSZJS1SmuOLcrEBH5yDk99pzpjFcrH5HLQin5BHtiS40MM2tcuz6ccmOzO4pmiM4eb8dghb9xi9lkvQ-Ja4603ifaM"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-[#091328] dark:bg-[#091328] shadow-[4px_0_24px_rgba(129,236,255,0.06)] flex flex-col py-6 font-manrope text-sm font-medium z-40">
+<div class="px-6 mb-8">
+<h3 class="text-[#dee5ff] font-bold text-xs uppercase tracking-widest opacity-50 mb-1">Map Controls</h3>
+<p class="text-[#00E5FF] text-[10px] tracking-tight">Obsidian Lens Engine</p>
+</div>
+<nav class="flex-1 flex flex-col">
+<a class="flex items-center gap-3 py-3 px-4 border-l-2 border-[#00E5FF] bg-[#141f38] text-[#00E5FF] transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="payments">payments</span>
+<span>Rent Analytics</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-[#dee5ff]/60 hover:bg-[#192540] hover:text-[#dee5ff] transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="architecture">architecture</span>
+<span>Permit Data</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-[#dee5ff]/60 hover:bg-[#192540] hover:text-[#dee5ff] transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="trending_up">trending_up</span>
+<span>Job Growth</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-[#dee5ff]/60 hover:bg-[#192540] hover:text-[#dee5ff] transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="layers">layers</span>
+<span>Market Layers</span>
+</a>
+</nav>
+<div class="mt-auto px-4 py-4 space-y-2 border-t border-outline-variant/10">
+<button class="w-full bg-primary text-on-primary py-2.5 rounded-lg font-bold text-xs hover:opacity-90 transition-all mb-4">Apply Filters</button>
+<a class="flex items-center gap-3 py-2 px-2 text-[#dee5ff]/60 hover:text-[#dee5ff] transition-all" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="help">help</span>
+<span>Help</span>
+</a>
+<a class="flex items-center gap-3 py-2 px-2 text-error-dim hover:text-error transition-all" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="logout">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-16 min-h-screen p-8 bg-background relative overflow-hidden">
+<!-- Background Accents -->
+<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-tertiary/5 rounded-full blur-[100px] pointer-events-none"></div>
+<!-- Header Section -->
+<header class="flex justify-between items-end mb-10">
+<div>
+<nav class="flex gap-2 text-xs font-label text-outline mb-2">
+<span>United States</span> / <span>Texas</span> / <span class="text-primary">Austin–Round Rock</span>
+</nav>
+<h1 class="text-4xl font-extrabold font-headline tracking-tighter text-on-surface">Austin Rent Flux <span class="text-primary">2024</span></h1>
+</div>
+<div class="flex gap-3">
+<div class="flex items-center bg-surface-container-high px-4 py-2 rounded-xl border border-outline-variant/10">
+<span class="text-xs font-label text-on-surface-variant mr-3">Timeframe:</span>
+<span class="text-sm font-semibold text-on-surface">Last 12 Months</span>
+<span class="material-symbols-outlined text-sm ml-2 text-primary" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- KPI Cards Row -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<!-- KPI: Avg Monthly Rent -->
+<div class="bg-surface-container-low p-6 rounded-xl relative group overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700"></div>
+<div class="relative z-10">
+<p class="text-xs font-label text-on-surface-variant uppercase tracking-widest mb-4">Avg. Monthly Rent</p>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-extrabold font-headline text-on-surface">$2,485</span>
+<span class="text-sm font-semibold text-primary font-label">/mo</span>
+</div>
+<div class="mt-4 flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+<p class="text-xs text-on-surface-variant">Market average across all sectors</p>
+</div>
+</div>
+</div>
+<!-- KPI: YoY Growth -->
+<div class="bg-surface-container-low p-6 rounded-xl border-l-2 border-primary/20">
+<p class="text-xs font-label text-on-surface-variant uppercase tracking-widest mb-4">YoY Rent Growth</p>
+<div class="flex items-baseline justify-between">
+<span class="text-4xl font-extrabold font-headline text-primary">+8.4%</span>
+<div class="bg-primary/10 px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-primary text-sm align-middle" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+<div class="mt-6 h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[84%]"></div>
+</div>
+</div>
+<!-- KPI: Vacancy -->
+<div class="bg-surface-container-low p-6 rounded-xl">
+<p class="text-xs font-label text-on-surface-variant uppercase tracking-widest mb-4">Current Vacancy Rate</p>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-extrabold font-headline text-secondary">4.2%</span>
+<span class="material-symbols-outlined text-secondary text-xl" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-4">Maintaining healthy supply balance</p>
+</div>
+</div>
+<!-- Main Trend Chart Area -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-low rounded-xl p-8 relative overflow-hidden flex flex-col">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h2 class="text-xl font-bold font-headline text-on-surface">Median Rent Trend</h2>
+<p class="text-sm text-on-surface-variant">12-month trailing performance index</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="text-xs font-label">Single Family</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-tertiary"></span>
+<span class="text-xs font-label">Multi-Family</span>
+</div>
+</div>
+</div>
+<!-- Simulated Chart -->
+<div class="flex-1 w-full flex items-end gap-1 relative min-h-[300px]">
+<!-- Chart Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
+<div class="w-full h-px bg-outline"></div>
+<div class="w-full h-px bg-outline"></div>
+<div class="w-full h-px bg-outline"></div>
+<div class="w-full h-px bg-outline"></div>
+<div class="w-full h-px bg-outline"></div>
+</div>
+<!-- Chart Bars/Lines Simulation -->
+<div class="flex-1 bg-gradient-to-t from-primary/20 to-primary/0 h-[40%] rounded-t-sm relative group cursor-pointer">
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-surface-container-highest px-2 py-1 rounded text-[10px] hidden group-hover:block whitespace-nowrap">$2.1k</div>
+</div>
+<div class="flex-1 bg-gradient-to-t from-primary/20 to-primary/0 h-[45%] rounded-t-sm"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/20 to-primary/0 h-[42%] rounded-t-sm"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/20 to-primary/0 h-[50%] rounded-t-sm"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/20 to-primary/0 h-[58%] rounded-t-sm"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/20 to-primary/0 h-[55%] rounded-t-sm"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/20 to-primary/0 h-[65%] rounded-t-sm"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/20 to-primary/0 h-[72%] rounded-t-sm border-t-2 border-primary"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/20 to-primary/0 h-[68%] rounded-t-sm"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/20 to-primary/0 h-[75%] rounded-t-sm"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/20 to-primary/0 h-[85%] rounded-t-sm border-t-2 border-primary"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/20 to-primary/0 h-[92%] rounded-t-sm border-t-2 border-primary shadow-[0_-8px_20px_rgba(129,236,255,0.2)]"></div>
+</div>
+<div class="flex justify-between mt-6 px-2">
+<span class="text-[10px] font-label text-outline">JAN</span>
+<span class="text-[10px] font-label text-outline">MAR</span>
+<span class="text-[10px] font-label text-outline">MAY</span>
+<span class="text-[10px] font-label text-outline">JUL</span>
+<span class="text-[10px] font-label text-outline">SEP</span>
+<span class="text-[10px] font-label text-outline text-primary font-bold">DEC</span>
+</div>
+</div>
+<!-- Heatmap Section -->
+<div class="col-span-12 lg:col-span-7 bg-surface-container-low rounded-xl p-8 overflow-hidden">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h2 class="text-xl font-bold font-headline text-on-surface">Rent Yield Heatmap</h2>
+<p class="text-sm text-on-surface-variant">Regional yield concentration and growth clusters</p>
+</div>
+<button class="text-primary text-xs font-bold border-b border-primary/20 pb-0.5">Focus: Downtown</button>
+</div>
+<div class="relative rounded-lg overflow-hidden h-[400px]">
+<img alt="Austin Texas map" class="w-full h-full object-cover grayscale opacity-40" data-alt="abstract stylized dark blue satellite map of an urban grid with glowing cyan and neon violet heatmap overlays" data-location="Austin, Texas" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqXE_XNVteosdga5WgAx_h9M1zZTwyk2_N_9LWT-M1mHXTXkQNaOFabaWQFC1Lp9M1kQE9ewcvM3BkcXpscRMVOM4VHV5e85MVyDh1n_kl-GP2xPvSKLWqc0Wv7SeZ_6GewzIGRh36zI5RZnY3x29x1huz8T6yfS_INwYDJGxwdejJoFFuM6ZxvviiDHHZ5UlpamKYaLPsoFrrE4FV-wQRgS3KNyBXkoRtx8HFB-2f40yUCIv37NJlH-5FfJmsLaBWFVS8smpsDOA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent"></div>
+<!-- Simulated Heatmap Blobs -->
+<div class="absolute top-1/4 left-1/3 w-32 h-32 bg-primary/30 rounded-full blur-3xl"></div>
+<div class="absolute top-1/2 left-1/2 w-48 h-48 bg-tertiary/20 rounded-full blur-3xl"></div>
+<div class="absolute bottom-1/3 right-1/4 w-24 h-24 bg-primary/40 rounded-full blur-3xl"></div>
+<!-- Map Overlay Glass UI -->
+<div class="absolute bottom-6 left-6 glass-panel p-4 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-3">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-xs font-bold">High Growth Focus Zone</span>
+</div>
+<p class="text-[10px] text-on-surface-variant leading-relaxed max-w-[200px]">
+                            Central Austin showing sustained yield increases of +12% in multi-family assets.
+                        </p>
+</div>
+</div>
+</div>
+<!-- Top Submarkets Table -->
+<div class="col-span-12 lg:col-span-5 bg-surface-container-low rounded-xl p-8 flex flex-col">
+<h2 class="text-xl font-bold font-headline text-on-surface mb-6">Top Performing Submarkets</h2>
+<div class="flex-1 overflow-y-auto custom-scrollbar pr-2">
+<table class="w-full text-left border-separate border-spacing-y-4">
+<thead>
+<tr class="text-[10px] uppercase tracking-widest text-on-surface-variant">
+<th class="font-medium pb-2">Submarket</th>
+<th class="font-medium pb-2 text-right">Rent Growth</th>
+<th class="font-medium pb-2 text-right">Inventory</th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<tr class="group">
+<td class="py-3">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Domain / North Austin</span>
+<span class="text-[10px] text-on-surface-variant">Tech Corridor</span>
+</div>
+</td>
+<td class="text-right py-3 text-primary font-bold">+14.2%</td>
+<td class="text-right py-3 text-on-surface-variant font-label">12.4k Units</td>
+</tr>
+<tr class="group">
+<td class="py-3">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Rainey District</span>
+<span class="text-[10px] text-on-surface-variant">Urban High-Rise</span>
+</div>
+</td>
+<td class="text-right py-3 text-primary font-bold">+11.8%</td>
+<td class="text-right py-3 text-on-surface-variant font-label">3.2k Units</td>
+</tr>
+<tr class="group">
+<td class="py-3">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">East Austin</span>
+<span class="text-[10px] text-on-surface-variant">Revitalization Zone</span>
+</div>
+</td>
+<td class="text-right py-3 text-primary font-bold">+10.5%</td>
+<td class="text-right py-3 text-on-surface-variant font-label">6.8k Units</td>
+</tr>
+<tr class="group">
+<td class="py-3">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Mueller</span>
+<span class="text-[10px] text-on-surface-variant">Mixed Use</span>
+</div>
+</td>
+<td class="text-right py-3 text-on-surface font-bold">+6.2%</td>
+<td class="text-right py-3 text-on-surface-variant font-label">4.1k Units</td>
+</tr>
+<tr class="group">
+<td class="py-3">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Round Rock</span>
+<span class="text-[10px] text-on-surface-variant">Suburban Growth</span>
+</div>
+</td>
+<td class="text-right py-3 text-on-surface font-bold">+5.4%</td>
+<td class="text-right py-3 text-on-surface-variant font-label">18.2k Units</td>
+</tr>
+</tbody>
+</table>
+</div>
+<button class="mt-8 py-3 w-full rounded-lg border border-outline-variant/20 text-xs font-bold hover:bg-surface-container-high transition-colors">View All Submarkets</button>
+</div>
+</div>
+<!-- Secondary Information Row -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="glass-panel p-6 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-tertiary" data-icon="insights">insights</span>
+<h3 class="font-bold text-sm">Market Velocity</h3>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">Average days on market decreased by 15% this quarter, indicating high demand pressure in suburban clusters.</p>
+</div>
+<div class="glass-panel p-6 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="construction">construction</span>
+<h3 class="font-bold text-sm">Supply Pipeline</h3>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">8,500 new units projected for 2025 completion, primarily concentrated in the North Tech corridor.</p>
+</div>
+<div class="glass-panel p-6 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-secondary" data-icon="policy">policy</span>
+<h3 class="font-bold text-sm">Legislative Impact</h3>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">Recent zoning changes in District 4 may increase potential yield for high-density multi-family conversions.</p>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (Active only on Home/Dashboard screens) -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-[0_8px_24px_rgba(0,229,255,0.4)] flex items-center justify-center transition-transform hover:scale-110 active:scale-95 z-50">
+<span class="material-symbols-outlined font-bold" data-icon="add">add</span>
+</button>
+</body></html>
