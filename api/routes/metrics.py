@@ -3,7 +3,8 @@
 import os
 import logging
 import requests
-from fastapi import APIRouter, Query
+from datetime import datetime, timedelta
+from fastapi import APIRouter, Query, HTTPException
 from fastapi_cache.decorator import cache
 from dotenv import load_dotenv
 
@@ -18,6 +19,9 @@ router = APIRouter()
 FRED_API_KEY = os.getenv("FRED_API_KEY", "")
 CENSUS_API_KEY = os.getenv("CENSUS_API_KEY", "")
 HUD_API_KEY = os.getenv("HUD_API_KEY", "")
+
+# Debug print for backend verification
+print(f"[*] Census Key Loaded: {CENSUS_API_KEY[:5]}...")
 
 def get_market_config(market: str) -> dict:
     key = market.lower().strip().replace(" ", "-")
@@ -98,89 +102,59 @@ async def get_permits(market: str = Query(default="austin"), limit: int = 1000):
 
 
 # ══════════════════════════════════════════════════════════════
-# /vacancy — Census ACS data (county-level)
+# /heatmap — Census ACS ZIP-level data
 # ══════════════════════════════════════════════════════════════
-@router.get("/vacancy")
+@router.get("/heatmap")
 @cache(expire=3600)
-async def get_vacancy(market: str = Query(default="austin")):
-    """Get vacancy rate data from Census ACS 5-year estimates."""
+async def get_heatmap_data(market: str = Query(default="austin"), metric: str = Query(default="rent")):
+    """Get ZIP-level heatmap data (rent or vacancy) from Census ACS."""
     config = get_market_config(market)
     try:
-        url = "https://api.census.gov/data/2022/acs/acs5"
+        variables = "B25064_001E" if metric == "rent" else "B25002_001E,B25002_003E"
+        
+        hot_zips = config.get("hot_zips", ["78701", "78704"])
+        zips_str = ",".join(hot_zips)
+        
+        # Use 2021 ACS - more stable for ZCTA queries with targeted lists
+        url = "https://api.census.gov/data/2021/acs/acs5"
         params = {
-            "get": "NAME,B25002_001E,B25002_003E",
-            "for": "county:*",
-            "in": f"state:{config['state_fips']}",
+            "get": f"NAME,{variables}",
+            "for": f"zip code tabulation area:{zips_str}",
             "key": CENSUS_API_KEY,
         }
         r = requests.get(url, params=params, timeout=60)
-        r.raise_for_status()
+        if r.status_code != 200:
+            logger.error("Census API Error: %s - %s", r.status_code, r.text)
+            return {"market": market, "data": [], "message": f"Census Error: {r.status_code}"}
+        
+        try:
+            rows = r.json()
+        except Exception as e:
+            logger.error("JSON Decode Error: %s. Response text: %s", e, r.text[:500])
+            return {"market": market, "data": [], "message": "JSON Parse Error"}
 
-        rows = r.json()
-        # rows[0] is header, rest is data
-        total_units = 0
-        vacant_units = 0
+        results = []
         for row in rows[1:]:
+            zip_code = row[-1]
             try:
-                total_units += int(row[1]) if row[1] else 0
-                vacant_units += int(row[2]) if row[2] else 0
+                if metric == "rent":
+                    val = float(row[1]) if row[1] and float(row[1]) > 0 else 0
+                else:
+                    total = float(row[1]) if row[1] else 0
+                    vacant = float(row[2]) if row[2] else 0
+                    val = (vacant / total * 100) if total > 0 else 0
+                
+                if val > 0:
+                    results.append({"zip": zip_code, "value": val})
             except (ValueError, IndexError):
                 continue
-
-        rate = (vacant_units / total_units * 100) if total_units > 0 else 0
-        formatted_val = f"{rate:.1f}%"
-
+                
         return {
             "market": market,
-            "data": [{"value": formatted_val, "trend": f"{vacant_units:,} units"}],
-            "message": f"Live from Census ACS ({config['state_code']})"
+            "metric": metric,
+            "data": results,
+            "message": f"Live from Census ACS ({len(results)} Submarkets)"
         }
     except Exception:
-        logger.exception("Error fetching Census vacancy for %s", market)
-        return {"market": market, "data": [{"value": "N/A", "trend": "—"}], "message": "Error"}
-
-
-# ══════════════════════════════════════════════════════════════
-# /jobs — FRED employment data
-# ══════════════════════════════════════════════════════════════
-@router.get("/jobs")
-@cache(expire=3600)
-async def get_job_growth(market: str = Query(default="austin")):
-    """Get employment data from FRED (Total Nonfarm, SA)."""
-    config = get_market_config(market)
-    series_id = config["fred_jobs"]
-    try:
-        url = "https://api.stlouisfed.org/fred/series/observations"
-        params = {
-            "series_id": series_id,
-            "api_key": FRED_API_KEY,
-            "file_type": "json",
-            "sort_order": "desc",
-            "limit": 2,
-        }
-        r = requests.get(url, params=params, timeout=30)
-        r.raise_for_status()
-
-        obs = r.json().get("observations", [])
-        if obs:
-            latest = float(obs[0]["value"])
-            formatted_val = f"{latest:,.0f}k"
-            # Calculate month-over-month change if we have 2 data points
-            if len(obs) >= 2:
-                prev = float(obs[1]["value"])
-                change = ((latest - prev) / prev) * 100
-                trend = f"{change:+.1f}% MoM"
-            else:
-                trend = "Latest Month"
-        else:
-            formatted_val = "N/A"
-            trend = "—"
-
-        return {
-            "market": market,
-            "data": [{"value": formatted_val, "trend": trend}],
-            "message": f"Live from FRED ({series_id})"
-        }
-    except Exception:
-        logger.exception("Error fetching FRED jobs for %s (series: %s)", market, series_id)
-        return {"market": market, "data": [{"value": "N/A", "trend": "—"}], "message": "Error"}
+        logger.exception("Error fetching Census heatmap data for %s", market)
+        return {"market": market, "data": [], "message": "Error"}

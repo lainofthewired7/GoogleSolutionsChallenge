@@ -56,6 +56,17 @@ export interface UnemploymentResponse {
   units: string;
 }
 
+export interface RentTrendResponse {
+  market: string;
+  series_id: string;
+  title: string;
+  observations: ObservationPoint[];
+  latest_value: number | null;
+  latest_date: string | null;
+  yoy_growth_pct: number | null;
+  units: string;
+}
+
 /* ── API calls ── */
 
 export async function getEmployment(market = 'austin', years = 5): Promise<EmploymentResponse> {
@@ -64,4 +75,8 @@ export async function getEmployment(market = 'austin', years = 5): Promise<Emplo
 
 export async function getUnemployment(market = 'austin', years = 5): Promise<UnemploymentResponse> {
   return request<UnemploymentResponse>(`/fred/unemployment?market=${encodeURIComponent(market)}&years=${years}`);
+}
+
+export async function getRentTrend(market = 'austin', years = 5): Promise<RentTrendResponse> {
+  return request<RentTrendResponse>(`/fred/rent?market=${encodeURIComponent(market)}&years=${years}`);
 }

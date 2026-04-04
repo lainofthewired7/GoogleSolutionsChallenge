@@ -17,6 +17,7 @@ import './App.css';
 import MetricCards from './components/MetricCards';
 import PermitDataView from './components/PermitDataView';
 import JobGrowthView from './components/JobGrowthView';
+import RentAnalyticsView from './components/RentAnalyticsView';
 
 function Dashboard() {
   const { activeView } = useAppContext();
@@ -33,6 +34,8 @@ function Dashboard() {
         )}
         {activeView === 'permits' && <PermitDataView />}
         {activeView === 'jobs' && <JobGrowthView />}
+        {activeView === 'rents' && <RentAnalyticsView />}
+        {activeView === 'comparison' && <ComparisonView />}
       </main>
     </div>
   );
@@ -46,7 +49,6 @@ export default function App() {
       <Header />
       <div className="pt-16">
         <Routes>
-          {/* Default Route handles Landing or redirects to Dashboard */}
           <Route 
             path="/" 
             element={
@@ -56,7 +58,6 @@ export default function App() {
           
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/compare" element={<ComparisonView />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
         </Routes>

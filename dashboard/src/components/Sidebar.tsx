@@ -12,7 +12,7 @@ export default function Sidebar() {
         <p className="text-primary text-[10px] font-bold tracking-tighter">Obsidian Lens Engine</p>
       </div>
 
-      <nav className="flex-1 space-y-1">
+      <nav className="flex-1 space-y-1 overflow-y-auto">
         <button 
           onClick={() => {
             setActiveView('map');
@@ -41,22 +41,19 @@ export default function Sidebar() {
         </button>
 
         <button 
-          onClick={() => {
-            setActiveView('map');
-            if (!layers.vacancy) toggleLayer('vacancy');
-          }}
-          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${activeView === 'map' && layers.vacancy ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
+          onClick={() => setActiveView('rents')}
+          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${activeView === 'rents' ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
         >
-          <span className="material-symbols-outlined">apartment</span>
-          <span>Vacancy Rates</span>
+          <span className="material-symbols-outlined">analytics</span>
+          <span>Rent Performance</span>
         </button>
-
+        
         <button 
-          onClick={() => toggleLayer('boundaries')}
-          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${activeView === 'map' && layers.boundaries ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
+          onClick={() => setActiveView('comparison')}
+          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${activeView === 'comparison' ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
         >
-          <span className="material-symbols-outlined">layers</span>
-          <span>Geospatial Boundaries</span>
+          <span className="material-symbols-outlined">compare_arrows</span>
+          <span>Market Comparison</span>
         </button>
       </nav>
 

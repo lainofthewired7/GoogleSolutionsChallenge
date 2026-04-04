@@ -238,3 +238,40 @@ async def get_unemployment(
         "yoy_change": growth["yoy_pct"],
         "units": "Percent",
     }
+
+
+@router.get("/rent")
+@cache(expire=3600)
+async def get_rent_trend(
+    market: str = Query(default="austin", description="Market code"),
+    years: int = Query(default=5, ge=1, le=20, description="Years of history"),
+):
+    """Get rent index (CPI) time series and YoY growth for a market."""
+    key = market.lower().strip().replace(" ", "-")
+    market_config = MARKET_DATA.get(key, MARKET_DATA["austin"])
+    series_id = market_config.get("fred_rent", "CUUR0000SEHA")
+    
+    start = (datetime.now() - timedelta(days=years * 365)).strftime("%Y-%m-%d")
+
+    async with httpx.AsyncClient() as client:
+        observations = await _fetch_fred_series(
+            client, series_id, observation_start=start
+        )
+
+    points = [
+        {"date": obs["date"], "value": float(obs["value"])} for obs in observations
+    ]
+
+    # Compute year-over-year change
+    growth = _compute_yoy_growth(observations)
+
+    return {
+        "market": market_config["name"],
+        "series_id": series_id,
+        "title": "Rent CPI Trend",
+        "observations": points,
+        "latest_value": points[-1]["value"] if points else None,
+        "latest_date": points[-1]["date"] if points else None,
+        "yoy_growth_pct": growth["yoy_pct"],
+        "units": "Index (1982-1984=100)",
+    }
