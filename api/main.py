@@ -1,14 +1,31 @@
 """FastAPI application entry point."""
 
-from fastapi import FastAPI
+import os
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from api.routes import markets, metrics, geojson
+from starlette.middleware.sessions import SessionMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from api.routes import markets, metrics, geojson, auth, watchlist
+
+# === Rate limiter ===
+limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 
 app = FastAPI(
     title="Projectr Analytics API",
     description="Real-estate data API for the geospatial dashboard",
-    version="0.1.0",
+    version="0.3.0",
+)
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Session middleware (required by authlib OAuth for CSRF state)
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("JWT_SECRET_KEY", "dev-secret-change-in-production"),
 )
 
 # CORS — allow dashboard frontend
@@ -23,6 +40,8 @@ app.add_middleware(
 app.include_router(markets.router, prefix="/api/markets", tags=["Markets"])
 app.include_router(metrics.router, prefix="/api/metrics", tags=["Metrics"])
 app.include_router(geojson.router, prefix="/api/geojson", tags=["GeoJSON"])
+app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
+app.include_router(watchlist.router, prefix="/api/watchlist", tags=["Watchlist"])
 
 @app.get("/health")
 async def health_check():

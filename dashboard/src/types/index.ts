@@ -87,3 +87,37 @@ export interface AppState {
   markets: MarketInfo[];
   loading: boolean;
 }
+
+/* ── Auth types ── */
+
+export interface User {
+  id: number;
+  email: string;
+  display_name: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData {
+  email: string;
+  password: string;
+  display_name: string;
+}
+
+export interface TokenResponse {
+  access_token: string;
+  token_type: string;
+}
+
+export interface WatchlistItem {
+  id: number;
+  market_code: string;
+  geo_code: string;
+  geo_type: string;
+  created_at: string;
+}

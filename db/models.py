@@ -77,3 +77,25 @@ class Migration(Base):
     net_migration = Column(Integer)
     source = Column(String(50))
     created_at = Column(DateTime, server_default=func.now())
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String(255), unique=True, nullable=False, index=True)
+    hashed_password = Column(String(255), nullable=False)
+    display_name = Column(String(100))
+    is_active = Column(Integer, default=1)
+    created_at = Column(DateTime, server_default=func.now())
+
+
+class WatchlistItem(Base):
+    __tablename__ = "watchlist"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    market_code = Column(String(50), nullable=False)
+    geo_code = Column(String(50))
+    geo_type = Column(String(50))  # 'zip', 'tract', 'msa'
+    created_at = Column(DateTime, server_default=func.now())

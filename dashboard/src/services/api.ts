@@ -1,20 +1,19 @@
-/**
- * API client — typed port of the original dashboard/js/api.js.
- *
- * All endpoints match the FastAPI routes defined in api/routes/.
- */
-
 import type {
   MarketInfo,
   MetricStubResponse,
   GeoJSONFeatureCollection,
   HeatmapResponse,
 } from '../types';
+import { getAuthHeaders } from './auth';
 
 const API_BASE = '/api';
 
 async function request<T>(path: string): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`);
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: {
+      ...getAuthHeaders(),
+    },
+  });
   if (!res.ok) {
     throw new Error(`API error ${res.status}: ${res.statusText}`);
   }

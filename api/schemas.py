@@ -1,7 +1,8 @@
 """Pydantic request/response schemas."""
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from datetime import date
+from typing import Optional
 
 
 class MarketInfo(BaseModel):
@@ -25,3 +26,40 @@ class MetricsResponse(BaseModel):
     metric: str
     data: list[MetricPoint]
     count: int
+
+
+# === Auth schemas ===
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+    display_name: str
+
+
+class UserResponse(BaseModel):
+    id: int
+    email: str
+    display_name: str
+    is_active: bool
+    created_at: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
+
+
+# === Watchlist schemas ===
+
+class WatchlistItemCreate(BaseModel):
+    market_code: str
+    geo_code: Optional[str] = None
+    geo_type: Optional[str] = "msa"
+
+
+class WatchlistItemResponse(BaseModel):
+    id: int
+    market_code: str
+    geo_code: str
+    geo_type: str
+    created_at: str
