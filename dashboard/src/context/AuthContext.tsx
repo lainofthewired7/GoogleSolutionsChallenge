@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     is_active: true,
     created_at: new Date().toISOString()
   });
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   /* Check for OAuth callback token in URL or existing token in storage */
   useEffect(() => {
