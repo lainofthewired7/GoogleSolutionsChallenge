@@ -58,18 +58,24 @@ export default function PermitDataView() {
 
       {/* Visual Analytics Block */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-        {/* Development Heatmap (Map focus) */}
+        {/* Development Heatmap (Seaborn) */}
         <div className="lg:col-span-3 bg-surface-container-low rounded-xl overflow-hidden relative min-h-[400px]">
           <div className="absolute top-4 left-4 z-10 p-3 rounded-lg border border-outline-variant/20" style={{ background: 'rgba(60, 71, 90, 0.4)', backdropFilter: 'blur(16px)' }}>
-            <h3 className="text-on-surface font-headline font-bold text-sm">Development Density Heatmap</h3>
-            <p className="text-on-surface-variant text-[10px] uppercase font-bold tracking-widest mt-1">Austin Central District</p>
+            <h3 className="text-on-surface font-headline font-bold text-sm">Permit Activity Heatmap</h3>
+            <p className="text-on-surface-variant text-[10px] uppercase font-bold tracking-widest mt-1">Type × Month Breakdown</p>
           </div>
-          <img alt="Topographic development map of Austin" className="w-full h-full object-cover opacity-60 grayscale brightness-75" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7Hubfo4hjUCKzL0kOEznrovKGD5xX_TdHWPkI8vBi-tHiZY-k6qmDsbOFAd602n0iJWnCJAL-14-CTAnHqxgfDRQX6mHbuDwbC2PB1IF4zfSqtDXRktgS5uvYHBrjwOCUCPHltj82xEjL_seRhdmgSJVUkCQxkfgS1KYqku99Hu1iftlJZB2GdWkXMJA80U6o-jNpSpBvSUN77YqU7ms066P5ujRcVCRpZOyzgyrvLuqUDRoElBrEcAYoTWPwrjhRJlhGnoK5_-k"/>
+          <img
+            alt="Seaborn heatmap of permit activity by type and month"
+            className="w-full h-full object-contain"
+            src="/api/charts/permits-heatmap?market=austin"
+            loading="lazy"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
           <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-2">
             <div className="p-2 rounded-md border border-outline-variant/10 text-[10px] text-on-surface font-bold" style={{ background: 'rgba(60, 71, 90, 0.4)', backdropFilter: 'blur(16px)' }}>
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_#00E5FF]"></span>
-                New Building Starts
+                Live from Socrata API
               </div>
             </div>
           </div>
