@@ -167,7 +167,7 @@ async def get_employment(
 
     return {
         "market": market_config["name"],
-        "msa_code": market_config["msa"],
+        "msa_code": market_config["msa_code"],
         "period": f"{years}-year",
         "sectors": results,
     }
