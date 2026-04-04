@@ -86,6 +86,7 @@ export interface AppState {
   marketInfo: MarketInfo | null;
   markets: MarketInfo[];
   loading: boolean;
+  activeView: 'map' | 'permits' | 'jobs' | 'rents';
 }
 
 /* ── Auth types ── */

@@ -18,6 +18,7 @@ import * as api from '../services/api';
 interface AppContextValue extends AppState {
   setMarket: (code: string) => Promise<void>;
   toggleLayer: (layer: keyof LayerToggles) => void;
+  setActiveView: (view: AppState['activeView']) => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -40,6 +41,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [marketInfo, setMarketInfo] = useState<MarketInfo | null>(null);
   const [markets, setMarkets] = useState<MarketInfo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeView, setActiveView] = useState<AppState['activeView']>('map');
 
   /* Load available markets on mount */
   useEffect(() => {
@@ -86,8 +88,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         marketInfo,
         markets,
         loading,
+        activeView,
         setMarket,
         toggleLayer,
+        setActiveView,
       }}
     >
       {children}

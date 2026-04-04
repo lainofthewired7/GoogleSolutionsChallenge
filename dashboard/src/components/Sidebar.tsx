@@ -1,9 +1,9 @@
 import { useAuth } from '../context/AuthContext';
-import { useMapLayers } from '../hooks/useMapLayers';
+import { useAppContext } from '../context/AppContext';
 
 export default function Sidebar() {
   const { logout } = useAuth();
-  const { layers, toggleLayer } = useMapLayers();
+  const { layers, toggleLayer, activeView, setActiveView } = useAppContext();
 
   return (
     <aside className="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-surface-container-low flex flex-col py-6 shadow-[4px_0_24px_rgba(129,236,255,0.06)] font-body text-sm font-medium z-40">
@@ -14,32 +14,41 @@ export default function Sidebar() {
 
       <nav className="flex-1 space-y-1">
         <button 
-          onClick={() => toggleLayer('heatmap')}
-          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${layers.heatmap ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
+          onClick={() => {
+            setActiveView('map');
+            if (!layers.heatmap) toggleLayer('heatmap');
+          }}
+          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${activeView === 'map' && layers.heatmap ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
         >
           <span className="material-symbols-outlined">payments</span>
           <span>Rent Heatmap</span>
         </button>
 
         <button 
-          onClick={() => toggleLayer('permits')}
-          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${layers.permits ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
+          onClick={() => setActiveView('permits')}
+          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${activeView === 'permits' ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
         >
           <span className="material-symbols-outlined">architecture</span>
           <span>Permit Data</span>
         </button>
 
         <button 
-          onClick={() => toggleLayer('jobs')}
-          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${layers.jobs ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
+          onClick={() => {
+            setActiveView('map');
+            if (!layers.jobs) toggleLayer('jobs');
+          }}
+          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${activeView === 'map' && layers.jobs ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
         >
           <span className="material-symbols-outlined">trending_up</span>
           <span>Job Growth</span>
         </button>
 
         <button 
-          onClick={() => toggleLayer('vacancy')}
-          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${layers.vacancy ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
+          onClick={() => {
+            setActiveView('map');
+            if (!layers.vacancy) toggleLayer('vacancy');
+          }}
+          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${activeView === 'map' && layers.vacancy ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
         >
           <span className="material-symbols-outlined">apartment</span>
           <span>Vacancy Rates</span>

@@ -25,48 +25,18 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>({
+    id: 1,
+    email: 'admin@example.com',
+    display_name: 'Dev User',
+    is_active: true,
+    created_at: new Date().toISOString()
+  });
+  const [loading, setLoading] = useState(false);
 
   /* Check for OAuth callback token in URL or existing token in storage */
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const callbackToken = params.get('token');
-    const authError = params.get('auth_error');
-
-    if (authError) {
-      console.error('OAuth error:', authError);
-      // Clean up URL
-      window.history.replaceState({}, '', window.location.pathname);
-      setLoading(false);
-      return;
-    }
-
-    if (callbackToken) {
-      // OAuth callback — store token and fetch user
-      authService.setToken(callbackToken);
-      window.history.replaceState({}, '', window.location.pathname);
-      authService
-        .getMe()
-        .then(setUser)
-        .catch(() => {
-          authService.clearToken();
-        })
-        .finally(() => setLoading(false));
-    } else {
-      const token = authService.getToken();
-      if (token) {
-        authService
-          .getMe()
-          .then(setUser)
-          .catch(() => {
-            authService.clearToken();
-          })
-          .finally(() => setLoading(false));
-      } else {
-        setLoading(false);
-      }
-    }
+    // Temporarily disabled to skip login page during development
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {

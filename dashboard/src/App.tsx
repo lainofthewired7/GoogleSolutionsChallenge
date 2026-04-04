@@ -10,17 +10,26 @@ import ComparisonView from './components/ComparisonView';
 import LandingPage from './components/LandingPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
+import { useAppContext } from './context/AppContext';
 import './App.css';
 
 import MetricCards from './components/MetricCards';
+import PermitDataView from './components/PermitDataView';
 
 function Dashboard() {
+  const { activeView } = useAppContext();
+
   return (
     <div className="flex h-[calc(100vh-64px)] pt-16">
       <Sidebar />
-      <main className="ml-64 w-full relative h-[calc(100vh-64px)]">
-        <MapContainer />
-        <MetricCards />
+      <main className="ml-64 w-full relative h-[calc(100vh-64px)] overflow-y-auto">
+        {activeView === 'map' && (
+          <>
+            <MapContainer />
+            <MetricCards />
+          </>
+        )}
+        {activeView === 'permits' && <PermitDataView />}
       </main>
     </div>
   );
