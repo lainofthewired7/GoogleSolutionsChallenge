@@ -64,9 +64,9 @@ export default function MetricCards() {
   }, [selectedMarket]);
 
   return (
-    <div className="absolute bottom-6 left-6 right-6 z-20 grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="absolute bottom-0 left-0 right-0 z-[1100] p-4 grid grid-cols-1 md:grid-cols-4 gap-3 pointer-events-none">
       {/* Metric Card 1 */}
-      <div className="glass-panel p-5 rounded-xl border border-outline-variant/10 flex flex-col justify-between h-32 relative">
+      <div className="glass-panel p-5 rounded-xl border border-outline-variant/10 flex flex-col justify-between h-28 relative pointer-events-auto backdrop-blur-xl">
         {loading && <div className="absolute inset-0 bg-surface-container/50 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl"><span className="material-symbols-outlined animate-spin text-primary opacity-50">sync</span></div>}
         <div>
           <span className="text-[10px] font-label text-outline uppercase tracking-wider mb-1 block">Current Vacancy Rate</span>
@@ -88,7 +88,7 @@ export default function MetricCards() {
       </div>
 
       {/* Metric Card 2 */}
-      <div className="glass-panel p-5 rounded-xl border border-outline-variant/10 flex flex-col justify-between h-32 relative">
+      <div className="glass-panel p-5 rounded-xl border border-outline-variant/10 flex flex-col justify-between h-28 relative pointer-events-auto backdrop-blur-xl">
         {loading && <div className="absolute inset-0 bg-surface-container/50 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl"><span className="material-symbols-outlined animate-spin text-primary opacity-50">sync</span></div>}
         <div>
           <span className="text-[10px] font-label text-outline uppercase tracking-wider mb-1 block">Job Growth %</span>
@@ -110,7 +110,7 @@ export default function MetricCards() {
       </div>
 
       {/* Metric Card 3 */}
-      <div className="glass-panel p-5 rounded-xl border border-outline-variant/10 flex flex-col justify-between h-32 relative">
+      <div className="glass-panel p-5 rounded-xl border border-outline-variant/10 flex flex-col justify-between h-28 relative pointer-events-auto backdrop-blur-xl">
         {loading && <div className="absolute inset-0 bg-surface-container/50 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl"><span className="material-symbols-outlined animate-spin text-primary opacity-50">sync</span></div>}
         <div>
           <span className="text-[10px] font-label text-outline uppercase tracking-wider mb-1 block">New Permits Issued</span>
@@ -129,7 +129,7 @@ export default function MetricCards() {
       </div>
 
       {/* Metric Card 4: Forecast */}
-      <div className="bg-primary/10 p-5 rounded-xl border border-primary/20 flex flex-col justify-between h-32 relative overflow-hidden">
+      <div className="bg-primary/10 p-5 rounded-xl border border-primary/20 flex flex-col justify-between h-28 relative overflow-hidden pointer-events-auto backdrop-blur-xl">
         {loading && <div className="absolute inset-0 bg-surface-container/50 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl"><span className="material-symbols-outlined animate-spin text-primary opacity-50">sync</span></div>}
         <div className="absolute top-0 right-0 p-2 opacity-20">
           <span className="material-symbols-outlined text-4xl text-primary">auto_graph</span>

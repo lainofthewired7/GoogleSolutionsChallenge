@@ -1,8 +1,9 @@
 /**
- * MapContainer — Interactive Leaflet map with heatmap overlay.
+ * MapContainer — Interactive Leaflet map with heatmap overlay and all-market markers.
  *
- * Uses free CartoDB Voyager basemap tiles (no API key required)
+ * Uses free CartoDB dark-matter basemap tiles (no API key required)
  * and leaflet.heat for weighted rent price visualization.
+ * Shows all supported markets as clickable markers.
  */
 
 import { useEffect, useRef, useCallback, useState } from 'react';
@@ -16,21 +17,36 @@ import 'leaflet.heat';
 
 /* ── Map tile providers ── */
 
-const TILE_URL = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+const TILE_URL = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 const TILE_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>';
 
-/* ── Default center (Austin) ── */
+/* ── Defaults ── */
 
 const DEFAULT_CENTER: [number, number] = [30.2672, -97.7431];
 const DEFAULT_ZOOM = 11;
 
+/* ── Custom marker icons ── */
+
+function createMarkerIcon(isActive: boolean) {
+  const color = isActive ? '#81ecff' : '#64748b';
+  const size = isActive ? 14 : 8;
+  const border = isActive ? '3px solid rgba(129,236,255,0.4)' : '2px solid rgba(100,116,139,0.3)';
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:${border};box-shadow:0 0 ${isActive ? 12 : 4}px ${color}40;transition:all 0.3s"></div>`,
+    iconSize: [size + 6, size + 6],
+    iconAnchor: [(size + 6) / 2, (size + 6) / 2],
+  });
+}
+
 export default function MapContainer() {
-  const { selectedMarket, marketInfo, layers } = useAppContext();
+  const { selectedMarket, marketInfo, layers, markets, setMarket } = useAppContext();
 
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<L.Map | null>(null);
   const heatLayer = useRef<L.Layer | null>(null);
+  const markersLayer = useRef<L.LayerGroup | null>(null);
   const [loading, setLoading] = useState(true);
 
   /* ── Initialize the map ── */
@@ -52,6 +68,7 @@ export default function MapContainer() {
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
+    markersLayer.current = L.layerGroup().addTo(map);
     mapInstance.current = map;
     setLoading(false);
 
@@ -60,6 +77,33 @@ export default function MapContainer() {
       mapInstance.current = null;
     };
   }, []);
+
+  /* ── Render market markers ── */
+  useEffect(() => {
+    if (!mapInstance.current || !markersLayer.current || markets.length === 0) return;
+
+    markersLayer.current.clearLayers();
+
+    markets.forEach((m) => {
+      const isActive = m.code === selectedMarket;
+      const marker = L.marker([m.lat, m.lon], {
+        icon: createMarkerIcon(isActive),
+        zIndexOffset: isActive ? 1000 : 0,
+      });
+
+      marker.bindTooltip(m.name, {
+        className: 'market-tooltip',
+        direction: 'top',
+        offset: [0, -8],
+      });
+
+      marker.on('click', () => {
+        setMarket(m.code);
+      });
+
+      markersLayer.current!.addLayer(marker);
+    });
+  }, [markets, selectedMarket, setMarket]);
 
   /* ── Pan to selected market ── */
   useEffect(() => {
@@ -120,7 +164,7 @@ export default function MapContainer() {
     }
   }, [selectedMarket, layers.heatmap, loadHeatmap]);
 
-  /* ── Recenter button ── */
+  /* ── Zoom controls ── */
   const recenter = () => {
     if (!mapInstance.current) return;
     const lat = marketInfo?.lat || DEFAULT_CENTER[0];
@@ -128,9 +172,33 @@ export default function MapContainer() {
     mapInstance.current.flyTo([lat, lng], DEFAULT_ZOOM, { duration: 1 });
   };
 
+  const showAll = () => {
+    if (!mapInstance.current || markets.length === 0) return;
+    const bounds = L.latLngBounds(markets.map((m) => [m.lat, m.lon] as [number, number]));
+    mapInstance.current.flyToBounds(bounds.pad(0.15), { duration: 1.5 });
+  };
+
   return (
-    <div className="absolute inset-0 bg-surface" style={{ bottom: '160px' }}>
+    <div className="absolute inset-0 bg-surface">
       <div ref={mapRef} className="w-full h-full" />
+
+      {/* Tooltip styles */}
+      <style>{`
+        .market-tooltip {
+          background: rgba(15, 23, 36, 0.92) !important;
+          border: 1px solid rgba(129, 236, 255, 0.2) !important;
+          color: #c8d6e5 !important;
+          font-size: 11px !important;
+          font-weight: 600 !important;
+          padding: 4px 10px !important;
+          border-radius: 8px !important;
+          backdrop-filter: blur(12px) !important;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
+        }
+        .market-tooltip::before {
+          border-top-color: rgba(15, 23, 36, 0.92) !important;
+        }
+      `}</style>
 
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-surface/90 z-[1000]">
@@ -141,16 +209,25 @@ export default function MapContainer() {
         </div>
       )}
 
+      {/* Map controls */}
       <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
         <button
           className="glass-panel w-10 h-10 rounded-lg flex items-center justify-center text-primary hover:bg-surface-container-highest transition-colors border border-outline-variant/10 cursor-pointer"
           onClick={recenter}
-          title="Re-center map"
+          title="Re-center on selected market"
         >
           <span className="material-symbols-outlined">my_location</span>
         </button>
+        <button
+          className="glass-panel w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-highest transition-colors border border-outline-variant/10 cursor-pointer"
+          onClick={showAll}
+          title="Show all markets"
+        >
+          <span className="material-symbols-outlined">zoom_out_map</span>
+        </button>
       </div>
 
+      {/* Market info badge */}
       {marketInfo && (
         <div className="absolute top-4 left-4 z-[1000]">
           <div
@@ -179,7 +256,18 @@ export default function MapContainer() {
           </div>
         </div>
       </div>
+
+      {/* Market count */}
+      <div className="absolute bottom-4 right-4 z-[1000]">
+        <div
+          className="px-3 py-1.5 rounded-lg border border-outline-variant/20"
+          style={{ background: 'rgba(15, 23, 36, 0.85)', backdropFilter: 'blur(16px)' }}
+        >
+          <span className="text-[10px] text-on-surface-variant">
+            <span className="text-primary font-bold">{markets.length}</span> markets tracked
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
-

@@ -23,9 +23,9 @@ function Dashboard() {
   const { activeView } = useAppContext();
 
   return (
-    <div className="flex h-[calc(100vh-64px)] pt-16">
+    <div className="flex h-full">
       <Sidebar />
-      <main className="ml-64 w-full relative h-[calc(100vh-64px)] overflow-y-auto">
+      <main className={`ml-64 w-full relative h-full ${activeView === 'map' ? 'overflow-hidden' : 'overflow-y-auto'}`}>
         {activeView === 'map' && (
           <>
             <MapContainer />
@@ -47,7 +47,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-background text-on-surface">
       <Header />
-      <div className="pt-16">
+      <div className="pt-16 h-screen">
         <Routes>
           <Route 
             path="/" 
