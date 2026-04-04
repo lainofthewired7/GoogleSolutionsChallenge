@@ -78,28 +78,38 @@ export default function LoginModal({ onClose }: LoginModalProps) {
   }, []);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-tabs">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4" onClick={onClose}>
+      <div 
+        className="glass-panel w-full max-w-sm rounded-2xl border border-outline-variant/20 shadow-2xl overflow-hidden relative" 
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button 
+          className="absolute top-4 right-4 text-outline hover:text-on-surface transition-colors focus:outline-none"
+          onClick={onClose}
+        >
+           <span className="material-symbols-outlined text-xl">close</span>
+        </button>
+
+        <div className="flex border-b border-outline-variant/20 pt-2">
           <button
-            className={`modal-tab ${tab === 'login' ? 'active' : ''}`}
+            className={`flex-1 py-4 text-sm font-bold tracking-wide transition-colors ${tab === 'login' ? 'text-primary border-b-2 border-primary bg-primary/5' : 'text-on-surface/60 hover:text-on-surface hover:bg-surface-variant/50'}`}
             onClick={() => setTab('login')}
           >
             Sign In
           </button>
           <button
-            className={`modal-tab ${tab === 'register' ? 'active' : ''}`}
+            className={`flex-1 py-4 text-sm font-bold tracking-wide transition-colors ${tab === 'register' ? 'text-primary border-b-2 border-primary bg-primary/5' : 'text-on-surface/60 hover:text-on-surface hover:bg-surface-variant/50'}`}
             onClick={() => setTab('register')}
           >
             Register
           </button>
         </div>
 
-        <div className="modal-form-wrapper">
+        <div className="p-8">
           {/* Social login buttons */}
-          <div className="social-buttons">
+          <div className="space-y-3">
             <button
-              className="social-btn google"
+              className="w-full bg-surface-container-highest hover:bg-surface-variant border border-outline-variant/20 rounded-xl py-2.5 px-4 flex items-center justify-center gap-3 transition-all text-on-surface text-sm font-medium"
               onClick={() => handleSocialLogin('google')}
               type="button"
             >
@@ -107,7 +117,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
               <span>Continue with Google</span>
             </button>
             <button
-              className="social-btn github"
+              className="w-full bg-surface-container-highest hover:bg-surface-variant border border-outline-variant/20 rounded-xl py-2.5 px-4 flex items-center justify-center gap-3 transition-all text-on-surface text-sm font-medium"
               onClick={() => handleSocialLogin('github')}
               type="button"
             >
@@ -115,7 +125,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
               <span>Continue with GitHub</span>
             </button>
             <button
-              className="social-btn microsoft"
+              className="w-full bg-surface-container-highest hover:bg-surface-variant border border-outline-variant/20 rounded-xl py-2.5 px-4 flex items-center justify-center gap-3 transition-all text-on-surface text-sm font-medium"
               onClick={() => handleSocialLogin('microsoft')}
               type="button"
             >
@@ -124,12 +134,14 @@ export default function LoginModal({ onClose }: LoginModalProps) {
             </button>
           </div>
 
-          <div className="social-divider">
-            <span>or</span>
+          <div className="flex items-center my-6">
+            <div className="flex-1 bg-outline-variant/30 h-px"></div>
+            <span className="px-4 text-xs font-label text-outline uppercase tracking-widest">or</span>
+            <div className="flex-1 bg-outline-variant/30 h-px"></div>
           </div>
 
           {/* Email / password form */}
-          <form onSubmit={handleSubmit} className="modal-form">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {tab === 'register' && (
               <input
                 type="text"
@@ -137,16 +149,16 @@ export default function LoginModal({ onClose }: LoginModalProps) {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 required
-                className="modal-input"
+                className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl py-3 px-4 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-outline"
               />
             )}
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="modal-input"
+              className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl py-3 px-4 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-outline"
             />
             <input
               type="password"
@@ -155,12 +167,16 @@ export default function LoginModal({ onClose }: LoginModalProps) {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="modal-input"
+              className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl py-3 px-4 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-outline"
             />
 
-            {error && <p className="modal-error">{error}</p>}
+            {error && <p className="text-error text-xs font-medium text-center bg-error-container/20 py-2 rounded-lg border border-error-container/30">{error}</p>}
 
-            <button type="submit" className="modal-submit" disabled={submitting}>
+            <button 
+              type="submit" 
+              className="w-full bg-primary hover:bg-primary-dim text-on-primary py-3 rounded-xl font-bold transition-all active:scale-[0.98] mt-2 shadow-[0_0_15px_rgba(129,236,255,0.2)]"
+              disabled={submitting}
+            >
               {submitting
                 ? 'Please wait...'
                 : tab === 'login'

@@ -30,29 +30,35 @@ export default function MetricChart({
   const rightPct = Math.min((Math.abs(rightNum) / max) * 100, 100);
 
   return (
-    <div className="metric-chart-card">
-      <h4 className="metric-chart-label">{label}</h4>
+    <div className="glass-panel p-6 rounded-2xl border border-outline-variant/10 hover:border-primary/30 transition-colors duration-300">
+      <h4 className="text-xs font-label text-outline uppercase tracking-widest mb-6">{label}</h4>
 
-      <div className="metric-chart-row">
-        <span className="metric-chart-name">{leftName}</span>
-        <div className="metric-chart-bar-container">
-          <div
-            className="metric-chart-bar left"
-            style={{ width: `${leftPct}%` }}
-          />
+      <div className="space-y-6">
+        <div className="flex flex-col gap-2 relative">
+          <div className="flex justify-between items-baseline mb-1">
+            <span className="text-on-surface/80 text-sm font-medium pr-4">{leftName}</span>
+            <span className="text-on-surface text-lg font-bold font-headline">{leftValue}</span>
+          </div>
+          <div className="w-full bg-surface-container-high h-2.5 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(129,236,255,0.4)]"
+              style={{ width: `${leftPct}%` }}
+            />
+          </div>
         </div>
-        <span className="metric-chart-value">{leftValue}</span>
-      </div>
 
-      <div className="metric-chart-row">
-        <span className="metric-chart-name">{rightName}</span>
-        <div className="metric-chart-bar-container">
-          <div
-            className="metric-chart-bar right"
-            style={{ width: `${rightPct}%` }}
-          />
+        <div className="flex flex-col gap-2 relative">
+          <div className="flex justify-between items-baseline mb-1">
+            <span className="text-on-surface/80 text-sm font-medium pr-4">{rightName}</span>
+            <span className="text-on-surface text-lg font-bold font-headline">{rightValue}</span>
+          </div>
+          <div className="w-full bg-surface-container-high h-2.5 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-tertiary rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(166,140,255,0.4)]"
+              style={{ width: `${rightPct}%` }}
+            />
+          </div>
         </div>
-        <span className="metric-chart-value">{rightValue}</span>
       </div>
     </div>
   );

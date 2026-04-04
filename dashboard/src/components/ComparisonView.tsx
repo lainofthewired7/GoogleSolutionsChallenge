@@ -85,77 +85,96 @@ export default function ComparisonView() {
   }, [rightCode, loadMetrics]);
 
   return (
-    <div className="comparison-page">
-      <div className="comparison-header">
-        <Link to="/" className="back-link">
-          ← Back to Dashboard
-        </Link>
-        <h2>Market Comparison</h2>
-      </div>
-
-      <div className="comparison-selectors">
-        <div className="comparison-selector">
-          <label>Market A</label>
-          <select
-            value={leftCode}
-            onChange={(e) => setLeftCode(e.target.value)}
-          >
-            <option value="">Select market...</option>
-            {markets.map((m) => (
-              <option key={m.code} value={m.code}>
-                {m.name}, {m.state}
-              </option>
-            ))}
-          </select>
+    <div className="min-h-[calc(100vh-64px)] bg-background pt-16 font-body">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="flex items-center justify-between mb-8 pb-6 border-b border-outline-variant/20">
+          <div>
+            <Link to="/" className="text-primary hover:text-primary-dim transition-colors text-sm font-bold flex items-center gap-2 mb-2">
+              <span className="material-symbols-outlined text-sm">arrow_back</span>
+              Back to Dashboard
+            </Link>
+            <h2 className="text-3xl font-headline font-extrabold text-on-surface tracking-tight">Market Comparison View</h2>
+          </div>
         </div>
 
-        <div className="comparison-vs">VS</div>
+        <div className="flex flex-col md:flex-row items-center gap-6 mb-12 bg-surface-container-low p-6 rounded-2xl border border-outline-variant/10 shadow-lg">
+          <div className="flex-1 w-full relative">
+            <label className="block text-xs font-label text-outline uppercase tracking-wider mb-2 font-semibold">Primary Market (A)</label>
+            <div className="relative">
+              <select
+                className="w-full bg-surface-container-highest border border-outline-variant/20 rounded-xl py-3 pl-4 pr-10 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none shadow-sm font-medium"
+                value={leftCode}
+                onChange={(e) => setLeftCode(e.target.value)}
+              >
+                <option value="">Select market...</option>
+                {markets.map((m) => (
+                  <option key={m.code} value={m.code}>
+                    {m.name}, {m.state}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <span className="material-symbols-outlined text-outline">expand_more</span>
+              </div>
+            </div>
+          </div>
 
-        <div className="comparison-selector">
-          <label>Market B</label>
-          <select
-            value={rightCode}
-            onChange={(e) => setRightCode(e.target.value)}
-          >
-            <option value="">Select market...</option>
-            {markets.map((m) => (
-              <option key={m.code} value={m.code}>
-                {m.name}, {m.state}
-              </option>
-            ))}
-          </select>
+          <div className="flex-shrink-0 bg-surface-container-highest w-12 h-12 rounded-full flex items-center justify-center border border-outline-variant/20 shadow-[0_0_15px_rgba(255,255,255,0.02)]">
+            <span className="text-outline font-bold text-sm tracking-widest">VS</span>
+          </div>
+
+          <div className="flex-1 w-full relative">
+            <label className="block text-xs font-label text-outline uppercase tracking-wider mb-2 font-semibold">Secondary Market (B)</label>
+            <div className="relative">
+              <select
+                className="w-full bg-surface-container-highest border border-outline-variant/20 rounded-xl py-3 pl-4 pr-10 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none shadow-sm font-medium"
+                value={rightCode}
+                onChange={(e) => setRightCode(e.target.value)}
+              >
+                <option value="">Select market...</option>
+                {markets.map((m) => (
+                  <option key={m.code} value={m.code}>
+                    {m.name}, {m.state}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <span className="material-symbols-outlined text-outline">expand_more</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="comparison-grid">
-        <MetricChart
-          label="Median Rent"
-          leftValue={leftMetrics.medianRent}
-          rightValue={rightMetrics.medianRent}
-          leftName={leftInfo?.name ?? '—'}
-          rightName={rightInfo?.name ?? '—'}
-        />
-        <MetricChart
-          label="Permits YTD"
-          leftValue={leftMetrics.permitsYTD}
-          rightValue={rightMetrics.permitsYTD}
-          leftName={leftInfo?.name ?? '—'}
-          rightName={rightInfo?.name ?? '—'}
-        />
-        <MetricChart
-          label="Vacancy Rate"
-          leftValue={leftMetrics.vacancyRate}
-          rightValue={rightMetrics.vacancyRate}
-          leftName={leftInfo?.name ?? '—'}
-          rightName={rightInfo?.name ?? '—'}
-        />
-        <MetricChart
-          label="Job Growth"
-          leftValue={leftMetrics.jobGrowth}
-          rightValue={rightMetrics.jobGrowth}
-          leftName={leftInfo?.name ?? '—'}
-          rightName={rightInfo?.name ?? '—'}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
+          <MetricChart
+            label="Median Rent"
+            leftValue={leftMetrics.medianRent}
+            rightValue={rightMetrics.medianRent}
+            leftName={leftInfo?.name ?? '—'}
+            rightName={rightInfo?.name ?? '—'}
+          />
+          <MetricChart
+            label="Permits YTD"
+            leftValue={leftMetrics.permitsYTD}
+            rightValue={rightMetrics.permitsYTD}
+            leftName={leftInfo?.name ?? '—'}
+            rightName={rightInfo?.name ?? '—'}
+          />
+          <MetricChart
+            label="Vacancy Rate"
+            leftValue={leftMetrics.vacancyRate}
+            rightValue={rightMetrics.vacancyRate}
+            leftName={leftInfo?.name ?? '—'}
+            rightName={rightInfo?.name ?? '—'}
+          />
+          <MetricChart
+            label="Job Growth"
+            leftValue={leftMetrics.jobGrowth}
+            rightValue={rightMetrics.jobGrowth}
+            leftName={leftInfo?.name ?? '—'}
+            rightName={rightInfo?.name ?? '—'}
+          />
+        </div>
       </div>
     </div>
   );

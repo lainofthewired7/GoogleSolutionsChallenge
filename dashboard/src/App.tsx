@@ -9,12 +9,17 @@ import MapContainer from './components/MapContainer';
 import ComparisonView from './components/ComparisonView';
 import './App.css';
 
+import MetricCards from './components/MetricCards';
+
 function Dashboard() {
   return (
-    <main id="app-main">
+    <div className="flex h-screen pt-16">
       <Sidebar />
-      <MapContainer />
-    </main>
+      <main className="ml-64 w-full relative">
+        <MapContainer />
+        <MetricCards />
+      </main>
+    </div>
   );
 }
 

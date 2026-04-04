@@ -36,9 +36,9 @@ export default function UserMenu() {
     .slice(0, 2);
 
   return (
-    <div className="user-menu" ref={menuRef}>
+    <div className="relative" ref={menuRef}>
       <button
-        className="user-avatar"
+        className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs border border-primary/20 hover:bg-primary/20 transition-colors focus:ring-2 focus:ring-primary/50"
         onClick={() => setOpen(!open)}
         aria-label="User menu"
       >
@@ -46,13 +46,17 @@ export default function UserMenu() {
       </button>
 
       {open && (
-        <div className="user-dropdown">
-          <div className="user-dropdown-header">
-            <span className="user-dropdown-name">{user.display_name}</span>
-            <span className="user-dropdown-email">{user.email}</span>
+        <div className="absolute right-0 mt-3 w-60 glass-panel rounded-xl border border-outline-variant/20 shadow-2xl overflow-hidden z-[100]">
+          <div className="p-4 bg-surface-container-highest/60 backdrop-blur-md">
+            <span className="block text-on-surface font-bold text-sm truncate">{user.display_name}</span>
+            <span className="block text-outline text-xs truncate mt-0.5">{user.email}</span>
           </div>
-          <hr className="user-dropdown-divider" />
-          <button className="user-dropdown-item" onClick={handleLogout}>
+          <div className="border-t border-outline-variant/10"></div>
+          <button 
+            className="w-full text-left px-5 py-3.5 text-sm text-error/90 hover:bg-surface-variant hover:text-error transition-colors flex items-center gap-3 font-medium"
+            onClick={handleLogout}
+          >
+            <span className="material-symbols-outlined text-[18px]">logout</span>
             Sign Out
           </button>
         </div>
