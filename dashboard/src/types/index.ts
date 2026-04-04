@@ -36,10 +36,17 @@ export interface HeatmapPoint {
   weight?: number;
 }
 
+export interface HeatmapItem {
+  zip: string;
+  value: number;
+}
+
 export interface HeatmapResponse {
   market: string;
   metric: string;
-  points: HeatmapPoint[];
+  points?: HeatmapPoint[];
+  data?: HeatmapItem[];
+  message?: string;
 }
 
 export interface GeoJSONFeature {
@@ -64,7 +71,7 @@ export interface GeoJSONFeatureCollection {
 
 export interface MetricStubResponse {
   market: string;
-  data: unknown[];
+  data: { value: string; trend: string }[];
   message?: string;
   zip_code?: string | null;
   limit?: number;

@@ -78,6 +78,6 @@ export async function getHeatmapData(
   metric = 'rent',
 ): Promise<HeatmapResponse> {
   return request<HeatmapResponse>(
-    `/geojson/heatmap?market=${market}&metric=${metric}`,
+    `/metrics/heatmap?market=${market}&metric=${metric}&v=${Date.now()}`,
   );
 }
