@@ -1,18 +1,21 @@
 """Market selection endpoints."""
 
 from fastapi import APIRouter
+from api.constants import MARKET_DATA
 from api.schemas import MarketInfo
 
 router = APIRouter()
 
-# Supported markets
+# Generate the markets list from centralized constants
 MARKETS = [
-    MarketInfo(code="austin", name="Austin–Round Rock", state="TX", lat=30.2672, lon=-97.7431),
-    MarketInfo(code="dallas", name="Dallas MSA", state="TX", lat=32.7767, lon=-96.7970),
-    MarketInfo(code="chicago", name="Chicago MSA", state="IL", lat=41.8781, lon=-87.6298),
-    MarketInfo(code="new york", name="New York Metro", state="NY", lat=40.7128, lon=-74.0060),
-    MarketInfo(code="seattle", name="Seattle MSA", state="WA", lat=47.6062, lon=-122.3321),
-    MarketInfo(code="los angeles", name="Los Angeles Metro", state="CA", lat=34.0522, lon=-118.2437)
+    MarketInfo(
+        code=slug,
+        name=data["name"],
+        state=data["state_code"],
+        lat=data["lat"],
+        lon=data["lon"]
+    )
+    for slug, data in MARKET_DATA.items()
 ]
 
 
@@ -25,8 +28,9 @@ async def list_markets():
 @router.get("/{market_code}", response_model=MarketInfo)
 async def get_market(market_code: str):
     """Get details for a specific market."""
+    lookup = market_code.lower().strip().replace(" ", "-")
     for m in MARKETS:
-        if m.code == market_code.lower():
+        if m.code == lookup:
             return m
             
     # Dynamic fallback to prevent 500 error validation crashes

@@ -10,21 +10,15 @@ from typing import Any
 
 import httpx
 from fastapi import APIRouter, HTTPException, Query
+from fastapi_cache.decorator import cache
+
+from api.constants import MARKET_DATA
 
 router = APIRouter()
 
 FRED_BASE = "https://api.stlouisfed.org/fred/series/observations"
 
-MARKET_MAPPING = {
-    "austin": {"prefix": "AUST448", "name": "Austin-Round Rock MSA", "msa": "12420"},
-    "dallas": {"prefix": "DALL148", "name": "Dallas-Fort Worth-Arlington, TX", "msa": "19100"},
-    "chicago": {"prefix": "CHIC917", "name": "Chicago-Naperville-Elgin, IL-IN-WI", "msa": "16980"},
-    "new york": {"prefix": "NEWY636", "name": "New York-Newark-Jersey City", "msa": "35620"},
-    "seattle": {"prefix": "SEAT853", "name": "Seattle-Tacoma-Bellevue, WA", "msa": "42660"},
-    "los angeles": {"prefix": "LOSA106", "name": "Los Angeles-Long Beach-Anaheim, CA", "msa": "31080"},
-}
-
-# The suffix mapping for each sector
+# SECTOR_SUFFIXES remains local as it defines the schema for the Job Growth UI
 SECTOR_SUFFIXES = {
     "total_nonfarm": {
         "id_suffix": "NA",
@@ -122,13 +116,15 @@ def _compute_yoy_growth(observations: list[dict[str, str]]) -> dict[str, Any]:
 
 
 @router.get("/employment")
+@cache(expire=3600)
 async def get_employment(
     market: str = Query(default="austin", description="Market code"),
     years: int = Query(default=5, ge=1, le=20, description="Years of history"),
 ):
     """Get multi-sector employment data with YoY growth for a market."""
-    market_config = MARKET_MAPPING.get(market.lower(), MARKET_MAPPING["austin"])
-    prefix = market_config["prefix"]
+    key = market.lower().strip().replace(" ", "-")
+    market_config = MARKET_DATA.get(key, MARKET_DATA["austin"])
+    prefix = market_config["fred_prefix"]
     
     start = (datetime.now() - timedelta(days=years * 365)).strftime("%Y-%m-%d")
 
@@ -178,13 +174,15 @@ async def get_employment(
 
 
 @router.get("/unemployment")
+@cache(expire=3600)
 async def get_unemployment(
     market: str = Query(default="austin", description="Market code"),
     years: int = Query(default=5, ge=1, le=20, description="Years of history"),
 ):
     """Get unemployment rate time series for a market."""
-    market_config = MARKET_MAPPING.get(market.lower(), MARKET_MAPPING["austin"])
-    series_id = f"{market_config['prefix']}UR"
+    key = market.lower().strip().replace(" ", "-")
+    market_config = MARKET_DATA.get(key, MARKET_DATA["austin"])
+    series_id = f"{market_config['fred_prefix']}UR"
     
     start = (datetime.now() - timedelta(days=years * 365)).strftime("%Y-%m-%d")
 

@@ -4,7 +4,10 @@ import os
 import logging
 import requests
 from fastapi import APIRouter, Query
+from fastapi_cache.decorator import cache
 from dotenv import load_dotenv
+
+from api.constants import MARKET_DATA
 
 load_dotenv()
 
@@ -16,39 +19,19 @@ FRED_API_KEY = os.getenv("FRED_API_KEY", "")
 CENSUS_API_KEY = os.getenv("CENSUS_API_KEY", "")
 HUD_API_KEY = os.getenv("HUD_API_KEY", "")
 
-# ── Market configuration ──
-# Maps search terms → correct API parameters (verified FRED series IDs)
-MARKET_MAP = {
-    "austin":        {"state_code": "TX", "state_fips": "48", "fred_jobs": "AUST448NA",   "metro_filter": "Austin"},
-    "dallas":        {"state_code": "TX", "state_fips": "48", "fred_jobs": "DALL148NA",   "metro_filter": "Dallas"},
-    "houston":       {"state_code": "TX", "state_fips": "48", "fred_jobs": "HOUS448NA",   "metro_filter": "Houston"},
-    "san antonio":   {"state_code": "TX", "state_fips": "48", "fred_jobs": "TXNA",        "metro_filter": "San Antonio"},
-    "new york":      {"state_code": "NY", "state_fips": "36", "fred_jobs": "NEWY636NA",   "metro_filter": "New York"},
-    "chicago":       {"state_code": "IL", "state_fips": "17", "fred_jobs": "CHIC917NA",   "metro_filter": "Chicago"},
-    "los angeles":   {"state_code": "CA", "state_fips": "06", "fred_jobs": "LOSA106NA",   "metro_filter": "Los Angeles"},
-    "san diego":     {"state_code": "CA", "state_fips": "06", "fred_jobs": "LOSA106NA",   "metro_filter": "San Diego"},
-    "seattle":       {"state_code": "WA", "state_fips": "53", "fred_jobs": "SEAT653NA",   "metro_filter": "Seattle"},
-    "miami":         {"state_code": "FL", "state_fips": "12", "fred_jobs": "MIAM112NA",   "metro_filter": "Miami"},
-    "atlanta":       {"state_code": "GA", "state_fips": "13", "fred_jobs": "ATLA013NA",   "metro_filter": "Atlanta"},
-    "boston":        {"state_code": "MA", "state_fips": "25", "fred_jobs": "BOSTN25NA",   "metro_filter": "Boston"},
-    "phoenix":       {"state_code": "AZ", "state_fips": "04", "fred_jobs": "PHOE004NA",   "metro_filter": "Phoenix"},
-    "denver":        {"state_code": "CO", "state_fips": "08", "fred_jobs": "DENN008NA",   "metro_filter": "Denver"},
-    "philadelphia":  {"state_code": "PA", "state_fips": "42", "fred_jobs": "PHIL942NA",   "metro_filter": "Philadelphia"},
-}
-
-
 def get_market_config(market: str) -> dict:
-    key = market.lower().strip()
-    if key in MARKET_MAP:
-        return MARKET_MAP[key]
+    key = market.lower().strip().replace(" ", "-")
+    if key in MARKET_DATA:
+        return MARKET_DATA[key]
     # Default fallback to Austin
-    return MARKET_MAP["austin"]
+    return MARKET_DATA["austin"]
 
 
 # ══════════════════════════════════════════════════════════════
 # /rents — HUD Fair Market Rent data
 # ══════════════════════════════════════════════════════════════
 @router.get("/rents")
+@cache(expire=3600)
 async def get_rents(market: str = Query(default="austin"), zip_code: str | None = None):
     """Get rent data for a market from HUD Fair Market Rent API."""
     config = get_market_config(market)
@@ -93,6 +76,7 @@ async def get_rents(market: str = Query(default="austin"), zip_code: str | None 
 # /permits — City of Austin open data (Socrata)
 # ══════════════════════════════════════════════════════════════
 @router.get("/permits")
+@cache(expire=3600)
 async def get_permits(market: str = Query(default="austin"), limit: int = 1000):
     """Get building permit data (currently Austin only via Socrata)."""
     try:
@@ -117,6 +101,7 @@ async def get_permits(market: str = Query(default="austin"), limit: int = 1000):
 # /vacancy — Census ACS data (county-level)
 # ══════════════════════════════════════════════════════════════
 @router.get("/vacancy")
+@cache(expire=3600)
 async def get_vacancy(market: str = Query(default="austin")):
     """Get vacancy rate data from Census ACS 5-year estimates."""
     config = get_market_config(market)
@@ -159,6 +144,7 @@ async def get_vacancy(market: str = Query(default="austin")):
 # /jobs — FRED employment data
 # ══════════════════════════════════════════════════════════════
 @router.get("/jobs")
+@cache(expire=3600)
 async def get_job_growth(market: str = Query(default="austin")):
     """Get employment data from FRED (Total Nonfarm, SA)."""
     config = get_market_config(market)
