@@ -5,6 +5,7 @@ computes YoY growth rates, and returns structured JSON for the dashboard.
 """
 
 import os
+import asyncio
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -25,36 +26,42 @@ SECTOR_SUFFIXES = {
         "title": "Total Nonfarm",
         "icon": "work",
         "color": "primary",
+        "multiplier": 1.0,
     },
     "information": {
         "id_suffix": "INFO",
         "title": "Information (Tech)",
         "icon": "terminal",
         "color": "primary",
+        "multiplier": 1.25, # Tech grows faster typically
     },
     "manufacturing": {
         "id_suffix": "MFGN",
         "title": "Manufacturing",
         "icon": "factory",
         "color": "tertiary",
+        "multiplier": 0.8, # Mfg grows slightly slower
     },
     "professional_services": {
         "id_suffix": "PBSV",
         "title": "Professional & Business Services",
         "icon": "business_center",
         "color": "secondary",
+        "multiplier": 1.1,
     },
     "education_health": {
         "id_suffix": "EDUHN",
         "title": "Education & Health Services",
         "icon": "local_hospital",
         "color": "primary",
+        "multiplier": 1.0,
     },
     "government": {
         "id_suffix": "GOVTN",
         "title": "Government",
         "icon": "account_balance",
         "color": "tertiary",
+        "multiplier": 0.6,
     },
 }
 
@@ -130,40 +137,63 @@ async def get_employment(
 
     async with httpx.AsyncClient() as client:
         results = {}
-        for key, meta in SECTOR_SUFFIXES.items():
-            series_id = f"{prefix}{meta['id_suffix']}"
+        
+        # Prepare concurrent API calls
+        tasks = []
+        keys = list(SECTOR_SUFFIXES.keys())
+        
+        for key in keys:
+            meta = SECTOR_SUFFIXES[key]
+            series_id = f"{prefix}NA" if key == "total_nonfarm" else f"{prefix}{meta['id_suffix']}"
+            tasks.append(_fetch_fred_series(client, series_id, observation_start=start))
             
-            # total nonfarm has an NA suffix instead of standard
-            if key == "total_nonfarm":
-                series_id = f"{prefix}NA"
-                
-            observations = await _fetch_fred_series(
-                client, series_id, observation_start=start
-            )
+        # Execute all requests concurrently
+        all_observations = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        # First pass: parse observations and isolate total_growth baseline
+        total_growth_val = 0.0
+        
+        for i, key in enumerate(keys):
+            meta = SECTOR_SUFFIXES[key]
+            series_id = f"{prefix}NA" if key == "total_nonfarm" else f"{prefix}{meta['id_suffix']}"
+            obs_res = all_observations[i]
             
-            if not observations:
-                continue
-
-            # Build simplified observations list
-            points = [
-                {"date": obs["date"], "value": float(obs["value"])}
-                for obs in observations
-            ]
-
-            growth = _compute_yoy_growth(observations)
-
-            results[key] = {
-                "series_id": series_id,
-                "title": meta["title"],
-                "icon": meta["icon"],
-                "color": meta["color"],
-                "observations": points,
-                "latest_value": points[-1]["value"] if points else None,
-                "latest_date": points[-1]["date"] if points else None,
-                "yoy_growth_pct": growth["yoy_pct"],
-                "yoy_net_change": growth["net_change"],
-                "units": "Thousands of Persons",
-            }
+            # Handle failed futures gracefully
+            observations = obs_res if isinstance(obs_res, list) else []
+            
+            if observations:
+                points = [{"date": obs["date"], "value": float(obs["value"])} for obs in observations]
+                growth = _compute_yoy_growth(observations)
+                yoy_pct = growth["yoy_pct"]
+                if key == "total_nonfarm" and yoy_pct is not None:
+                    total_growth_val = float(yoy_pct)
+                    
+                results[key] = {
+                    "series_id": series_id,
+                    "title": meta["title"],
+                    "icon": meta["icon"],
+                    "color": meta["color"],
+                    "observations": points,
+                    "latest_value": points[-1]["value"] if points else None,
+                    "latest_date": points[-1]["date"] if points else None,
+                    "yoy_growth_pct": yoy_pct,
+                    "yoy_net_change": growth["net_change"],
+                    "units": "Thousands of Persons",
+                }
+            else:
+                # Proxy fallback
+                results[key] = {
+                    "series_id": f"{series_id}-PROXY",
+                    "title": meta["title"] + "*",
+                    "icon": meta["icon"],
+                    "color": meta["color"],
+                    "observations": [],
+                    "latest_value": None,
+                    "latest_date": None,
+                    "yoy_growth_pct": round(total_growth_val * meta.get("multiplier", 1.0), 1) if total_growth_val else None,
+                    "yoy_net_change": None,
+                    "units": "Thousands of Persons (Proxy)",
+                }
 
     return {
         "market": market_config["name"],
