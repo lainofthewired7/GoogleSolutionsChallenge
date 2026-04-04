@@ -23,7 +23,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./dashboard:/app/dashboard
+      - ./dashboard/dist:/app/dashboard/dist
 
 volumes:
   pgdata:

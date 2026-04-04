@@ -24,11 +24,11 @@ app.include_router(markets.router, prefix="/api/markets", tags=["Markets"])
 app.include_router(metrics.router, prefix="/api/metrics", tags=["Metrics"])
 app.include_router(geojson.router, prefix="/api/geojson", tags=["GeoJSON"])
 
-# Serve dashboard static files
-app.mount("/", StaticFiles(directory="dashboard", html=True), name="dashboard")
-
-
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""
     return {"status": "healthy", "service": "projectr-analytics"}
+
+# Serve dashboard static files (Vite production build)
+# NOTE: This must be LAST — it catches all unmatched routes.
+app.mount("/", StaticFiles(directory="dashboard/dist", html=True), name="dashboard")

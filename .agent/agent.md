@@ -11,7 +11,7 @@
 | **Ingestion** | Python 3.11+ (`requests`, `pandas`, `geopandas`) |
 | **Storage** | PostgreSQL 15 + PostGIS 3.3 |
 | **Backend API** | FastAPI (uvicorn) |
-| **Frontend** | Vanilla HTML/CSS/JS + Google Maps JavaScript API |
+| **Frontend** | React 18 + TypeScript (Vite) + Google Maps JavaScript API |
 | **Containerization** | Docker + docker-compose |
 | **Scheduling** | cron (dev) / Apache Airflow (prod) |
 | **Testing** | pytest, unittest.mock |
@@ -57,17 +57,30 @@ projectr-analytics/
 │   │   ├── metrics.py         # Data metrics endpoints
 │   │   └── geojson.py         # GeoJSON data endpoints
 │   └── schemas.py             # Pydantic request/response models
-├── dashboard/                 # Frontend dashboard
-│   ├── index.html             # Main dashboard page
-│   ├── css/
-│   │   └── style.css          # Dashboard styles
-│   ├── js/
-│   │   ├── app.js             # Main application logic
-│   │   ├── map.js             # Google Maps initialization & layers
-│   │   ├── controls.js        # UI controls (market selector, toggles)
-│   │   └── api.js             # API client for fetching data
-│   └── assets/
-│       └── favicon.ico
+├── dashboard/                 # Frontend dashboard (React + TypeScript + Vite)
+│   ├── index.html             # Vite entry HTML
+│   ├── package.json           # Frontend dependencies
+│   ├── vite.config.ts         # Vite config with API proxy
+│   ├── tsconfig.json          # TypeScript config
+│   └── src/
+│       ├── main.tsx           # React entry point
+│       ├── App.tsx            # Root component
+│       ├── App.css            # Dashboard styles (preserved from original)
+│       ├── types/
+│       │   └── index.ts       # TypeScript interfaces
+│       ├── services/
+│       │   └── api.ts         # Typed API client
+│       ├── context/
+│       │   └── AppContext.tsx  # Global state provider
+│       ├── hooks/
+│       │   ├── useMarket.ts   # Market selection hook
+│       │   └── useMapLayers.ts # Layer toggle hook
+│       └── components/
+│           ├── Header.tsx     # Title, market selector, theme toggle
+│           ├── Sidebar.tsx    # Layer + metrics panels container
+│           ├── LayerPanel.tsx  # Map layer checkboxes
+│           ├── MetricsPanel.tsx # Market metrics cards
+│           └── MapContainer.tsx # Google Maps lifecycle + layers
 ├── tests/                     # Test suite
 │   ├── __init__.py
 │   ├── conftest.py            # Shared fixtures
@@ -144,3 +157,11 @@ open dashboard/index.html      # Or serve via API
 # Run tests
 pytest tests/ -v
 ```
+
+## Modular Collaboration
+
+This project is designed for **independent, parallel development** by multiple agents.
+
+- **Isolation**: Each directory (`ingestion/`, `etl/`, `db/`, `api/`, `dashboard/`) is a standalone target.
+- **Handbook**: Refer to [agent_handbook.md](file:///home/jcmb/Projectr%20Analytics/docs/agent_handbook.md) for detailed instructions on how to work on specific parts of the app without causing conflicts.
+- **Workflow-First**: Always check `.agent/workflows/` before starting a task.

@@ -27,3 +27,7 @@ Thumbs.db
 
 # Docker
 docker-compose.override.yml
+
+# Dashboard (Vite)
+dashboard/node_modules/
+dashboard/dist/
