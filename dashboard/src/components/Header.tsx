@@ -6,13 +6,23 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useAppContext } from '../context/AppContext';
 import LoginModal from './LoginModal';
 import UserMenu from './UserMenu';
 
 export default function Header() {
   const { isAuthenticated } = useAuth();
+  const { setMarket } = useAppContext();
   const [showLogin, setShowLogin] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const location = useLocation();
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchValue.trim()) {
+      setMarket(searchValue.trim());
+      setSearchValue(''); // clear after search
+    }
+  };
 
   return (
     <>
@@ -54,8 +64,11 @@ export default function Header() {
             </div>
             <input
               className="bg-surface-container-highest border-none rounded-xl py-2 pl-10 pr-4 text-sm w-64 focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-outline text-on-surface"
-              placeholder="Search Austin submarkets..."
+              placeholder="Search US markets (e.g. Dallas)..."
               type="text"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={handleSearch}
             />
           </div>
           {isAuthenticated && (
