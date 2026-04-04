@@ -4,7 +4,7 @@
  * Ported from dashboard/js/map.js with full TypeScript typing.
  */
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 import * as api from '../services/api';
 
@@ -156,6 +156,31 @@ export default function MapContainer() {
     });
   }, [layers.boundaries]);
 
+  const [marketRent, setMarketRent] = useState<string>('—');
+  const [marketStatus, setMarketStatus] = useState<string>('Stable');
+
+  /* ── Fetch dynamic market data ── */
+  useEffect(() => {
+    let active = true;
+    api.getRents(selectedMarket).then(res => {
+      if (!active) return;
+      const first = res?.data?.[0] as { value?: string; trend?: string } | undefined;
+      const rentVal = first?.value || '—';
+      setMarketRent(rentVal);
+      
+      // Compute status based on trend if available, else default
+      const trend = first?.trend || '';
+      if (trend.includes('+') && parseFloat(trend.replace('+', '')) > 2) {
+        setMarketStatus('High Growth');
+      } else if (trend.includes('+')) {
+        setMarketStatus('Moderate Growth');
+      } else {
+        setMarketStatus('Stable');
+      }
+    });
+    return () => { active = false; };
+  }, [selectedMarket]);
+
   return (
     <div className="absolute inset-0 z-0 bg-surface-container-lowest">
       <div className="absolute inset-0 heatmap-overlay z-10 opacity-60 pointer-events-none" />
@@ -169,7 +194,7 @@ export default function MapContainer() {
               {marketInfo?.name || 'Austin–Round Rock'}
             </h2>
             <p className="text-xs font-label text-outline uppercase tracking-widest">
-              Market Status: High Growth
+              Market Status: {marketStatus}
             </p>
           </div>
           <div className="bg-primary/10 px-3 py-1 rounded-full">
@@ -181,7 +206,7 @@ export default function MapContainer() {
         <div className="space-y-3">
           <div className="flex items-center justify-between text-xs">
             <span className="text-outline">Median Rent</span>
-            <span className="text-on-surface font-bold">$2,140/mo</span>
+            <span className="text-on-surface font-bold">{marketRent}/mo</span>
           </div>
           <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
             <div className="h-full bg-gradient-to-r from-primary to-tertiary w-[75%]"></div>

@@ -22,8 +22,16 @@ services:
       - .env
     depends_on:
       - db
+      - redis
     volumes:
       - ./dashboard/dist:/app/dashboard/dist
+
+  redis:
+    image: redis:7-alpine
+    container_name: projectr-redis
+    ports:
+      - "6379:6379"
+    restart: always
 
 volumes:
   pgdata:

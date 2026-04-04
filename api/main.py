@@ -1,7 +1,11 @@
 """FastAPI application entry point."""
 
 import os
+import redis.asyncio as redis
 from fastapi import FastAPI, Request
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
@@ -18,6 +22,19 @@ app = FastAPI(
     description="Real-estate data API for the geospatial dashboard",
     version="0.3.0",
 )
+
+@app.on_event("startup")
+async def startup():
+    redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    try:
+        r = redis.from_url(redis_url, encoding="utf-8", decode_responses=True)
+        # Verify connection
+        await r.ping()
+        FastAPICache.init(RedisBackend(r), prefix="fastapi-cache")
+        print(f"[*] Redis cache initialized at {redis_url}")
+    except Exception as e:
+        print(f"[!] Redis connection failed: {e}. Falling back to InMemoryBackend.")
+        FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
