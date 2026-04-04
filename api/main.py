@@ -27,9 +27,16 @@ app = FastAPI(
 async def startup():
     redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     try:
-        r = redis.from_url(redis_url, encoding="utf-8", decode_responses=True)
-        # Verify connection
-        await r.ping()
+        # Add connection timeout to prevent startup hangs
+        r = redis.from_url(
+            redis_url, 
+            encoding="utf-8", 
+            decode_responses=True,
+            socket_connect_timeout=2.0 # 2 seconds timeout
+        )
+        # Verify connection with a hard timeout
+        import asyncio
+        await asyncio.wait_for(r.ping(), timeout=2.0)
         FastAPICache.init(RedisBackend(r), prefix="fastapi-cache")
         print(f"[*] Redis cache initialized at {redis_url}")
     except Exception as e:
