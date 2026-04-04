@@ -1,235 +1,185 @@
 /**
- * MapContainer — manages the Google Maps JavaScript API lifecycle and layers.
+ * MapContainer — Interactive Leaflet map with heatmap overlay.
  *
- * Ported from dashboard/js/map.js with full TypeScript typing.
+ * Uses free CartoDB Voyager basemap tiles (no API key required)
+ * and leaflet.heat for weighted rent price visualization.
  */
 
 import { useEffect, useRef, useCallback, useState } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { useAppContext } from '../context/AppContext';
 import * as api from '../services/api';
 
-/* ── Dark-theme map styles (from original map.js) ── */
+// Import leaflet.heat — it extends L automatically
+import 'leaflet.heat';
 
-const MAP_STYLES: google.maps.MapTypeStyle[] = [
-  { elementType: 'geometry', stylers: [{ color: '#1d2c4d' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#8ec3b9' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#1a3646' }] },
-  {
-    featureType: 'water',
-    elementType: 'geometry.fill',
-    stylers: [{ color: '#0e1626' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry',
-    stylers: [{ color: '#304a7d' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry.stroke',
-    stylers: [{ color: '#255763' }],
-  },
-];
+/* ── Map tile providers ── */
 
-const BOUNDARY_STYLE: google.maps.Data.StyleOptions = {
-  fillColor: '#6c63ff',
-  fillOpacity: 0.1,
-  strokeColor: '#6c63ff',
-  strokeWeight: 1.5,
-  strokeOpacity: 0.6,
-};
+const TILE_URL = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+const TILE_ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>';
+
+/* ── Default center (Austin) ── */
+
+const DEFAULT_CENTER: [number, number] = [30.2672, -97.7431];
+const DEFAULT_ZOOM = 11;
 
 export default function MapContainer() {
   const { selectedMarket, marketInfo, layers } = useAppContext();
 
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<google.maps.Map | null>(null);
-  const heatmapRef = useRef<google.maps.visualization.HeatmapLayer | null>(
-    null,
-  );
-  const boundaryFeaturesRef = useRef<google.maps.Data.Feature[]>([]);
+  const mapInstance = useRef<L.Map | null>(null);
+  const heatLayer = useRef<L.Layer | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  /* ── Initialize the map once ── */
+  /* ── Initialize the map ── */
   useEffect(() => {
-    if (!mapRef.current || mapInstanceRef.current) return;
+    if (!mapRef.current || mapInstance.current) return;
 
-    /* If Google Maps script isn't loaded yet, load it dynamically */
-    const initMap = () => {
-      if (!mapRef.current) return;
+    const map = L.map(mapRef.current, {
+      center: DEFAULT_CENTER,
+      zoom: DEFAULT_ZOOM,
+      zoomControl: false,
+      attributionControl: true,
+    });
 
-      const map = new google.maps.Map(mapRef.current, {
-        center: { lat: 30.2672, lng: -97.7431 },
-        zoom: 11,
-        mapTypeControl: false,
-        streetViewControl: false,
-        styles: MAP_STYLES,
-      });
-      mapInstanceRef.current = map;
+    L.tileLayer(TILE_URL, {
+      attribution: TILE_ATTRIBUTION,
+      maxZoom: 18,
+      subdomains: 'abcd',
+    }).addTo(map);
 
-      /* Initialize heatmap layer (hidden) */
-      const heatmap = new google.maps.visualization.HeatmapLayer({
-        data: [],
-        map: null,
-        radius: 30,
-        opacity: 0.7,
-      });
-      heatmapRef.current = heatmap;
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    mapInstance.current = map;
+    setLoading(false);
+
+    return () => {
+      map.remove();
+      mapInstance.current = null;
     };
-
-    if (typeof google !== 'undefined' && google.maps) {
-      initMap();
-    } else {
-      /* Dynamically inject the Google Maps script */
-      const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=visualization`;
-      script.async = true;
-      script.defer = true;
-      script.onload = initMap;
-      document.head.appendChild(script);
-    }
   }, []);
 
-  /* ── Recenter map when market changes ── */
+  /* ── Pan to selected market ── */
   useEffect(() => {
-    if (!mapInstanceRef.current || !marketInfo) return;
-    mapInstanceRef.current.setCenter({
-      lat: marketInfo.lat,
-      lng: marketInfo.lon,
-    });
-    mapInstanceRef.current.setZoom(11);
+    if (!mapInstance.current || !marketInfo) return;
+    mapInstance.current.flyTo(
+      [marketInfo.lat, marketInfo.lon],
+      DEFAULT_ZOOM,
+      { duration: 1.5 },
+    );
   }, [marketInfo]);
-
-  /* ── Load boundary GeoJSON ── */
-  const loadBoundaries = useCallback(async () => {
-    const map = mapInstanceRef.current;
-    if (!map) return;
-
-    /* Clear existing features */
-    boundaryFeaturesRef.current.forEach((f) => map.data.remove(f));
-    boundaryFeaturesRef.current = [];
-
-    try {
-      const geojson = await api.getBoundaries(selectedMarket);
-      const features = map.data.addGeoJson(geojson);
-      boundaryFeaturesRef.current = features;
-      map.data.setStyle(BOUNDARY_STYLE);
-    } catch (err) {
-      console.error('Failed to load boundaries:', err);
-    }
-  }, [selectedMarket]);
 
   /* ── Load heatmap data ── */
   const loadHeatmap = useCallback(async () => {
-    if (!heatmapRef.current) return;
+    if (!mapInstance.current) return;
 
     try {
       const response = await api.getHeatmapData(selectedMarket, 'rent');
-      const data = (response.points || []).map(
-        (p) => new google.maps.LatLng(p.lat, p.lng),
+      const points = (response.points || []).map(
+        (p) => [p.lat, p.lng, p.weight || 1] as [number, number, number],
       );
-      heatmapRef.current.setData(data);
+
+      // Remove old heat layer
+      if (heatLayer.current) {
+        mapInstance.current.removeLayer(heatLayer.current);
+      }
+
+      if (points.length > 0) {
+        const heat = L.heatLayer(points, {
+          radius: 30,
+          blur: 20,
+          maxZoom: 15,
+          max: 5.0,
+          gradient: {
+            0.0: 'transparent',
+            0.15: '#1a9641',
+            0.35: '#a6d96a',
+            0.50: '#ffffbf',
+            0.70: '#fdae61',
+            0.85: '#f46d43',
+            1.0: '#d73027',
+          },
+        });
+        heat.addTo(mapInstance.current);
+        heatLayer.current = heat;
+      }
     } catch (err) {
       console.error('Failed to load heatmap:', err);
     }
   }, [selectedMarket]);
 
-  /* ── Reload layers when market changes ── */
+  /* ── Reload heatmap when market changes or layer toggles ── */
   useEffect(() => {
-    if (!mapInstanceRef.current) return;
-    loadBoundaries();
-    loadHeatmap();
-  }, [selectedMarket, loadBoundaries, loadHeatmap]);
+    if (layers.heatmap) {
+      loadHeatmap();
+    } else if (heatLayer.current && mapInstance.current) {
+      mapInstance.current.removeLayer(heatLayer.current);
+      heatLayer.current = null;
+    }
+  }, [selectedMarket, layers.heatmap, loadHeatmap]);
 
-  /* ── Toggle heatmap visibility ── */
-  useEffect(() => {
-    if (!heatmapRef.current || !mapInstanceRef.current) return;
-    heatmapRef.current.setMap(layers.heatmap ? mapInstanceRef.current : null);
-  }, [layers.heatmap]);
-
-  /* ── Toggle boundary visibility ── */
-  useEffect(() => {
-    if (!mapInstanceRef.current) return;
-    mapInstanceRef.current.data.setStyle({
-      ...BOUNDARY_STYLE,
-      visible: layers.boundaries,
-    });
-  }, [layers.boundaries]);
-
-  const [marketRent, setMarketRent] = useState<string>('—');
-  const [marketStatus, setMarketStatus] = useState<string>('Stable');
-
-  /* ── Fetch dynamic market data ── */
-  useEffect(() => {
-    let active = true;
-    api.getRents(selectedMarket).then(res => {
-      if (!active) return;
-      const first = res?.data?.[0] as { value?: string; trend?: string } | undefined;
-      const rentVal = first?.value || '—';
-      setMarketRent(rentVal);
-      
-      // Compute status based on trend if available, else default
-      const trend = first?.trend || '';
-      if (trend.includes('+') && parseFloat(trend.replace('+', '')) > 2) {
-        setMarketStatus('High Growth');
-      } else if (trend.includes('+')) {
-        setMarketStatus('Moderate Growth');
-      } else {
-        setMarketStatus('Stable');
-      }
-    });
-    return () => { active = false; };
-  }, [selectedMarket]);
+  /* ── Recenter button ── */
+  const recenter = () => {
+    if (!mapInstance.current) return;
+    const lat = marketInfo?.lat || DEFAULT_CENTER[0];
+    const lng = marketInfo?.lon || DEFAULT_CENTER[1];
+    mapInstance.current.flyTo([lat, lng], DEFAULT_ZOOM, { duration: 1 });
+  };
 
   return (
-    <div className="absolute inset-0 z-0 bg-surface-container-lowest">
-      <div className="absolute inset-0 heatmap-overlay z-10 opacity-60 pointer-events-none" />
-      <div ref={mapRef} className="w-full h-full object-cover opacity-60" />
+    <div className="absolute inset-0 bg-surface" style={{ bottom: '160px' }}>
+      <div ref={mapRef} className="w-full h-full" />
 
-      {/* Floating Overlay: Legend & Market Info */}
-      <div className="absolute top-6 left-6 z-20 glass-panel p-4 rounded-xl border border-outline-variant/10 active-glow">
-        <div className="flex items-center justify-between gap-12 mb-4">
-          <div>
-            <h2 className="font-headline font-bold text-lg text-on-surface">
-              {marketInfo?.name || 'Austin–Round Rock'}
-            </h2>
-            <p className="text-xs font-label text-outline uppercase tracking-widest">
-              Market Status: {marketStatus}
-            </p>
-          </div>
-          <div className="bg-primary/10 px-3 py-1 rounded-full">
-            <span className="text-primary text-[10px] font-bold tracking-tighter uppercase">
-              Live Data
-            </span>
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-surface/90 z-[1000]">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            <span className="text-on-surface-variant text-sm font-label">Loading Map…</span>
           </div>
         </div>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-outline">Median Rent</span>
-            <span className="text-on-surface font-bold">{marketRent}/mo</span>
-          </div>
-          <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-primary to-tertiary w-[75%]"></div>
-          </div>
-        </div>
-      </div>
+      )}
 
-      {/* Map Tools (Right Floating) */}
-      <div className="absolute right-6 top-6 z-20 flex flex-col gap-2">
-        <button className="glass-panel w-10 h-10 rounded-lg flex items-center justify-center text-on-surface hover:bg-surface-container-highest transition-colors border border-outline-variant/10 cursor-pointer" onClick={() => mapInstanceRef.current?.setZoom(mapInstanceRef.current.getZoom()! + 1)}>
-          <span className="material-symbols-outlined">add</span>
-        </button>
-        <button className="glass-panel w-10 h-10 rounded-lg flex items-center justify-center text-on-surface hover:bg-surface-container-highest transition-colors border border-outline-variant/10 cursor-pointer" onClick={() => mapInstanceRef.current?.setZoom(mapInstanceRef.current.getZoom()! - 1)}>
-          <span className="material-symbols-outlined">remove</span>
-        </button>
-        <div className="h-px bg-outline-variant/20 my-1"></div>
-        <button className="glass-panel w-10 h-10 rounded-lg flex items-center justify-center text-primary hover:bg-surface-container-highest transition-colors border border-outline-variant/10 cursor-pointer" onClick={() => mapInstanceRef.current?.panTo({lat: marketInfo?.lat || 30.2672, lng: marketInfo?.lon || -97.7431})}>
+      <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
+        <button
+          className="glass-panel w-10 h-10 rounded-lg flex items-center justify-center text-primary hover:bg-surface-container-highest transition-colors border border-outline-variant/10 cursor-pointer"
+          onClick={recenter}
+          title="Re-center map"
+        >
           <span className="material-symbols-outlined">my_location</span>
         </button>
-        <button className="glass-panel w-10 h-10 rounded-lg flex items-center justify-center text-on-surface hover:bg-surface-container-highest transition-colors border border-outline-variant/10 cursor-pointer">
-          <span className="material-symbols-outlined">3d_rotation</span>
-        </button>
+      </div>
+
+      {marketInfo && (
+        <div className="absolute top-4 left-4 z-[1000]">
+          <div
+            className="px-4 py-3 rounded-xl border border-outline-variant/20"
+            style={{ background: 'rgba(15, 23, 36, 0.8)', backdropFilter: 'blur(16px)' }}
+          >
+            <h3 className="text-on-surface font-headline font-bold text-sm">{marketInfo.name}</h3>
+            <p className="text-primary text-[10px] uppercase font-bold tracking-widest mt-1">
+              Rent Price Heatmap
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Legend */}
+      <div className="absolute bottom-4 left-4 z-[1000]">
+        <div
+          className="px-3 py-2 rounded-lg border border-outline-variant/20"
+          style={{ background: 'rgba(15, 23, 36, 0.85)', backdropFilter: 'blur(16px)' }}
+        >
+          <p className="text-[9px] text-on-surface-variant uppercase font-bold tracking-widest mb-1.5">Relative Rent</p>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] text-on-surface-variant">Low</span>
+            <div className="w-24 h-2.5 rounded-full" style={{ background: 'linear-gradient(to right, #1a9641, #a6d96a, #ffffbf, #fdae61, #f46d43, #d73027)' }} />
+            <span className="text-[10px] text-on-surface-variant">High</span>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+
