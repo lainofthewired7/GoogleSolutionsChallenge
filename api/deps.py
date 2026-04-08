@@ -2,12 +2,13 @@
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from api.auth import decode_access_token, get_user_by_email, UserRecord
+from api.auth import decode_access_token, get_user_by_email
+from db.models import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
 
 
-async def get_current_user(token: str | None = Depends(oauth2_scheme)) -> UserRecord:
+async def get_current_user(token: str | None = Depends(oauth2_scheme)) -> User:
     """Dependency: extract and validate the current user from a JWT token.
 
     Raises:
@@ -43,7 +44,7 @@ async def get_current_user(token: str | None = Depends(oauth2_scheme)) -> UserRe
     return user
 
 
-async def get_optional_user(token: str | None = Depends(oauth2_scheme)) -> UserRecord | None:
+async def get_optional_user(token: str | None = Depends(oauth2_scheme)) -> User | None:
     """Dependency: optionally extract the current user. Returns None if not authenticated."""
     if token is None:
         return None

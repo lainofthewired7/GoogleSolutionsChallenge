@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useAppContext } from '../context/AppContext';
+import { useTheme } from '../context/ThemeContext';
 import * as api from '../services/api';
 
 // Import leaflet.heat — it extends L automatically
@@ -17,7 +18,8 @@ import 'leaflet.heat';
 
 /* ── Map tile providers ── */
 
-const TILE_URL = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+const TILE_URL_DARK = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+const TILE_URL_LIGHT = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
 const TILE_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>';
 
@@ -28,10 +30,13 @@ const DEFAULT_ZOOM = 11;
 
 /* ── Custom marker icons ── */
 
-function createMarkerIcon(isActive: boolean) {
-  const color = isActive ? '#81ecff' : '#64748b';
+function createMarkerIcon(isActive: boolean, isDark: boolean) {
+  const color = isActive ? (isDark ? '#81ecff' : '#006976') : (isDark ? '#64748b' : '#94a3b8');
   const size = isActive ? 14 : 8;
-  const border = isActive ? '3px solid rgba(129,236,255,0.4)' : '2px solid rgba(100,116,139,0.3)';
+  const borderColor = isActive 
+    ? (isDark ? 'rgba(129,236,255,0.4)' : 'rgba(0,105,118,0.4)') 
+    : (isDark ? 'rgba(100,116,139,0.3)' : 'rgba(148,163,184,0.3)');
+  const border = isActive ? `3px solid ${borderColor}` : `2px solid ${borderColor}`;
   return L.divIcon({
     className: '',
     html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:${border};box-shadow:0 0 ${isActive ? 12 : 4}px ${color}40;transition:all 0.3s"></div>`,
@@ -42,9 +47,12 @@ function createMarkerIcon(isActive: boolean) {
 
 export default function MapContainer() {
   const { selectedMarket, marketInfo, layers, markets, setMarket } = useAppContext();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<L.Map | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
   const heatLayer = useRef<L.Layer | null>(null);
   const markersLayer = useRef<L.LayerGroup | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,11 +68,12 @@ export default function MapContainer() {
       attributionControl: true,
     });
 
-    L.tileLayer(TILE_URL, {
+    const tl = L.tileLayer(isDark ? TILE_URL_DARK : TILE_URL_LIGHT, {
       attribution: TILE_ATTRIBUTION,
       maxZoom: 18,
       subdomains: 'abcd',
     }).addTo(map);
+    tileLayerRef.current = tl;
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
@@ -78,6 +87,13 @@ export default function MapContainer() {
     };
   }, []);
 
+  /* ── Swap tile layer on theme change ── */
+  useEffect(() => {
+    if (!mapInstance.current || !tileLayerRef.current) return;
+    const newUrl = isDark ? TILE_URL_DARK : TILE_URL_LIGHT;
+    tileLayerRef.current.setUrl(newUrl);
+  }, [isDark]);
+
   /* ── Render market markers ── */
   useEffect(() => {
     if (!mapInstance.current || !markersLayer.current || markets.length === 0) return;
@@ -87,7 +103,7 @@ export default function MapContainer() {
     markets.forEach((m) => {
       const isActive = m.code === selectedMarket;
       const marker = L.marker([m.lat, m.lon], {
-        icon: createMarkerIcon(isActive),
+        icon: createMarkerIcon(isActive, isDark),
         zIndexOffset: isActive ? 1000 : 0,
       });
 
@@ -103,7 +119,7 @@ export default function MapContainer() {
 
       markersLayer.current!.addLayer(marker);
     });
-  }, [markets, selectedMarket, setMarket]);
+  }, [markets, selectedMarket, setMarket, isDark]);
 
   /* ── Pan to selected market ── */
   useEffect(() => {
@@ -212,18 +228,18 @@ export default function MapContainer() {
       {/* Tooltip styles */}
       <style>{`
         .market-tooltip {
-          background: rgba(15, 23, 36, 0.92) !important;
-          border: 1px solid rgba(129, 236, 255, 0.2) !important;
-          color: #c8d6e5 !important;
+          background: ${isDark ? 'rgba(15, 23, 36, 0.92)' : 'rgba(255, 255, 255, 0.95)'} !important;
+          border: 1px solid ${isDark ? 'rgba(129, 236, 255, 0.2)' : 'rgba(0, 105, 118, 0.2)'} !important;
+          color: ${isDark ? '#c8d6e5' : '#1a1c2b'} !important;
           font-size: 11px !important;
           font-weight: 600 !important;
           padding: 4px 10px !important;
           border-radius: 8px !important;
           backdrop-filter: blur(12px) !important;
-          box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
+          box-shadow: 0 4px 16px ${isDark ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.1)'} !important;
         }
         .market-tooltip::before {
-          border-top-color: rgba(15, 23, 36, 0.92) !important;
+          border-top-color: ${isDark ? 'rgba(15, 23, 36, 0.92)' : 'rgba(255, 255, 255, 0.95)'} !important;
         }
       `}</style>
 
@@ -258,8 +274,7 @@ export default function MapContainer() {
       {marketInfo && (
         <div className="absolute top-4 left-4 z-[1000]">
           <div
-            className="px-4 py-3 rounded-xl border border-outline-variant/20"
-            style={{ background: 'rgba(15, 23, 36, 0.8)', backdropFilter: 'blur(16px)' }}
+            className="glass-panel px-4 py-3 rounded-xl border border-outline-variant/20"
           >
             <h3 className="text-on-surface font-headline font-bold text-sm">{marketInfo.name}</h3>
             <p className="text-primary text-[10px] uppercase font-bold tracking-widest mt-1">
@@ -272,8 +287,7 @@ export default function MapContainer() {
       {/* Legend */}
       <div className="absolute bottom-4 left-4 z-[1000]">
         <div
-          className="px-3 py-2 rounded-lg border border-outline-variant/20"
-          style={{ background: 'rgba(15, 23, 36, 0.85)', backdropFilter: 'blur(16px)' }}
+          className="glass-panel px-3 py-2 rounded-lg border border-outline-variant/20"
         >
           <p className="text-[9px] text-on-surface-variant uppercase font-bold tracking-widest mb-1.5">Relative Rent</p>
           <div className="flex items-center gap-1.5">
@@ -287,8 +301,7 @@ export default function MapContainer() {
       {/* Market count */}
       <div className="absolute bottom-4 right-4 z-[1000]">
         <div
-          className="px-3 py-1.5 rounded-lg border border-outline-variant/20"
-          style={{ background: 'rgba(15, 23, 36, 0.85)', backdropFilter: 'blur(16px)' }}
+          className="glass-panel px-3 py-1.5 rounded-lg border border-outline-variant/20"
         >
           <span className="text-[10px] text-on-surface-variant">
             <span className="text-primary font-bold">{markets.length}</span> markets tracked

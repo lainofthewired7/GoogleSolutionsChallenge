@@ -2,10 +2,12 @@ import { useState, type FormEvent } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { updateProfile } from '../services/auth';
 import { useAppContext } from '../context/AppContext';
+import { useTheme } from '../context/ThemeContext';
 
 export default function SettingsPage() {
   const { user, updateUserState } = useAuth();
   const { selectedMarket, setMarket } = useAppContext();
+  const { theme, toggleTheme } = useTheme();
   
   const [displayName, setDisplayName] = useState(user?.display_name || '');
   const [isUpdating, setIsUpdating] = useState(false);
@@ -105,6 +107,36 @@ export default function SettingsPage() {
             <h2 className="text-xl font-headline font-bold mb-6">Dashboard Preferences</h2>
             
             <div className="space-y-6">
+              {/* Theme Toggle */}
+              <div>
+                <label className="block text-sm font-medium text-on-surface/70 mb-2">Appearance</label>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => theme !== 'light' && toggleTheme()}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border transition-all cursor-pointer ${
+                      theme === 'light'
+                        ? 'bg-primary/10 border-primary text-primary font-bold'
+                        : 'border-outline-variant/30 text-on-surface/60 hover:border-outline-variant/60'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-lg">light_mode</span>
+                    <span className="text-sm">Light</span>
+                  </button>
+                  <button
+                    onClick={() => theme !== 'dark' && toggleTheme()}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border transition-all cursor-pointer ${
+                      theme === 'dark'
+                        ? 'bg-primary/10 border-primary text-primary font-bold'
+                        : 'border-outline-variant/30 text-on-surface/60 hover:border-outline-variant/60'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-lg">dark_mode</span>
+                    <span className="text-sm">Dark</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Default Market */}
               <div>
                 <label className="block text-sm font-medium text-on-surface/70 mb-2">Default Target Market</label>
                 <select 
