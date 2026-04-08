@@ -6,7 +6,7 @@
  * Shows all supported markets as clickable markers.
  */
 
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useAppContext } from '../context/AppContext';
@@ -115,54 +115,81 @@ export default function MapContainer() {
     );
   }, [marketInfo]);
 
-  /* ── Load heatmap data ── */
-  const loadHeatmap = useCallback(async () => {
+  /* ── Heatmap Data Management ── */
+  const [localHeatmapPoints, setLocalHeatmapPoints] = useState<[number, number, number][]>([]);
+  const [globalHeatmapPoints, setGlobalHeatmapPoints] = useState<[number, number, number][]>([]);
+
+  // 1. Fetch Local Heatmap for selected market
+  useEffect(() => {
+    if (!layers.heatmap || layers.globalHeatmap) return;
+    
+    async function fetchLocalData() {
+      try {
+        const response = await api.getHeatmapData(selectedMarket, 'rent');
+        const points = (response.points || []).map(
+          (p) => [p.lat, p.lng, p.weight || 1] as [number, number, number],
+        );
+        setLocalHeatmapPoints(points);
+      } catch (err) {
+        console.error('Failed to load local heatmap:', err);
+      }
+    }
+    fetchLocalData();
+  }, [selectedMarket, layers.heatmap, layers.globalHeatmap]);
+
+  // 2. Fetch Global Heatmap (All Markets) - Lazy load when enabled
+  useEffect(() => {
+    if (!layers.globalHeatmap) return;
+    if (globalHeatmapPoints.length > 0) return; // Already loaded
+
+    async function fetchGlobalData() {
+      try {
+        const response = await api.getGlobalHeatmapData('rent');
+        const points = (response.points || []).map(
+          (p) => [p.lat, p.lng, p.weight || 1] as [number, number, number],
+        );
+        setGlobalHeatmapPoints(points);
+      } catch (err) {
+        console.error('Failed to load global heatmap:', err);
+      }
+    }
+    fetchGlobalData();
+  }, [layers.globalHeatmap, globalHeatmapPoints.length]);
+
+  /* ── Render/Toggle Heatmap Layer ── */
+  useEffect(() => {
     if (!mapInstance.current) return;
 
-    try {
-      const response = await api.getHeatmapData(selectedMarket, 'rent');
-      const points = (response.points || []).map(
-        (p) => [p.lat, p.lng, p.weight || 1] as [number, number, number],
-      );
-
-      // Remove old heat layer
-      if (heatLayer.current) {
-        mapInstance.current.removeLayer(heatLayer.current);
-      }
-
-      if (points.length > 0) {
-        const heat = L.heatLayer(points, {
-          radius: 30,
-          blur: 20,
-          maxZoom: 15,
-          max: 5.0,
-          gradient: {
-            0.0: 'transparent',
-            0.15: '#1a9641',
-            0.35: '#a6d96a',
-            0.50: '#ffffbf',
-            0.70: '#fdae61',
-            0.85: '#f46d43',
-            1.0: '#d73027',
-          },
-        });
-        heat.addTo(mapInstance.current);
-        heatLayer.current = heat;
-      }
-    } catch (err) {
-      console.error('Failed to load heatmap:', err);
-    }
-  }, [selectedMarket]);
-
-  /* ── Reload heatmap when market changes or layer toggles ── */
-  useEffect(() => {
-    if (layers.heatmap) {
-      loadHeatmap();
-    } else if (heatLayer.current && mapInstance.current) {
+    // Clear old layer
+    if (heatLayer.current) {
       mapInstance.current.removeLayer(heatLayer.current);
       heatLayer.current = null;
     }
-  }, [selectedMarket, layers.heatmap, loadHeatmap]);
+
+    // Determine which points to show
+    const pointsToShow = layers.globalHeatmap ? globalHeatmapPoints : (layers.heatmap ? localHeatmapPoints : []);
+
+    if (pointsToShow.length > 0) {
+      const isGlobal = layers.globalHeatmap;
+      const heat = L.heatLayer(pointsToShow, {
+        radius: isGlobal ? 25 : 30, // Slightly smaller radius for global clusters
+        blur: isGlobal ? 15 : 20,
+        maxZoom: isGlobal ? 13 : 15,
+        max: isGlobal ? 4.5 : 5.0,
+        gradient: {
+          0.0: 'transparent',
+          0.15: '#1a9641',
+          0.35: '#a6d96a',
+          0.50: '#ffffbf',
+          0.70: '#fdae61',
+          0.85: '#f46d43',
+          1.0: '#d73027',
+        },
+      });
+      heat.addTo(mapInstance.current);
+      heatLayer.current = heat;
+    }
+  }, [layers.heatmap, layers.globalHeatmap, localHeatmapPoints, globalHeatmapPoints]);
 
   /* ── Zoom controls ── */
   const recenter = () => {

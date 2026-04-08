@@ -81,3 +81,9 @@ export async function getHeatmapData(
     `/geojson/heatmap?market=${market}&metric=${metric}`,
   );
 }
+
+export async function getGlobalHeatmapData(
+  metric = 'rent',
+): Promise<HeatmapResponse> {
+  return request<HeatmapResponse>(`/geojson/heatmap/all?metric=${metric}`);
+}

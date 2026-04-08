@@ -81,6 +81,7 @@ export interface MetricStubResponse {
 
 export interface LayerToggles {
   heatmap: boolean;
+  globalHeatmap: boolean;
   permits: boolean;
   vacancy: boolean;
   jobs: boolean;

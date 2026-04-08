@@ -8,6 +8,7 @@ import type { LayerToggles } from '../types';
 
 const LAYER_OPTIONS: { key: keyof LayerToggles; label: string }[] = [
   { key: 'heatmap', label: 'Rent Heatmap' },
+  { key: 'globalHeatmap', label: 'Global View (All Markets)' },
   { key: 'permits', label: 'Permits' },
   { key: 'vacancy', label: 'Vacancy Rates' },
   { key: 'jobs', label: 'Job Growth' },

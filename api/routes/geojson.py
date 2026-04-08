@@ -110,24 +110,55 @@ def _generate_permit_heatmap(config: dict, market_key: str) -> list[dict]:
 
 @router.get("/heatmap")
 async def get_heatmap_data(market: str = Query(default="austin"), metric: str = "rent"):
-    """Get weighted lat/lng points for heatmap rendering.
-
-    Args:
-        market: Market identifier.
-        metric: Heatmap metric — 'rent', 'permits', 'vacancy'.
-    """
+    """Get weighted lat/lng points for heatmap rendering for a specific market."""
     market_key = market.lower().strip().replace(" ", "-")
+    points = await _get_market_heatmap_points(market_key, metric)
+    return {"market": market, "metric": metric, "points": points}
 
+
+@router.get("/heatmap/all")
+async def get_all_heatmap_data(metric: str = "rent"):
+    """Aggregate heatmap data for ALL supported markets."""
+    all_points = []
+    
+    # Process markets concurrently for speed
+    import asyncio
+    
+    async def process_market(m_key):
+        try:
+            return await _get_market_heatmap_points(m_key, metric)
+        except Exception:
+            return []
+
+    tasks = [process_market(m_key) for m_key in MARKET_DATA.keys()]
+    results = await asyncio.gather(*tasks)
+    
+    for pts in results:
+        all_points.extend(pts)
+        
+    return {
+        "metric": metric,
+        "count": len(all_points),
+        "markets_count": len(MARKET_DATA),
+        "points": all_points
+    }
+
+
+async def _get_market_heatmap_points(market_key: str, metric: str) -> list[dict]:
+    """Helper to fetch or generate heatmap points for a single market."""
+    
     # Austin permits — use real Socrata data
     if metric == "permits" and market_key in ("austin", "austin-round-rock-tx"):
         try:
             url = "https://data.austintexas.gov/resource/3syk-w9eu.json"
             params = {
-                "$limit": 1500,
+                "$limit": 1000,
                 "$order": "issue_date DESC",
                 "$where": "latitude IS NOT NULL",
             }
-            r = requests.get(url, params=params, timeout=30)
+            # Use non-async requests for now to match existing pattern, 
+            # or could use httpx for better performance in the "all" endpoint
+            r = requests.get(url, params=params, timeout=10)
             r.raise_for_status()
             records = r.json()
 
@@ -141,20 +172,17 @@ async def get_heatmap_data(market: str = Query(default="austin"), metric: str = 
                     points.append({"lat": lat, "lng": lng, "weight": weight})
                 except (KeyError, ValueError, TypeError):
                     continue
-
-            return {"market": market, "metric": metric, "points": points}
+            return points
         except Exception:
             logger.exception("Error fetching permit heatmap data")
 
     # Resolve market config
-    config = _resolve_market(market)
+    config = _resolve_market(market_key)
     if not config:
-        return {"market": market, "metric": metric, "points": []}
+        return []
 
     # Generate heatmap based on metric type
     if metric == "rent":
-        points = _generate_rent_heatmap(config, market_key)
+        return _generate_rent_heatmap(config, market_key)
     else:
-        points = _generate_permit_heatmap(config, market_key)
-
-    return {"market": market, "metric": metric, "points": points}
+        return _generate_permit_heatmap(config, market_key)
