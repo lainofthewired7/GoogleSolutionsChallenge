@@ -1,0 +1,58 @@
+INFO:     Started server process [47045]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[*] Census Key Loaded: da649...
+[!] Redis connection failed: Error 111 connecting to localhost:6379. 111.. Falling back to InMemoryBackend.
+INFO:     127.0.0.1:46298 - "GET /api/metrics/jobs?market=austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46306 - "GET /api/metrics/vacancy?market=austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36878 - "GET /api/metrics/jobs?market=austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36884 - "GET /api/metrics/vacancy?market=austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36892 - "GET /api/geojson/heatmap?market=austin&metric=rent HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40924 - "GET /api/geojson/heatmap?market=austin&metric=rent HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40934 - "GET /api/metrics/vacancy?market=austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40942 - "GET /api/metrics/jobs?market=austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40944 - "GET /api/metrics/permits?market=austin&limit=1000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40948 - "GET /api/metrics/rents?market=austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40964 - "GET /api/markets/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40966 - "GET /api/markets/austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40978 - "GET /api/geojson/heatmap?market=austin&metric=rent HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40992 - "GET /api/metrics/vacancy?market=austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41004 - "GET /api/metrics/jobs?market=austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41020 - "GET /api/metrics/permits?market=austin&limit=1000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41036 - "GET /api/metrics/rents?market=austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41038 - "GET /api/markets/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41040 - "GET /api/markets/austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59144 - "GET /api/geojson/heatmap?market=new-york&metric=rent HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59150 - "GET /api/metrics/vacancy?market=new-york HTTP/1.1" 200 OK
+Error fetching FRED jobs for new-york
+Traceback (most recent call last):
+  File "/home/jcmb/Projectr Analytics/api/routes/metrics.py", line 125, in get_jobs
+    r.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/jcmb/Projectr Analytics/venv/lib/python3.14/site-packages/requests/models.py", line 1028, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://api.stlouisfed.org/fred/series/observations?series_id=NEWY136NA&api_key=f9b268f9c89578aad9d9a99c2bd751ce&file_type=json&sort_order=desc&limit=13
+INFO:     127.0.0.1:59160 - "GET /api/metrics/jobs?market=new-york HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59162 - "GET /api/metrics/permits?market=new-york&limit=1000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59178 - "GET /api/metrics/rents?market=new-york HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59190 - "GET /api/markets/new-york HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40760 - "GET /api/geojson/heatmap?market=austin&metric=rent HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40182 - "GET /api/markets/austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40194 - "GET /api/charts/permits-heatmap?market=austin HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40200 - "GET /api/geojson/heatmap?market=austin&metric=rent HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56942 - "GET /api/geojson/heatmap?market=austin&metric=rent HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56930 - "GET /api/fred/unemployment?market=austin&years=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56922 - "GET /api/fred/employment?market=austin&years=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44502 - "GET /api/geojson/heatmap?market=austin&metric=rent HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44506 - "GET /api/geojson/heatmap?market=austin&metric=rent HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57316 - "GET /api/geojson/heatmap?market=new-york&metric=rent HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57318 - "GET /api/markets/new-york HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57328 - "GET /api/geojson/heatmap?market=alexandria&metric=rent HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57334 - "GET /api/metrics/vacancy?market=alexandria HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57344 - "GET /api/metrics/jobs?market=alexandria HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57360 - "GET /api/metrics/permits?market=alexandria&limit=1000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57370 - "GET /api/metrics/rents?market=alexandria HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57376 - "GET /api/markets/alexandria HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33028 - "GET /api/geojson/heatmap?market=new-york&metric=rent HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33038 - "GET /api/markets/new-york HTTP/1.1" 200 OK
