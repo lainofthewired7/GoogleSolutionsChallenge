@@ -74,7 +74,9 @@ export default function MetricCards() {
         </div>
         <div className="flex items-end justify-between">
           <span className="text-xs text-error font-medium flex items-center gap-1">
-            <span className="material-symbols-outlined text-xs">trending_up</span>
+            <span className="material-symbols-outlined text-xs">
+              {data.vacancyTrend.startsWith('-') ? 'trending_down' : 'trending_up'}
+            </span>
             {data.vacancyTrend}
           </span>
           <div className="h-8 w-24 flex items-end gap-0.5">
@@ -129,17 +131,24 @@ export default function MetricCards() {
       </div>
 
       {/* Metric Card 4: Forecast */}
-      <div className="bg-primary/10 p-5 rounded-xl border border-primary/20 flex flex-col justify-between h-28 relative overflow-hidden pointer-events-auto backdrop-blur-xl">
+      <div className="glass-panel p-5 rounded-xl border border-outline-variant/10 flex flex-col justify-between h-28 relative pointer-events-auto backdrop-blur-xl">
         {loading && <div className="absolute inset-0 bg-surface-container/50 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl"><span className="material-symbols-outlined animate-spin text-primary opacity-50">sync</span></div>}
-        <div className="absolute top-0 right-0 p-2 opacity-20">
-          <span className="material-symbols-outlined text-4xl text-primary">auto_graph</span>
-        </div>
         <div>
-          <span className="text-[10px] font-label text-primary uppercase tracking-wider mb-1 block">Forecast Rent (Q4)</span>
+          <span className="text-[10px] font-label text-outline uppercase tracking-wider mb-1 block">Forecast Rent (Q4)</span>
           <h3 className="text-2xl font-headline font-extrabold text-on-surface">{data.rent}</h3>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-primary">{data.rentTrend}</span>
+        <div className="flex items-end justify-between">
+          <span className="text-xs text-primary font-medium flex items-center gap-1">
+            <span className="material-symbols-outlined text-xs">auto_graph</span>
+            {data.rentTrend}
+          </span>
+          <div className="h-8 w-24 flex items-end gap-0.5">
+            <div className="w-full bg-primary/20 h-[40%] rounded-t-sm"></div>
+            <div className="w-full bg-primary/30 h-[45%] rounded-t-sm"></div>
+            <div className="w-full bg-primary/40 h-[55%] rounded-t-sm"></div>
+            <div className="w-full bg-primary/60 h-[75%] rounded-t-sm"></div>
+            <div className="w-full bg-primary h-[95%] rounded-t-sm"></div>
+          </div>
         </div>
       </div>
     </div>
