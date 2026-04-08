@@ -62,6 +62,12 @@ export async function getJobGrowth(
   return request<MetricStubResponse>(`/metrics/jobs?market=${market}`);
 }
 
+export async function getProjects(
+  market: string,
+): Promise<any> {
+  return request<any>(`/metrics/projects?market=${market}`);
+}
+
 /* ── GeoJSON ── */
 
 export async function getBoundaries(

@@ -1,16 +1,48 @@
+import { useState, useEffect } from 'react';
+import { useAppContext } from '../context/AppContext';
+import { getPermits, getProjects } from '../services/api';
+import type { MetricStubResponse } from '../types';
+
 export default function PermitDataView() {
+  const { selectedMarket, marketInfo } = useAppContext();
+  const [permitData, setPermitData] = useState<MetricStubResponse | null>(null);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    
+    Promise.all([
+      getPermits(selectedMarket),
+      getProjects(selectedMarket)
+    ])
+      .then(([permRes, projRes]) => {
+        if (mounted) {
+          setPermitData(permRes);
+          setProjects(projRes.data || []);
+        }
+      })
+      .catch(console.error)
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+      
+    return () => { mounted = false; };
+  }, [selectedMarket]);
+
   return (
     <div className="p-8 min-h-screen">
       {/* Header */}
       <header className="mb-10 flex justify-between items-end">
         <div>
           <nav className="flex gap-2 text-xs text-on-surface-variant mb-2 font-label">
-            <span>Texas</span>
+            <span>{marketInfo?.state_code || 'Texas'}</span>
             <span>/</span>
-            <span className="text-primary">Austin MSA</span>
+            <span className="text-primary">{marketInfo?.name || 'MSA'}</span>
           </nav>
           <h1 className="text-4xl font-headline font-extrabold tracking-tighter text-on-surface">
-            Austin–Round Rock Development Pipeline
+            {marketInfo?.name || 'Austin–Round Rock'} Development Pipeline
           </h1>
         </div>
         <div className="flex gap-3">
@@ -27,31 +59,50 @@ export default function PermitDataView() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="p-6 bg-gradient-to-br from-surface-container-high to-surface-container-low rounded-xl relative overflow-hidden group">
           <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"></div>
-          <p className="text-on-surface-variant text-sm font-medium mb-1">Total Permitted Value</p>
-          <h2 className="text-4xl font-headline font-extrabold text-on-surface">$3.82B</h2>
+          <div className="flex justify-between items-start mb-1">
+            <p className="text-on-surface-variant text-sm font-medium">Total Permitted Value</p>
+            {permitData?.data?.[0]?.source && (
+              <span className="text-[8px] bg-surface-variant px-1.5 py-0.5 rounded text-on-surface-variant font-bold uppercase tracking-widest opacity-60">
+                {permitData.data[0].source}
+              </span>
+            )}
+          </div>
+          <h2 className="text-4xl font-headline font-extrabold text-on-surface">
+            {loading ? '...' : (permitData?.data?.find(d => d.key === 'valuation')?.value || 'N/A')}
+          </h2>
           <div className="mt-4 flex items-center gap-2 text-xs text-primary font-bold">
             <span className="material-symbols-outlined text-sm">trending_up</span>
-            <span>+12.4% YoY</span>
+            <span>{loading ? 'Thinking...' : (permitData?.data?.find(d => d.key === 'valuation')?.trend || 'Live Data')}</span>
           </div>
         </div>
 
         <div className="p-6 bg-gradient-to-br from-surface-container-high to-surface-container-low rounded-xl relative overflow-hidden group">
           <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-tertiary/5 rounded-full blur-2xl group-hover:bg-tertiary/10 transition-colors"></div>
-          <p className="text-on-surface-variant text-sm font-medium mb-1">Avg. Approval Time</p>
-          <h2 className="text-4xl font-headline font-extrabold text-on-surface">142 Days</h2>
+          <div className="flex justify-between items-start mb-1">
+            <p className="text-on-surface-variant text-sm font-medium">Avg. Approval Time</p>
+          </div>
+          <h2 className="text-4xl font-headline font-extrabold text-on-surface">
+            {loading ? '...' : (permitData?.data?.find(d => d.key === 'approval_time')?.value || 'N/A')}
+          </h2>
           <div className="mt-4 flex items-center gap-2 text-xs text-error font-bold">
             <span className="material-symbols-outlined text-sm">schedule</span>
-            <span>-8% efficiency vs 2023</span>
+            <span>{loading ? 'Calculating...' : (permitData?.data?.find(d => d.key === 'approval_time')?.trend || 'Market Avg')}</span>
           </div>
         </div>
 
         <div className="p-6 bg-gradient-to-br from-surface-container-high to-surface-container-low rounded-xl relative overflow-hidden group">
           <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"></div>
-          <p className="text-on-surface-variant text-sm font-medium mb-1">New Residential Units</p>
-          <h2 className="text-4xl font-headline font-extrabold text-on-surface">14,204</h2>
+          <div className="flex justify-between items-start mb-1">
+            <p className="text-on-surface-variant text-sm font-medium">
+              {permitData?.data?.[0]?.source === 'FRED' ? 'New Units Authorized' : 'Recent Permit Filings'}
+            </p>
+          </div>
+          <h2 className="text-4xl font-headline font-extrabold text-on-surface">
+            {loading ? '...' : (permitData?.data?.find(d => d.key === 'filings')?.value || 'N/A')}
+          </h2>
           <div className="mt-4 flex items-center gap-2 text-xs text-primary font-bold">
             <span className="material-symbols-outlined text-sm">add_home</span>
-            <span>2,105 pending review</span>
+            <span>{loading ? 'Scanning...' : (permitData?.data?.find(d => d.key === 'filings')?.trend || 'L12M Activity')}</span>
           </div>
         </div>
       </div>
@@ -67,7 +118,7 @@ export default function PermitDataView() {
           <img
             alt="Seaborn heatmap of permit activity by type and month"
             className="w-full h-full object-contain"
-            src="/api/charts/permits-heatmap?market=austin"
+            src={`/api/charts/permits-heatmap?market=${selectedMarket}`}
             loading="lazy"
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
@@ -153,96 +204,38 @@ export default function PermitDataView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/10">
-              <tr className="hover:bg-surface-variant/10 transition-colors group">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded bg-surface-container-high overflow-hidden border border-outline-variant/20">
-                      <img alt="Tower project thumbnail" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFQCe_y_ZrLpwZqMUOSppJoMACa-ywyOLn-R-BM1QU3XGv6V5bQMx86TQbJsamjHi7UmUf-OiqwOWqTax4goqGZMCwFBTWrJcWSjSTtL0mHc-9zWstz4kG7jfO9eYiz5ninkF77tQAo4M7XQsKdk7QYX5L3aOfxfCtSsrtZgBLP9mahQbp5LKuFkYzFbQDg6AI1zkHKbDLrD1mopFZLy_U4kTNSW511hT2Akut5wPIikZ_tstu6HBkdIvUB5rg0_btgrOvwac3jaE"/>
+              {projects.map((proj, idx) => (
+                <tr key={idx} className="hover:bg-surface-variant/10 transition-colors group">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded bg-surface-container-high overflow-hidden border border-outline-variant/20">
+                        <img alt={proj.name} className="w-full h-full object-cover" src={proj.thumbnail || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=100"}/>
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-on-surface">{proj.name}</div>
+                        <div className="text-[10px] text-on-surface-variant font-label">{proj.address}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="text-sm font-bold text-on-surface">The Republic Tower</div>
-                      <div className="text-[10px] text-on-surface-variant font-label">4th &amp; Guadalupe, ATX</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="px-2 py-1 rounded bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-tighter">{proj.type}</span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <span className="text-sm font-headline font-bold text-on-surface">{proj.valuation}</span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full ${proj.status.includes('Active') || proj.status.includes('Ground') ? 'bg-primary animate-pulse' : 'bg-surface-variant'}`}></span>
+                      <span className="text-xs text-on-surface">{proj.status}</span>
                     </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="px-2 py-1 rounded bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-tighter">Mixed-Use</span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <span className="text-sm font-headline font-bold text-on-surface">$580,000,000</span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                    <span className="text-xs text-on-surface">Groundbreaking</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <button className="p-2 text-on-surface-variant hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined text-lg">arrow_forward</span>
-                  </button>
-                </td>
-              </tr>
-              <tr className="hover:bg-surface-variant/10 transition-colors group">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded bg-surface-container-high overflow-hidden border border-outline-variant/20">
-                      <img alt="Luxury apartment project" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByjMLMSgO1-jGPIHBJKAfO_a20YeG2moWsUPL0hHwDOlniMWTNuro0h4OnO8ylhjT2d3pumzq2l1HZpucN66RfZRbtgig5qNYaBaJOIi5oGLr0NMgKQ0YhZCGueiEPaPZp74KY4jE7t62wgQCz17N-u3c8sZRUsBcafkZomjRjho7g2FjZZop0eLxzOjvuVgVqNn6eA7T7xekQxwFnI4ZpDx-YVvTiwOr8hcvEJ83EmceHC8WjbuIgD76y7GkvToyqYtk6koAYxzg"/>
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-on-surface">E. Riverside Lofts</div>
-                      <div className="text-[10px] text-on-surface-variant font-label">Riverside Corridor</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="px-2 py-1 rounded bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-tighter">Multi-Family</span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <span className="text-sm font-headline font-bold text-on-surface">$145,200,000</span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-tertiary-dim"></span>
-                    <span className="text-xs text-on-surface">In Review</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <button className="p-2 text-on-surface-variant hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined text-lg">arrow_forward</span>
-                  </button>
-                </td>
-              </tr>
-              <tr className="hover:bg-surface-variant/10 transition-colors group">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded bg-surface-container-high overflow-hidden border border-outline-variant/20">
-                      <img alt="Corporate campus" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDW-TNUy7qJ3TE4GIhi-K8s1_yK8UGrF6khuMtiHKrBaX5xRKhbkjAyk4qKCYwtCrpC5CvLEH-tOZS4zjMcOgdX23HsLCzHwp8ZGIRr0a6nJMH5HJ9z5MFdnLQVJNaOuwwAc_Nl5MC_49qmiazHAG5Oq9nEKYqmBfhdXPIkRGPkxgzpqjNVFWv3pAHNr9u5ZMfZkuj2rm18ohNyUE0AAlgFIPezdsEIvkdzgtE1Wo7peBk21ERn3KRmfL9U5AGpcWZk3xEqzdZXy4"/>
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-on-surface">North Austin Tech Hub</div>
-                      <div className="text-[10px] text-on-surface-variant font-label">Domain Northside</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="px-2 py-1 rounded bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-tighter">Commercial</span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <span className="text-sm font-headline font-bold text-on-surface">$225,800,000</span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-primary/60"></span>
-                    <span className="text-xs text-on-surface">Final Inspection</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <button className="p-2 text-on-surface-variant hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined text-lg">arrow_forward</span>
-                  </button>
-                </td>
-              </tr>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button className="p-2 text-on-surface-variant hover:text-primary transition-colors">
+                      <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

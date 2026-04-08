@@ -43,8 +43,25 @@ export default function MetricCards() {
 
         const v = vacRef.status === 'fulfilled' ? extract(vacRef.value, fallbacks.vacancy) : fallbacks.vacancy;
         const j = jobRef.status === 'fulfilled' ? extract(jobRef.value, fallbacks.jobs) : fallbacks.jobs;
-        const p = permRef.status === 'fulfilled' ? extract(permRef.value, fallbacks.permits) : fallbacks.permits;
         const r = rentRef.status === 'fulfilled' ? extract(rentRef.value, fallbacks.rent) : fallbacks.rent;
+        
+        // Specialized extraction for Permits to combine Count and Valuation
+        let p = fallbacks.permits;
+        if (permRef.status === 'fulfilled') {
+          const res = (permRef.value as any);
+          const valuation = res?.data?.find((d: any) => d.key === 'valuation')?.value;
+          const filings = res?.data?.find((d: any) => d.key === 'filings')?.value;
+          const source = res?.data?.[0]?.source;
+          
+          if (filings && valuation) {
+            p = { 
+              value: `${filings} (${valuation})`, 
+              trend: source === 'FRED' ? 'Units Authorized' : 'Recent Filings'
+            };
+          } else if (filings || valuation) {
+            p = { value: filings || valuation, trend: 'Permit Data' };
+          }
+        }
 
         setData({
           vacancy: v.value,

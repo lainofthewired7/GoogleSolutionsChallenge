@@ -13,7 +13,15 @@ MARKET_DATA = {
         "fred_rent": "CUUR0300SEHA",
         "fred_prefix": "AUST448",
         "metro_filter": "Austin",
+        "approx_pop": 974000,
+        "msa_pop": 2400000,
+        "is_satellite": False,
         "hot_zips": ["78701", "78702", "78703", "78704", "78705", "78751", "78756", "78757"],
+        "major_projects": [
+            {"name": "The Republic Tower", "address": "4th & Guadalupe, ATX", "type": "Mixed-Use", "valuation": "$580,000,000", "status": "Groundbreaking", "thumbnail": "https://lh3.googleusercontent.com/aida-public/AB6AXuAFQCe_y_ZrLpwZqMUOSppJoMACa-ywyOLn-R-BM1QU3XGv6V5bQMx86TQbJsamjHi7UmUf-OiqwOWqTax4goqGZMCwFBTWrJcWSjSTtL0mHc-9zWstz4kG7jfO9eYiz5ninkF77tQAo4M7XQsKdk7QYX5L3aOfxfCtSsrtZgBLP9mahQbp5LKuFkYzFbQDg6AI1zkHKbDLrD1mopFZLy_U4kTNSW511hT2Akut5wPIikZ_tstu6HBkdIvUB5rg0_btgrOvwac3jaE"},
+            {"name": "E. Riverside Lofts", "address": "Riverside Corridor", "type": "Multi-Family", "valuation": "$145,200,000", "status": "In Review", "thumbnail": "https://lh3.googleusercontent.com/aida-public/AB6AXuByjMLMSgO1-jGPIHBJKAfO_a20YeG2moWsUPL0hHwDOlniMWTNuro0h4OnO8ylhjT2d3pumzq2l1HZpucN66RfZRbtgig5qNYaBaJOIi5oGLr0NMgKQ0YhZCGueiEPaPZp74KY4jE7t62wgQCz17N-u3c8sZRUsBcafkZomjRjho7g2FjZZop0eLxzOjvuVgVqNn6eA7T7xekQxwFnI4ZpDx-YVvTiwOr8hcvEJ83EmceHC8WjbuIgD76y7GkvToyqYtk6koAYxzg"},
+            {"name": "North Austin Tech Hub", "address": "Domain Northside", "type": "Commercial", "valuation": "$225,800,000", "status": "Final Inspection", "thumbnail": "https://lh3.googleusercontent.com/aida-public/AB6AXuDDW-TNUy7qJ3TE4GIhi-K8s1_yK8UGrF6khuMtiHKrBaX5xRKhbkjAyk4qKCYwtCrpC5CvLEH-tOZS4zjMcOgdX23HsLCzHwp8ZGIRr0a6nJMH5HJ9z5MFdnLQVJNaOuwwAc_Nl5MC_49qmiazHAG5Oq9nEKYqmBfhdXPIkRGPkxgzpqjNVFWv3pAHNr9u5ZMfZkuj2rm18ohNyUE0AAlgFIPezdsEIvkdzgtE1Wo7peBk21ERn3KRmfL9U5AGpcWZk3xEqzdZXy4"}
+        ]
     },
     "round-rock": {
         "name": "Round Rock, TX",
@@ -25,6 +33,10 @@ MARKET_DATA = {
         "fred_jobs": "AUST448NA",
         "fred_prefix": "AUST448",
         "metro_filter": "Austin",
+        "approx_pop": 133000,
+        "msa_pop": 2400000,
+        "is_satellite": True,
+        "parent_market": "austin"
     },
     "pflugerville": {
         "name": "Pflugerville, TX",
@@ -81,7 +93,14 @@ MARKET_DATA = {
         "fred_rent": "CUUSA316SEHA",
         "fred_prefix": "DALL148",
         "metro_filter": "Dallas",
+        "approx_pop": 1288000,
+        "msa_pop": 8100000,
+        "is_satellite": False,
         "hot_zips": ["75201", "75204", "75205", "75206", "75219", "75225", "75231"],
+        "major_projects": [
+            {"name": "Southern Gateway Deck Park", "address": "I-35E @ Marsalis", "type": "Infrastructure", "valuation": "$172,000,000", "status": "Under Construction", "thumbnail": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=100"},
+            {"name": "Field Street Tower", "address": "Field & Woodall Rogers", "type": "Commercial", "valuation": "$250,000,000", "status": "Planned", "thumbnail": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=100"}
+        ]
     },
     "houston": {
         "name": "Houston, TX",
@@ -173,8 +192,15 @@ MARKET_DATA = {
         "state_fips": "06",
         "msa_code": "41860",
         "fred_jobs": "SANF106NA",
-        "fred_prefix": "SANF106",
+        "fred_prefix": "SANA418",
         "metro_filter": "San Francisco",
+        "approx_pop": 815000,
+        "msa_pop": 4700000,
+        "is_satellite": False,
+        "major_projects": [
+            {"name": "Potrero Power Station", "address": "Dogpatch Waterfront", "type": "Mixed-Use", "valuation": "$2,000,000,000", "status": "Active Phase 1", "thumbnail": "https://images.unsplash.com/photo-1449156059431-787c5b7cb39c?auto=format&fit=crop&w=100"},
+            {"name": "Mission Rock", "address": "Adjacent to Oracle Park", "type": "Residential/Commercial", "valuation": "$1,000,000,000", "status": "Pre-Leasing", "thumbnail": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=100"}
+        ]
     },
     "san-jose": {
         "name": "San Jose, CA",
@@ -197,6 +223,13 @@ MARKET_DATA = {
         "fred_jobs": "LOSA106NA",
         "fred_prefix": "LOSA106",
         "metro_filter": "Los Angeles",
+        "approx_pop": 3898000,
+        "msa_pop": 12800000,
+        "is_satellite": False,
+        "major_projects": [
+            {"name": "LACMA Building the Future", "address": "Wilshire Blvd", "type": "Cultural", "valuation": "$750,000,000", "status": "Under Construction", "thumbnail": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=100"},
+            {"name": "The Grand LA", "address": "Downtown LA", "type": "Mixed-Use", "valuation": "$1,000,000,000", "status": "Active", "thumbnail": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=100"}
+        ]
     },
     "san-diego": {
         "name": "San Diego, CA",
@@ -397,6 +430,13 @@ MARKET_DATA = {
         "fred_jobs": "NEWY136NA",
         "fred_prefix": "NEWY136",
         "metro_filter": "New York",
+        "approx_pop": 8336000,
+        "msa_pop": 19600000,
+        "is_satellite": False,
+        "major_projects": [
+            {"name": "JFK New Terminal One", "address": "Queens, NY", "type": "Infrastructure", "valuation": "$9,500,000,000", "status": "Active Construction", "thumbnail": "https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?auto=format&fit=crop&w=100"},
+            {"name": "Hudson Yards Phase 2", "address": "West Side, Manhattan", "type": "Mixed-Use", "valuation": "$6,000,000,000", "status": "Permitting", "thumbnail": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=100"}
+        ]
     },
     "boston": {
         "name": "Boston, MA",
