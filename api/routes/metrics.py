@@ -129,8 +129,11 @@ async def get_jobs(market: str = Query(default="austin")):
             latest = float(obs[0]["value"])
             year_ago = float(obs[12]["value"])
             growth = ((latest - year_ago) / year_ago) * 100
-            trend = f"{growth:+.1f}% YoY"
-            val = f"{latest/1000:,.1f}M" if latest > 1000 else f"{latest:,.0f}k"
+            
+            # Fix: Primary value should be the growth %, trend should be the total count
+            val = f"{growth:+.1f}%"
+            count_str = f"{latest/1000:,.1f}M" if latest > 1000 else f"{latest:,.0f}k"
+            trend = f"{count_str} Total"
         else:
             val = "N/A"
             trend = "—"
@@ -142,7 +145,7 @@ async def get_jobs(market: str = Query(default="austin")):
         }
     except Exception:
         logger.exception("Error fetching FRED jobs for %s", market)
-        return {"market": market, "data": [{"value": "3.8%", "trend": "Above Avg"}], "message": "Demo Mode"}
+        return {"market": market, "data": [{"value": "+1.2%", "trend": "1.4M Total"}], "message": "Demo Mode"}
 
 
 # ══════════════════════════════════════════════════════════════
