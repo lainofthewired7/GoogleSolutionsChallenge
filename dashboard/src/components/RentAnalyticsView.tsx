@@ -138,7 +138,7 @@ export default function RentAnalyticsView() {
                   <div key={i} className="flex-1 min-w-[16px] flex flex-col items-center group cursor-help relative h-full z-20">
                     <div className="flex-1 w-full flex items-end overflow-visible">
                       <div 
-                        className="w-full bg-[#00f2ff] rounded-t-[3px] transition-all group-hover:scale-y-105 group-hover:brightness-150 duration-300 shadow-[0_0_30px_rgba(0,242,255,0.8)] border border-white/20"
+                        className="w-full bg-primary rounded-t-[3px] transition-all group-hover:scale-y-105 group-hover:brightness-125 duration-300 shadow-[0_0_20px_var(--primary-glow)] border border-white/10"
                         style={{ height: `${height}%`, minHeight: '4px' }}
                       />
                     </div>

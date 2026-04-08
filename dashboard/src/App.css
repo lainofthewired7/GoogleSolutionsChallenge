@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* ══════════════════════════════════════════════════════════════
+   DARK THEME (default) — Obsidian Flux
+   ══════════════════════════════════════════════════════════════ */
+
 @theme {
   --color-inverse-primary: #006976;
   --color-outline: #6d758c;
@@ -58,11 +62,78 @@
   --font-label: "Inter", sans-serif;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   LIGHT THEME — Aether Lux
+   ══════════════════════════════════════════════════════════════ */
+
+[data-theme="light"] {
+  --color-inverse-primary: #81ecff;
+  --color-outline: #6e7891;
+  --color-tertiary: #6d45d8;
+  --color-on-secondary-container: #1d2b3e;
+  --color-secondary-container: #dce3f0;
+  --color-surface-bright: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-surface-tint: #006976;
+  --color-tertiary-dim: #5a35c0;
+  --color-on-surface-variant: #434a5e;
+  --color-on-secondary-fixed: #354053;
+  --color-outline-variant: #c3c8d8;
+  --color-on-primary-fixed-variant: #005762;
+  --color-primary-fixed-dim: #00d4ec;
+  --color-on-surface: #1a1c2b;
+  --color-background: #f8f9fe;
+  --color-secondary: #505d73;
+  --color-surface-container-low: #f2f3fa;
+  --color-surface: #f8f9fe;
+  --color-primary-dim: #007e8e;
+  --color-error: #ba1a1a;
+  --color-surface-container-highest: #dfe1ec;
+  --color-on-error: #ffffff;
+  --color-tertiary-fixed-dim: #ab93ff;
+  --color-on-error-container: #410002;
+  --color-surface-variant: #e2e5f0;
+  --color-surface-container-lowest: #ffffff;
+  --color-primary-container: #c2f4ff;
+  --color-tertiary-container: #e9ddff;
+  --color-inverse-surface: #2d3042;
+  --color-on-primary-container: #001f24;
+  --color-on-primary-fixed: #003840;
+  --color-on-primary: #ffffff;
+  --color-tertiary-fixed: #e9ddff;
+  --color-secondary-dim: #6a7891;
+  --color-on-secondary: #ffffff;
+  --color-inverse-on-surface: #eef0fb;
+  --color-on-tertiary-fixed: #1c0055;
+  --color-surface-dim: #d8dae5;
+  --color-on-tertiary-fixed-variant: #4000ad;
+  --color-surface-container-high: #e8eaf4;
+  --color-primary-fixed: #c2f4ff;
+  --color-secondary-fixed: #dce3f0;
+  --color-on-tertiary: #ffffff;
+  --color-on-background: #1a1c2b;
+  --color-error-dim: #93000a;
+  --color-on-tertiary-container: #24005a;
+  --color-secondary-fixed-dim: #c0c8d9;
+  --color-surface-container: #eceeF8;
+  --color-on-secondary-fixed-variant: #515c70;
+  --color-primary: #006976;
+}
+
+/* ── Smooth theme transition ── */
+html {
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
 @layer utilities {
   .glass-panel {
       background: rgba(60, 71, 90, 0.4);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
+  }
+  [data-theme="light"] .glass-panel {
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
   }
   .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -70,12 +141,22 @@
   .active-glow {
       box-shadow: 0 0 15px rgba(129, 236, 255, 0.15);
   }
+  [data-theme="light"] .active-glow {
+      box-shadow: 0 0 15px rgba(0, 105, 118, 0.12);
+  }
   .heatmap-overlay {
       background: radial-gradient(circle at 40% 50%, rgba(0, 229, 255, 0.15) 0%, transparent 60%),
                   radial-gradient(circle at 60% 30%, rgba(166, 140, 255, 0.1) 0%, transparent 50%);
   }
+  [data-theme="light"] .heatmap-overlay {
+      background: radial-gradient(circle at 40% 50%, rgba(0, 105, 118, 0.08) 0%, transparent 60%),
+                  radial-gradient(circle at 60% 30%, rgba(109, 69, 216, 0.06) 0%, transparent 50%);
+  }
   .obsidian-glow {
       box-shadow: 0 0 40px -10px rgba(129, 236, 255, 0.15);
+  }
+  [data-theme="light"] .obsidian-glow {
+      box-shadow: 0 0 40px -10px rgba(0, 105, 118, 0.1);
   }
 }
 

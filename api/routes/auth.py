@@ -9,7 +9,8 @@ from api.auth import (
     create_user, authenticate_user, create_access_token,
     create_or_get_oauth_user, update_user
 )
-from api.deps import get_current_user, UserRecord
+from api.deps import get_current_user
+from db.models import User
 from api.schemas import UserCreate, UserUpdate, UserResponse, TokenResponse
 
 router = APIRouter()
@@ -86,7 +87,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_me(current_user: UserRecord = Depends(get_current_user)):
+async def get_me(current_user: User = Depends(get_current_user)):
     """Return the authenticated user's profile."""
     return UserResponse(
         id=current_user.id,
@@ -98,7 +99,7 @@ async def get_me(current_user: UserRecord = Depends(get_current_user)):
 
 
 @router.put("/update", response_model=UserResponse)
-async def update_profile(data: UserUpdate, current_user: UserRecord = Depends(get_current_user)):
+async def update_profile(data: UserUpdate, current_user: User = Depends(get_current_user)):
     """Update the authenticated user's profile."""
     user = update_user(current_user.email, data.display_name)
     if not user:

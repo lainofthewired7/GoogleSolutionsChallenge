@@ -27,6 +27,7 @@ const AppContext = createContext<AppContextValue | null>(null);
 
 const DEFAULT_LAYERS: LayerToggles = {
   heatmap: true,
+  globalHeatmap: false,
   permits: false,
   vacancy: false,
   jobs: false,

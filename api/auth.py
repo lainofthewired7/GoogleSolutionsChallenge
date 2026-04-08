@@ -63,98 +63,86 @@ def decode_access_token(token: str) -> Optional[dict]:
         return None
 
 
-# === In-memory user store (placeholder until DB Phase 1 is done) ===
+import secrets
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
+from db.models import User, WatchlistItem
+from db.connection import SessionLocal
 
-class UserRecord:
-    """In-memory representation of a user."""
+# ... (Keeping hash/jwt functions unchanged) ...
 
-    def __init__(self, user_id: int, email: str, hashed_password: str,
-                 display_name: str, auth_provider: str = "local"):
-        self.id = user_id
-        self.email = email
-        self.hashed_password = hashed_password
-        self.display_name = display_name
-        self.auth_provider = auth_provider
-        self.is_active = True
-        self.created_at = datetime.now(timezone.utc).isoformat()
+# === Database Helpers ===
 
-
-class WatchlistRecord:
-    """In-memory representation of a watchlist item."""
-
-    def __init__(self, item_id: int, user_id: int, market_code: str,
-                 geo_code: str = "", geo_type: str = "msa"):
-        self.id = item_id
-        self.user_id = user_id
-        self.market_code = market_code
-        self.geo_code = geo_code
-        self.geo_type = geo_type
-        self.created_at = datetime.now(timezone.utc).isoformat()
-
-
-# Stores: email → UserRecord
-users_db: dict[str, UserRecord] = {}
-_next_user_id = 1
-
-# Stores: item_id → WatchlistRecord
-watchlist_db: dict[int, WatchlistRecord] = {}
-_next_watchlist_id = 1
-
-
-def create_user(email: str, password: str, display_name: str) -> UserRecord:
-    """Register a new user in the in-memory store."""
-    global _next_user_id
-    if email in users_db:
+def create_user(email: str, password: str, display_name: str) -> User:
+    """Register a new user in the persistent database."""
+    session = SessionLocal()
+    try:
+        user = User(
+            email=email,
+            hashed_password=hash_password(password),
+            display_name=display_name,
+        )
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        return user
+    except IntegrityError:
+        session.rollback()
         raise ValueError("Email already registered")
-    user = UserRecord(
-        user_id=_next_user_id,
-        email=email,
-        hashed_password=hash_password(password),
-        display_name=display_name,
-    )
-    users_db[email] = user
-    _next_user_id += 1
-    return user
+    finally:
+        session.close()
 
 
-def update_user(email: str, display_name: str) -> Optional[UserRecord]:
+def update_user(email: str, display_name: str) -> Optional[User]:
     """Update user profile."""
-    user = users_db.get(email)
-    if user:
-        user.display_name = display_name
-    return user
+    session = SessionLocal()
+    try:
+        user = session.query(User).filter(User.email == email).first()
+        if user:
+            user.display_name = display_name
+            session.commit()
+            session.refresh(user)
+        return user
+    finally:
+        session.close()
 
 
-def create_or_get_oauth_user(email: str, display_name: str, provider: str) -> UserRecord:
-    """Find an existing user by email, or create a new one for OAuth sign-in.
+def create_or_get_oauth_user(email: str, display_name: str, provider: str) -> User:
+    """Find an existing user by email, or create a new one for OAuth sign-in."""
+    session = SessionLocal()
+    try:
+        user = session.query(User).filter(User.email == email).first()
+        if user:
+            # We don't have a provider field in the current model, but we could add it
+            # For now just return the user
+            return user
+        
+        user = User(
+            email=email,
+            hashed_password=hash_password(secrets.token_hex(32)),
+            display_name=display_name or email.split("@")[0],
+        )
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        return user
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
-    For OAuth users, a random placeholder password is set (never used for login).
-    If the user already exists, their auth_provider is updated.
-    """
-    global _next_user_id
-    existing = users_db.get(email)
-    if existing:
-        existing.auth_provider = provider
-        return existing
-    import secrets
-    user = UserRecord(
-        user_id=_next_user_id,
-        email=email,
-        hashed_password=hash_password(secrets.token_hex(32)),
-        display_name=display_name or email.split("@")[0],
-        auth_provider=provider,
-    )
-    users_db[email] = user
-    _next_user_id += 1
-    return user
 
-
-def get_user_by_email(email: str) -> Optional[UserRecord]:
+def get_user_by_email(email: str) -> Optional[User]:
     """Look up a user by email."""
-    return users_db.get(email)
+    session = SessionLocal()
+    try:
+        return session.query(User).filter(User.email == email).first()
+    finally:
+        session.close()
 
 
-def authenticate_user(email: str, password: str) -> Optional[UserRecord]:
+def authenticate_user(email: str, password: str) -> Optional[User]:
     """Verify credentials and return the user, or None."""
     user = get_user_by_email(email)
     if not user or not verify_password(password, user.hashed_password):
@@ -163,30 +151,45 @@ def authenticate_user(email: str, password: str) -> Optional[UserRecord]:
 
 
 def add_watchlist_item(user_id: int, market_code: str,
-                       geo_code: str = "", geo_type: str = "msa") -> WatchlistRecord:
+                       geo_code: str = "", geo_type: str = "msa") -> WatchlistItem:
     """Add a market/geo to the user's watchlist."""
-    global _next_watchlist_id
-    item = WatchlistRecord(
-        item_id=_next_watchlist_id,
-        user_id=user_id,
-        market_code=market_code,
-        geo_code=geo_code,
-        geo_type=geo_type,
-    )
-    watchlist_db[_next_watchlist_id] = item
-    _next_watchlist_id += 1
-    return item
+    session = SessionLocal()
+    try:
+        item = WatchlistItem(
+            user_id=user_id,
+            market_code=market_code,
+            geo_code=geo_code,
+            geo_type=geo_type,
+        )
+        session.add(item)
+        session.commit()
+        session.refresh(item)
+        return item
+    finally:
+        session.close()
 
 
-def get_user_watchlist(user_id: int) -> list[WatchlistRecord]:
+def get_user_watchlist(user_id: int) -> list[WatchlistItem]:
     """Get all watchlist items for a user."""
-    return [w for w in watchlist_db.values() if w.user_id == user_id]
+    session = SessionLocal()
+    try:
+        return session.query(WatchlistItem).filter(WatchlistItem.user_id == user_id).all()
+    finally:
+        session.close()
 
 
 def remove_watchlist_item(item_id: int, user_id: int) -> bool:
     """Remove a watchlist item if it belongs to the user."""
-    item = watchlist_db.get(item_id)
-    if item and item.user_id == user_id:
-        del watchlist_db[item_id]
-        return True
-    return False
+    session = SessionLocal()
+    try:
+        item = session.query(WatchlistItem).filter(
+            WatchlistItem.id == item_id,
+            WatchlistItem.user_id == user_id
+        ).first()
+        if item:
+            session.delete(item)
+            session.commit()
+            return True
+        return False
+    finally:
+        session.close()

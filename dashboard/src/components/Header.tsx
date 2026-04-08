@@ -1,18 +1,20 @@
 /**
- * Header component — brand title, nav links, search with autocomplete, auth, and notifications.
- * Uses the Obsidian Flux design system (Tailwind).
+ * Header component — brand title, nav links, search with autocomplete, auth, theme toggle, and notifications.
+ * Uses the Obsidian Flux / Aether Lux design system (Tailwind).
  */
 
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useAppContext } from '../context/AppContext';
+import { useTheme } from '../context/ThemeContext';
 import LoginModal from './LoginModal';
 import UserMenu from './UserMenu';
 
 export default function Header() {
   const { isAuthenticated } = useAuth();
   const { setMarket, markets, selectedMarket, marketInfo } = useAppContext();
+  const { theme, toggleTheme } = useTheme();
   const [showLogin, setShowLogin] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
@@ -139,7 +141,7 @@ export default function Header() {
 
             {/* Dropdown */}
             {showDropdown && (
-              <div className="absolute top-full left-0 right-0 mt-1 rounded-xl border border-outline-variant/15 overflow-hidden shadow-2xl" style={{ background: 'rgba(15, 23, 36, 0.97)', backdropFilter: 'blur(24px)' }}>
+              <div className="absolute top-full left-0 right-0 mt-1 rounded-xl border border-outline-variant/15 overflow-hidden shadow-2xl glass-panel">
                 <div className="max-h-72 overflow-y-auto">
                   {filteredMarkets.length === 0 ? (
                     <div className="px-4 py-3 text-sm text-on-surface-variant">
@@ -174,6 +176,17 @@ export default function Header() {
               </div>
             )}
           </div>
+          {/* Theme toggle — always visible */}
+          <button
+            className="text-on-surface/70 hover:text-primary transition-all active:scale-95 cursor-pointer"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            <span className="material-symbols-outlined">
+              {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+            </span>
+          </button>
+
           {isAuthenticated && (
             <>
               <button className="text-on-surface/70 hover:text-primary transition-all active:scale-95" title="Notifications">
