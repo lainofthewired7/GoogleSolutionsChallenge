@@ -86,22 +86,20 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-6">
             <Link
               to="/"
-              className={`transition-colors duration-300 pb-1 ${
-                location.pathname === '/'
+              className={`transition-colors duration-300 pb-1 ${location.pathname === '/'
                   ? 'text-primary border-b-2 border-primary'
                   : 'text-on-surface/70 hover:text-primary'
-              }`}
+                }`}
             >
               Market Overview
             </Link>
             {isAuthenticated && (
               <Link
                 to="/compare"
-                className={`transition-colors duration-300 pb-1 ${
-                  location.pathname === '/compare'
+                className={`transition-colors duration-300 pb-1 ${location.pathname === '/compare'
                     ? 'text-primary border-b-2 border-primary'
                     : 'text-on-surface/70 hover:text-primary'
-                }`}
+                  }`}
               >
                 Comparison View
               </Link>
@@ -118,7 +116,7 @@ export default function Header() {
             <input
               ref={inputRef}
               className="bg-surface-container-highest border-none rounded-xl py-2 pl-10 pr-4 text-sm w-72 focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-outline text-on-surface"
-              placeholder="Search markets (e.g. Dallas, Phoenix)..."
+              placeholder="Search markets"
               type="text"
               value={searchValue}
               onChange={(e) => {
@@ -151,13 +149,12 @@ export default function Header() {
                     filteredMarkets.map((m, i) => (
                       <button
                         key={m.code}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors cursor-pointer ${
-                          i === highlightIndex
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors cursor-pointer ${i === highlightIndex
                             ? 'bg-primary/15 text-primary'
                             : m.code === selectedMarket
                               ? 'bg-surface-container-high text-on-surface'
                               : 'text-on-surface/80 hover:bg-surface-container-highest'
-                        }`}
+                          }`}
                         onClick={() => selectMarket(m.code)}
                         onMouseEnter={() => setHighlightIndex(i)}
                       >
