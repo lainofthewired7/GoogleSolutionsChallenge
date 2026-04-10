@@ -4,12 +4,22 @@ import { getPermits, getProjects } from '../services/api';
 import type { MetricStubResponse } from '../types';
 import PermitMap from './PermitMap';
 import PermitBreakdownChart from './PermitBreakdownChart';
+import GenerateInsightsModal from './GenerateInsightsModal';
+import { exportToPDF } from '../utils/pdfExport';
 
 export default function PermitDataView() {
   const { selectedMarket, marketInfo } = useAppContext();
   const [permitData, setPermitData] = useState<MetricStubResponse | null>(null);
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [insightsOpen, setInsightsOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async () => {
+    setExporting(true);
+    await exportToPDF('permit-report', `${marketInfo?.name || 'Development'}-Pipeline-Report`);
+    setExporting(false);
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -34,7 +44,7 @@ export default function PermitDataView() {
   }, [selectedMarket]);
 
   return (
-    <div className="p-8 min-h-screen">
+    <div id="permit-report" className="p-8 min-h-screen bg-background">
       {/* Header */}
       <header className="mb-10 flex justify-between items-end">
         <div>
@@ -48,10 +58,17 @@ export default function PermitDataView() {
           </h1>
         </div>
         <div className="flex gap-3">
-          <button className="px-4 py-2 bg-surface-container-high text-on-surface text-sm font-semibold rounded-md border border-outline-variant/10 hover:bg-surface-container-highest transition-colors">
-            Export PDF
+          <button 
+            onClick={handleExport}
+            disabled={exporting}
+            className="px-5 py-2 bg-surface-container-highest text-on-surface text-sm font-semibold rounded-md hover:bg-surface-variant transition-colors border border-outline-variant/10 disabled:opacity-50"
+          >
+            {exporting ? 'Exporting...' : 'Export PDF'}
           </button>
-          <button className="px-4 py-2 bg-primary text-on-primary text-sm font-bold rounded-md hover:brightness-105 transition-all">
+          <button 
+            onClick={() => setInsightsOpen(true)}
+            className="px-5 py-2 bg-[#006A75] text-white text-sm font-bold rounded-md hover:brightness-110 transition-all shadow-sm"
+          >
             Generate Insights
           </button>
         </div>
@@ -148,7 +165,11 @@ export default function PermitDataView() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded bg-surface-container-high overflow-hidden border border-outline-variant/20">
-                        <img alt={proj.name} className="w-full h-full object-cover" src={proj.thumbnail || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=100"}/>
+                        <img 
+                          alt={proj.name} 
+                          className="w-full h-full object-cover" 
+                          src={idx % 2 === 0 ? "/assets/project-1.png" : "/assets/project-2.png"}
+                        />
                       </div>
                       <div>
                         <div className="text-sm font-bold text-on-surface">{proj.name}</div>
@@ -185,6 +206,11 @@ export default function PermitDataView() {
         <span className="material-symbols-outlined">filter_list</span>
       </button>
 
+      <GenerateInsightsModal 
+        isOpen={insightsOpen} 
+        onClose={() => setInsightsOpen(false)} 
+        title="Development Pipeline Insights"
+      />
     </div>
   );
 }
