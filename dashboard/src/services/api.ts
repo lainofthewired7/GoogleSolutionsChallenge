@@ -50,6 +50,12 @@ export async function getPermits(
   );
 }
 
+export async function getPermitsBreakdown(
+  market: string,
+): Promise<any> {
+  return request<any>(`/metrics/permits/breakdown?market=${market}`);
+}
+
 export async function getVacancy(
   market: string,
 ): Promise<MetricStubResponse> {

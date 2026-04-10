@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { getPermits, getProjects } from '../services/api';
 import type { MetricStubResponse } from '../types';
+import PermitMap from './PermitMap';
+import PermitBreakdownChart from './PermitBreakdownChart';
 
 export default function PermitDataView() {
   const { selectedMarket, marketInfo } = useAppContext();
@@ -109,27 +111,8 @@ export default function PermitDataView() {
 
       {/* Visual Analytics Block */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-        {/* Development Heatmap (Seaborn) */}
         <div className="lg:col-span-3 bg-surface-container-low rounded-xl overflow-hidden relative min-h-[400px]">
-          <div className="absolute top-4 left-4 z-10 p-3 rounded-lg border border-outline-variant/20" style={{ background: 'rgba(60, 71, 90, 0.4)', backdropFilter: 'blur(16px)' }}>
-            <h3 className="text-on-surface font-headline font-bold text-sm">Permit Activity Heatmap</h3>
-            <p className="text-on-surface-variant text-[10px] uppercase font-bold tracking-widest mt-1">Type × Month Breakdown</p>
-          </div>
-          <img
-            alt="Seaborn heatmap of permit activity by type and month"
-            className="w-full h-full object-contain"
-            src={`/api/charts/permits-heatmap?market=${selectedMarket}`}
-            loading="lazy"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
-          <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-2">
-            <div className="p-2 rounded-md border border-outline-variant/10 text-[10px] text-on-surface font-bold" style={{ background: 'rgba(60, 71, 90, 0.4)', backdropFilter: 'blur(16px)' }}>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_#00E5FF]"></span>
-                Live from Socrata API
-              </div>
-            </div>
-          </div>
+          <PermitMap />
         </div>
 
         {/* New Permits Issued Chart */}
@@ -138,51 +121,7 @@ export default function PermitDataView() {
             <h3 className="text-on-surface font-headline font-bold text-lg">New Permits Issued</h3>
             <p className="text-on-surface-variant text-xs mb-6">Residential vs. Commercial (L12M)</p>
           </div>
-          
-          <div className="flex-1 flex items-end gap-2 mb-4 h-48">
-            {/* Faux Bar Chart */}
-            <div className="flex-1 flex flex-col justify-end gap-1 group">
-              <div className="w-full bg-primary/20 rounded-t h-[60%] relative overflow-hidden"><div className="absolute inset-x-0 bottom-0 bg-primary/40 h-1/2"></div></div>
-              <div className="w-full bg-on-surface-variant/10 rounded-t h-[40%]"></div>
-              <span className="text-[8px] text-center mt-2 opacity-50">OCT</span>
-            </div>
-            <div className="flex-1 flex flex-col justify-end gap-1">
-              <div className="w-full bg-primary/20 rounded-t h-[85%] relative overflow-hidden"><div className="absolute inset-x-0 bottom-0 bg-primary/40 h-1/2"></div></div>
-              <div className="w-full bg-on-surface-variant/10 rounded-t h-[55%]"></div>
-              <span className="text-[8px] text-center mt-2 opacity-50">NOV</span>
-            </div>
-            <div className="flex-1 flex flex-col justify-end gap-1">
-              <div className="w-full bg-primary/20 rounded-t h-[70%] relative overflow-hidden"><div className="absolute inset-x-0 bottom-0 bg-primary/40 h-1/2"></div></div>
-              <div className="w-full bg-on-surface-variant/10 rounded-t h-[30%]"></div>
-              <span className="text-[8px] text-center mt-2 opacity-50">DEC</span>
-            </div>
-            <div className="flex-1 flex flex-col justify-end gap-1">
-              <div className="w-full bg-primary/20 rounded-t h-[95%] relative overflow-hidden shadow-[0_0_15px_rgba(129,236,255,0.2)]"><div className="absolute inset-x-0 bottom-0 bg-primary/40 h-1/2"></div></div>
-              <div className="w-full bg-on-surface-variant/10 rounded-t h-[45%]"></div>
-              <span className="text-[8px] text-center mt-2 opacity-50">JAN</span>
-            </div>
-            <div className="flex-1 flex flex-col justify-end gap-1">
-              <div className="w-full bg-primary/20 rounded-t h-[40%] relative overflow-hidden"><div className="absolute inset-x-0 bottom-0 bg-primary/40 h-1/2"></div></div>
-              <div className="w-full bg-on-surface-variant/10 rounded-t h-[20%]"></div>
-              <span className="text-[8px] text-center mt-2 opacity-50">FEB</span>
-            </div>
-            <div className="flex-1 flex flex-col justify-end gap-1">
-              <div className="w-full bg-primary/20 rounded-t h-[80%] relative overflow-hidden"><div className="absolute inset-x-0 bottom-0 bg-primary/40 h-1/2"></div></div>
-              <div className="w-full bg-on-surface-variant/10 rounded-t h-[60%]"></div>
-              <span className="text-[8px] text-center mt-2 opacity-50">MAR</span>
-            </div>
-          </div>
-
-          <div className="flex gap-4 pt-4 border-t border-outline-variant/10">
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-sm bg-primary/60"></span>
-              <span className="text-[10px] text-on-surface font-bold">Residential</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-sm bg-on-surface-variant/20"></span>
-              <span className="text-[10px] text-on-surface font-bold">Commercial</span>
-            </div>
-          </div>
+          <PermitBreakdownChart />
         </div>
       </div>
 

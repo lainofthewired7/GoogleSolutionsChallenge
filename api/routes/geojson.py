@@ -169,7 +169,16 @@ async def _get_market_heatmap_points(market_key: str, metric: str) -> list[dict]
                     lng = float(rec["longitude"])
                     val = float(rec.get("total_job_valuation", 0))
                     weight = min(val / 500000 + 0.3, 5.0)
-                    points.append({"lat": lat, "lng": lng, "weight": weight})
+                    # Add metadata for frontend filtering
+                    month = rec.get("issue_date", "")[:7] # YYYY-MM
+                    p_type = rec.get("permit_class_mapped", "Other")
+                    points.append({
+                        "lat": lat, 
+                        "lng": lng, 
+                        "weight": weight,
+                        "month": month,
+                        "type": p_type
+                    })
                 except (KeyError, ValueError, TypeError):
                     continue
             return points
