@@ -87,23 +87,12 @@ export default function Header() {
             <Link
               to="/"
               className={`transition-colors duration-300 pb-1 ${location.pathname === '/'
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-on-surface/70 hover:text-primary'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-on-surface/70 hover:text-primary'
                 }`}
             >
               Market Overview
             </Link>
-            {isAuthenticated && (
-              <Link
-                to="/compare"
-                className={`transition-colors duration-300 pb-1 ${location.pathname === '/compare'
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-on-surface/70 hover:text-primary'
-                  }`}
-              >
-                Comparison View
-              </Link>
-            )}
           </div>
         </div>
 
@@ -150,10 +139,10 @@ export default function Header() {
                       <button
                         key={m.code}
                         className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors cursor-pointer ${i === highlightIndex
-                            ? 'bg-primary/15 text-primary'
-                            : m.code === selectedMarket
-                              ? 'bg-surface-container-high text-on-surface'
-                              : 'text-on-surface/80 hover:bg-surface-container-highest'
+                          ? 'bg-primary/15 text-primary'
+                          : m.code === selectedMarket
+                            ? 'bg-surface-container-high text-on-surface'
+                            : 'text-on-surface/80 hover:bg-surface-container-highest'
                           }`}
                         onClick={() => selectMarket(m.code)}
                         onMouseEnter={() => setHighlightIndex(i)}
