@@ -94,18 +94,6 @@ export default function Header() {
             >
               Market Overview
             </Link>
-            {isAuthenticated && (
-              <Link
-                to="/compare"
-                className={`transition-colors duration-300 pb-1 ${
-                  location.pathname === '/compare'
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-on-surface/70 hover:text-primary'
-                }`}
-              >
-                Comparison View
-              </Link>
-            )}
           </div>
         </div>
 
