@@ -1,1 +1,1 @@
-"""Projectr Analytics — Test Suite."""
+"""Indicium — Test Suite."""

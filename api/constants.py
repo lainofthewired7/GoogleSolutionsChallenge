@@ -1,4 +1,4 @@
-"""Centralized constants and configuration for the Projectr API."""
+"""Centralized constants and configuration for the Indicium API."""
 
 MARKET_DATA = {
     # ── Texas ──────────────────────────────────────────

@@ -5,7 +5,7 @@
 import type { User, TokenResponse } from '../types';
 
 const API_BASE = '/api/auth';
-const TOKEN_KEY = 'projectr_token';
+const TOKEN_KEY = 'indicium_token';
 
 /* ── Token storage ── */
 

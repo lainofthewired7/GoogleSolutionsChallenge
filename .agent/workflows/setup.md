@@ -1,5 +1,5 @@
 ---
-description: Set up the development environment for Projectr Analytics
+description: Set up the development environment for Indicium
 ---
 
 # Environment Setup
@@ -13,7 +13,7 @@ description: Set up the development environment for Projectr Analytics
 
 1. Clone the repository and navigate into it
 ```bash
-cd "/home/jcmb/Projectr Analytics"
+cd "/home/jcmb/Indicium"
 ```
 
 2. Copy the environment template and fill in API keys

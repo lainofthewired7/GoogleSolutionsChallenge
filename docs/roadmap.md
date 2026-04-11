@@ -1,6 +1,6 @@
-# Projectr Analytics — Roadmap
+# Indicium — Roadmap
 
-This document outlines the planned future development for **Projectr Analytics**.
+This document outlines the planned future development for **Indicium**.
 
 ---
 

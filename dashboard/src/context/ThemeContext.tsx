@@ -21,7 +21,7 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const STORAGE_KEY = 'projectr_theme';
+const STORAGE_KEY = 'indicium_theme';
 
 function getInitialTheme(): Theme {
   if (typeof window === 'undefined') return 'dark';

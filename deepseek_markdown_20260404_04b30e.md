@@ -1,4 +1,4 @@
-# Projectr Analytics — Real Estate Data Ingestion Engine & Geospatial Dashboard
+# Indicium — Real Estate Data Ingestion Engine & Geospatial Dashboard
 
 ## Project Overview
 

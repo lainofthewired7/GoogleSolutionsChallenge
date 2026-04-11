@@ -108,6 +108,41 @@ def _generate_permit_heatmap(config: dict, market_key: str) -> list[dict]:
     return points
 
 
+def _generate_density_heatmap(config: dict, market_key: str, metric: str) -> list[dict]:
+    """Generate mock population or migration density data."""
+    center_lat = config["lat"]
+    center_lng = config["lon"]
+    random.seed(hash(market_key + "-" + metric))
+
+    points = []
+    
+    if metric == "population":
+        # Broad spread, dense center
+        for _ in range(300):
+            angle = random.uniform(0, 2 * math.pi)
+            r = abs(random.gauss(0, 0.05))
+            lat = center_lat + r * math.cos(angle)
+            lng = center_lng + r * math.sin(angle)
+            weight = max(1.0, 5.0 - r * 50 + random.gauss(0, 0.5))
+            points.append({"lat": round(lat, 6), "lng": round(lng, 6), "weight": round(min(weight, 5.0), 2)})
+    else:  # migration
+        # Cluster-based, focused on sub-market hotspots
+        num_clusters = random.randint(3, 6)
+        for _ in range(num_clusters):
+            c_lat = center_lat + random.uniform(-0.1, 0.1)
+            c_lng = center_lng + random.uniform(-0.1, 0.1)
+            intensity = random.uniform(2.0, 5.0)
+            for _ in range(80):
+                angle = random.uniform(0, 2 * math.pi)
+                r = abs(random.gauss(0, 0.02))
+                lat = c_lat + r * math.cos(angle)
+                lng = c_lng + r * math.sin(angle)
+                weight = max(0.5, intensity + random.gauss(0, 1.0))
+                points.append({"lat": round(lat, 6), "lng": round(lng, 6), "weight": round(min(weight, 5.0), 2)})
+                
+    return points
+
+
 @router.get("/heatmap")
 async def get_heatmap_data(market: str = Query(default="austin"), metric: str = "rent"):
     """Get weighted lat/lng points for heatmap rendering for a specific market."""
@@ -193,5 +228,7 @@ async def _get_market_heatmap_points(market_key: str, metric: str) -> list[dict]
     # Generate heatmap based on metric type
     if metric == "rent":
         return _generate_rent_heatmap(config, market_key)
+    elif metric in ("population", "migration"):
+        return _generate_density_heatmap(config, market_key, metric)
     else:
         return _generate_permit_heatmap(config, market_key)

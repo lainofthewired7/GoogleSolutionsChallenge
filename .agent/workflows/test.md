@@ -1,5 +1,5 @@
 ---
-description: Run the test suite for Projectr Analytics
+description: Run the test suite for Indicium
 ---
 
 # Run Tests

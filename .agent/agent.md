@@ -1,8 +1,8 @@
-# Projectr Analytics — Agent Configuration
+# Indicium — Agent Configuration
 
 ## Project Identity
 
-**Projectr Analytics** is a real-estate data ingestion engine and geospatial dashboard targeting the Austin–Round Rock, TX MSA. It pulls from multiple public data APIs, normalizes the data into PostgreSQL + PostGIS, and renders interactive Google Maps visualizations.
+**Indicium** is a real-estate data ingestion engine and geospatial dashboard targeting the Austin–Round Rock, TX MSA. It pulls from multiple public data APIs, normalizes the data into PostgreSQL + PostGIS, and renders interactive Google Maps visualizations.
 
 ## Tech Stack
 
@@ -19,7 +19,7 @@
 ## Project Structure
 
 ```
-projectr-analytics/
+indicium/
 ├── .agent/                    # Agent configuration
 │   ├── agent.md               # This file
 │   └── workflows/             # Workflow definitions
@@ -163,5 +163,5 @@ pytest tests/ -v
 This project is designed for **independent, parallel development** by multiple agents.
 
 - **Isolation**: Each directory (`ingestion/`, `etl/`, `db/`, `api/`, `dashboard/`) is a standalone target.
-- **Handbook**: Refer to [agent_handbook.md](file:///home/jcmb/Projectr%20Analytics/docs/agent_handbook.md) for detailed instructions on how to work on specific parts of the app without causing conflicts.
+- **Handbook**: Refer to [agent_handbook.md](file:///home/jcmb/Indicium%20Analytics/docs/agent_handbook.md) for detailed instructions on how to work on specific parts of the app without causing conflicts.
 - **Workflow-First**: Always check `.agent/workflows/` before starting a task.

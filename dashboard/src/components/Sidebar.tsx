@@ -41,13 +41,21 @@ export default function Sidebar() {
         </button>
 
         <button 
+          onClick={() => setActiveView('density')}
+          className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${activeView === 'density' ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
+        >
+          <span className="material-symbols-outlined">groups</span>
+          <span>Market Density</span>
+        </button>
+
+        <button 
           onClick={() => setActiveView('rents')}
           className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${activeView === 'rents' ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
         >
           <span className="material-symbols-outlined">analytics</span>
           <span>Rent Performance</span>
         </button>
-        
+
         <button 
           onClick={() => setActiveView('comparison')}
           className={`w-full flex items-center justify-start gap-3 py-3 px-4 ${activeView === 'comparison' ? 'border-l-2 border-primary bg-surface-container-high text-primary' : 'text-on-surface/60 hover:bg-surface-variant hover:text-on-surface'} transition-all duration-200 ease-in-out cursor-pointer`}
@@ -55,6 +63,7 @@ export default function Sidebar() {
           <span className="material-symbols-outlined">compare_arrows</span>
           <span>Market Comparison</span>
         </button>
+        
       </nav>
 
       <div className="mt-auto border-t border-outline-variant/10 pt-4">

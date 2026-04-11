@@ -18,7 +18,7 @@ from api.routes import markets, metrics, geojson, auth, watchlist, fred, charts,
 limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 
 app = FastAPI(
-    title="Projectr Analytics API",
+    title="Indicium API",
     description="Real-estate data API for the geospatial dashboard",
     version="0.3.0",
 )
@@ -73,7 +73,7 @@ app.include_router(chatbot.router, prefix="/api/chatbot", tags=["AI Chatbot"])
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""
-    return {"status": "healthy", "service": "projectr-analytics"}
+    return {"status": "healthy", "service": "indicium"}
 
 # Serve dashboard static files (Vite production build)
 # NOTE: This must be LAST — it catches all unmatched routes.

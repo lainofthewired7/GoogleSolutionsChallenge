@@ -1,4 +1,4 @@
-/** TypeScript interfaces for Projectr Analytics.
+/** TypeScript interfaces for Indicium.
  *
  * Source of truth: api/schemas.py (Pydantic models) and db/models.py (SQLAlchemy).
  */
@@ -100,7 +100,7 @@ export interface AppState {
   marketInfo: MarketInfo | null;
   markets: MarketInfo[];
   loading: boolean;
-  activeView: 'map' | 'permits' | 'jobs' | 'rents' | 'comparison';
+  activeView: 'map' | 'permits' | 'jobs' | 'rents' | 'comparison' | 'density';
 }
 
 /* ── Auth types ── */

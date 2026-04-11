@@ -14,7 +14,7 @@ export default function LandingPage() {
           <br />for the Future
         </h1>
         <p className="text-lg md:text-xl text-on-surface/70 mb-12 max-w-2xl mx-auto tracking-tight font-medium">
-          Projectr Analytics delivers real-time geospatial intelligence, rent forecasts, and permit data for the Austin–Round Rock MSA.
+          Indicium delivers real-time geospatial intelligence, rent forecasts, and permit data for the Austin–Round Rock MSA.
         </p>
         <button
           onClick={() => setShowLogin(true)}
