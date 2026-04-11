@@ -122,9 +122,9 @@ MARKET_DATA = {
         "state_code": "TX",
         "state_fips": "48",
         "msa_code": "41700",
-        "fred_jobs": "TXNA",
+        "fred_jobs": "SANA748NA",
         "fred_rent": "CUUR0300SEHA",
-        "fred_prefix": "SAN448",
+        "fred_prefix": "SANA748",
         "metro_filter": "San Antonio",
         "hot_zips": ["78201", "78205", "78209", "78210", "78212", "78215", "78230", "78248"],
     },
@@ -135,8 +135,8 @@ MARKET_DATA = {
         "state_code": "TX",
         "state_fips": "48",
         "msa_code": "21340",
-        "fred_jobs": "ELPA448NA",
-        "fred_prefix": "ELPA448",
+        "fred_jobs": "ELPA348NA",
+        "fred_prefix": "ELPA348",
         "metro_filter": "El Paso",
     },
     # ── West Coast ─────────────────────────────────────
@@ -148,7 +148,7 @@ MARKET_DATA = {
         "state_fips": "53",
         "msa_code": "42660",
         "fred_jobs": "SEAT653NA",
-        "fred_prefix": "SEAT653",
+        "fred_prefix": "SEAT653",  # Verified OK
         "metro_filter": "Seattle",
     },
     "bellevue": {
@@ -159,7 +159,7 @@ MARKET_DATA = {
         "state_fips": "53",
         "msa_code": "42660",
         "fred_jobs": "SEAT653NA",
-        "fred_prefix": "SEAT653",
+        "fred_prefix": "SEAT653",  # Verified OK
         "metro_filter": "Seattle",
     },
     "redmond": {
@@ -170,7 +170,7 @@ MARKET_DATA = {
         "state_fips": "53",
         "msa_code": "42660",
         "fred_jobs": "SEAT653NA",
-        "fred_prefix": "SEAT653",
+        "fred_prefix": "SEAT653",  # Verified OK
         "metro_filter": "Seattle",
     },
     "portland": {
@@ -180,8 +180,8 @@ MARKET_DATA = {
         "state_code": "OR",
         "state_fips": "41",
         "msa_code": "38900",
-        "fred_jobs": "PORT041NA",
-        "fred_prefix": "PORT041",
+        "fred_jobs": "PORT941NA",
+        "fred_prefix": "PORT941",
         "metro_filter": "Portland",
     },
     "san-francisco": {
@@ -191,8 +191,8 @@ MARKET_DATA = {
         "state_code": "CA",
         "state_fips": "06",
         "msa_code": "41860",
-        "fred_jobs": "SANF106NA",
-        "fred_prefix": "SANA418",
+        "fred_jobs": "SANF806NA",
+        "fred_prefix": "SANF806",
         "metro_filter": "San Francisco",
         "approx_pop": 815000,
         "msa_pop": 4700000,
@@ -209,8 +209,8 @@ MARKET_DATA = {
         "state_code": "CA",
         "state_fips": "06",
         "msa_code": "41940",
-        "fred_jobs": "SANJ106NA",
-        "fred_prefix": "SANJ106",
+        "fred_jobs": "SANJ906NA",
+        "fred_prefix": "SANJ906",
         "metro_filter": "San Jose",
     },
     "los-angeles": {
@@ -220,8 +220,16 @@ MARKET_DATA = {
         "state_code": "CA",
         "state_fips": "06",
         "msa_code": "31080",
-        "fred_jobs": "LOSA106NA",
+        "fred_jobs": "SMS06310800000000001",
         "fred_prefix": "LOSA106",
+        "fred_sectors": {
+            "INFO": "SMU06310805000000001SA",
+            "MFGN": "SMU06310803000000001SA",
+            "PBSV": "SMU06310806000000001SA",
+            "EDUHN": "SMU06310806500000001SA",
+            "GOVTN": "SMU06310809000000001SA",
+            "UR": "LAUMT063108000000003",
+        },
         "metro_filter": "Los Angeles",
         "approx_pop": 3898000,
         "msa_pop": 12800000,
@@ -238,8 +246,8 @@ MARKET_DATA = {
         "state_code": "CA",
         "state_fips": "06",
         "msa_code": "41740",
-        "fred_jobs": "SAND106NA",
-        "fred_prefix": "SAND106",
+        "fred_jobs": "SAND706NA",
+        "fred_prefix": "SAND706",
         "metro_filter": "San Diego",
     },
     "sacramento": {
@@ -249,8 +257,8 @@ MARKET_DATA = {
         "state_code": "CA",
         "state_fips": "06",
         "msa_code": "40900",
-        "fred_jobs": "SACR106NA",
-        "fred_prefix": "SACR106",
+        "fred_jobs": "SACR906NA",
+        "fred_prefix": "SACR906",
         "metro_filter": "Sacramento",
     },
     # ── Southwest ──────────────────────────────────────
@@ -262,7 +270,7 @@ MARKET_DATA = {
         "state_fips": "04",
         "msa_code": "38060",
         "fred_jobs": "PHOE004NA",
-        "fred_prefix": "PHOE004",
+        "fred_prefix": "PHOE004",  # Verified OK
         "metro_filter": "Phoenix",
     },
     "mesa": {
@@ -273,7 +281,7 @@ MARKET_DATA = {
         "state_fips": "04",
         "msa_code": "38060",
         "fred_jobs": "PHOE004NA",
-        "fred_prefix": "PHOE004",
+        "fred_prefix": "PHOE004",  # Verified OK
         "metro_filter": "Phoenix",
     },
     "tempe": {
@@ -284,7 +292,7 @@ MARKET_DATA = {
         "state_fips": "04",
         "msa_code": "38060",
         "fred_jobs": "PHOE004NA",
-        "fred_prefix": "PHOE004",
+        "fred_prefix": "PHOE004",  # Verified OK
         "metro_filter": "Phoenix",
     },
     "chandler": {
@@ -295,7 +303,7 @@ MARKET_DATA = {
         "state_fips": "04",
         "msa_code": "38060",
         "fred_jobs": "PHOE004NA",
-        "fred_prefix": "PHOE004",
+        "fred_prefix": "PHOE004",  # Verified OK
         "metro_filter": "Phoenix",
     },
     "gilbert": {
@@ -306,7 +314,7 @@ MARKET_DATA = {
         "state_fips": "04",
         "msa_code": "38060",
         "fred_jobs": "PHOE004NA",
-        "fred_prefix": "PHOE004",
+        "fred_prefix": "PHOE004",  # Verified OK
         "metro_filter": "Phoenix",
     },
     "scottsdale": {
@@ -317,7 +325,7 @@ MARKET_DATA = {
         "state_fips": "04",
         "msa_code": "38060",
         "fred_jobs": "PHOE004NA",
-        "fred_prefix": "PHOE004",
+        "fred_prefix": "PHOE004",  # Verified OK
         "metro_filter": "Phoenix",
     },
     "tucson": {
@@ -327,8 +335,8 @@ MARKET_DATA = {
         "state_code": "AZ",
         "state_fips": "04",
         "msa_code": "46060",
-        "fred_jobs": "TUCS004NA",
-        "fred_prefix": "TUCS004",
+        "fred_jobs": "TUSC004NA",
+        "fred_prefix": "TUSC004",
         "metro_filter": "Tucson",
     },
     "las-vegas": {
@@ -338,8 +346,8 @@ MARKET_DATA = {
         "state_code": "NV",
         "state_fips": "32",
         "msa_code": "29820",
-        "fred_jobs": "LASV332NA",
-        "fred_prefix": "LASV332",
+        "fred_jobs": "LASV832NA",
+        "fred_prefix": "LASV832",
         "metro_filter": "Las Vegas",
     },
     "denver": {
@@ -349,8 +357,8 @@ MARKET_DATA = {
         "state_code": "CO",
         "state_fips": "08",
         "msa_code": "19740",
-        "fred_jobs": "DENV108NA",
-        "fred_prefix": "DENV108",
+        "fred_jobs": "DENV708NA",
+        "fred_prefix": "DENV708",
         "metro_filter": "Denver",
     },
     "salt-lake-city": {
@@ -360,8 +368,8 @@ MARKET_DATA = {
         "state_code": "UT",
         "state_fips": "49",
         "msa_code": "41620",
-        "fred_jobs": "SALT449NA",
-        "fred_prefix": "SALT449",
+        "fred_jobs": "SALT649NA",
+        "fred_prefix": "SALT649",
         "metro_filter": "Salt Lake City",
     },
     "albuquerque": {
@@ -371,8 +379,8 @@ MARKET_DATA = {
         "state_code": "NM",
         "state_fips": "35",
         "msa_code": "10740",
-        "fred_jobs": "ALBU535NA",
-        "fred_prefix": "ALBU535",
+        "fred_jobs": "ALBU735NA",
+        "fred_prefix": "ALBU735",
         "metro_filter": "Albuquerque",
     },
     # ── East Coast ─────────────────────────────────────
@@ -427,8 +435,8 @@ MARKET_DATA = {
         "state_code": "NY",
         "state_fips": "36",
         "msa_code": "35620",
-        "fred_jobs": "NEWY136NA",
-        "fred_prefix": "NEWY136",
+        "fred_jobs": "NEWY636NA",
+        "fred_prefix": "NEWY636",
         "metro_filter": "New York",
         "approx_pop": 8336000,
         "msa_pop": 19600000,
@@ -445,8 +453,8 @@ MARKET_DATA = {
         "state_code": "MA",
         "state_fips": "25",
         "msa_code": "14460",
-        "fred_jobs": "BOST125NA",
-        "fred_prefix": "BOST125",
+        "fred_jobs": "SMS25144600000000001",
+        "fred_prefix": "BOST625",  # Sector prefix works; NA series uses SMS format
         "metro_filter": "Boston",
     },
     "philadelphia": {
@@ -456,8 +464,8 @@ MARKET_DATA = {
         "state_code": "PA",
         "state_fips": "42",
         "msa_code": "37980",
-        "fred_jobs": "PHIL142NA",
-        "fred_prefix": "PHIL142",
+        "fred_jobs": "PHIL942NA",
+        "fred_prefix": "PHIL942",
         "metro_filter": "Philadelphia",
     },
     "miami": {
@@ -468,7 +476,7 @@ MARKET_DATA = {
         "state_fips": "12",
         "msa_code": "33100",
         "fred_jobs": "MIAM112NA",
-        "fred_prefix": "MIAM112",
+        "fred_prefix": "MIAM112",  # Verified OK
         "metro_filter": "Miami",
     },
     "orlando": {
@@ -478,8 +486,8 @@ MARKET_DATA = {
         "state_code": "FL",
         "state_fips": "12",
         "msa_code": "36740",
-        "fred_jobs": "ORLA112NA",
-        "fred_prefix": "ORLA112",
+        "fred_jobs": "ORLA712NA",
+        "fred_prefix": "ORLA712",
         "metro_filter": "Orlando",
     },
     "tampa": {
@@ -489,8 +497,8 @@ MARKET_DATA = {
         "state_code": "FL",
         "state_fips": "12",
         "msa_code": "45300",
-        "fred_jobs": "TAMP112NA",
-        "fred_prefix": "TAMP112",
+        "fred_jobs": "TAMP312NA",
+        "fred_prefix": "TAMP312",
         "metro_filter": "Tampa",
     },
     "jacksonville": {
@@ -500,8 +508,8 @@ MARKET_DATA = {
         "state_code": "FL",
         "state_fips": "12",
         "msa_code": "27260",
-        "fred_jobs": "JACK112NA",
-        "fred_prefix": "JACK112",
+        "fred_jobs": "JACK212NA",
+        "fred_prefix": "JACK212",
         "metro_filter": "Jacksonville",
     },
     "charlotte": {
@@ -511,8 +519,8 @@ MARKET_DATA = {
         "state_code": "NC",
         "state_fips": "37",
         "msa_code": "16740",
-        "fred_jobs": "CHAR137NA",
-        "fred_prefix": "CHAR137",
+        "fred_jobs": "CHAR737NA",
+        "fred_prefix": "CHAR737",
         "metro_filter": "Charlotte",
     },
     "raleigh": {
@@ -522,8 +530,8 @@ MARKET_DATA = {
         "state_code": "NC",
         "state_fips": "37",
         "msa_code": "39580",
-        "fred_jobs": "RALE137NA",
-        "fred_prefix": "RALE137",
+        "fred_jobs": "RALE537NA",
+        "fred_prefix": "RALE537",
         "metro_filter": "Raleigh",
     },
     "atlanta": {
@@ -533,8 +541,8 @@ MARKET_DATA = {
         "state_code": "GA",
         "state_fips": "13",
         "msa_code": "12060",
-        "fred_jobs": "ATLA113NA",
-        "fred_prefix": "ATLA113",
+        "fred_jobs": "ATLA013NA",
+        "fred_prefix": "ATLA013",
         "metro_filter": "Atlanta",
     },
     "nashville": {
@@ -544,8 +552,8 @@ MARKET_DATA = {
         "state_code": "TN",
         "state_fips": "47",
         "msa_code": "34980",
-        "fred_jobs": "NASH147NA",
-        "fred_prefix": "NASH147",
+        "fred_jobs": "NASH947NA",
+        "fred_prefix": "NASH947",
         "metro_filter": "Nashville",
     },
     # ── Midwest ────────────────────────────────────────
@@ -556,8 +564,8 @@ MARKET_DATA = {
         "state_code": "IL",
         "state_fips": "17",
         "msa_code": "16980",
-        "fred_jobs": "CHIC117NA",
-        "fred_prefix": "CHIC117",
+        "fred_jobs": "CHIC917NA",
+        "fred_prefix": "CHIC917",
         "metro_filter": "Chicago",
     },
     "minneapolis": {
@@ -567,8 +575,8 @@ MARKET_DATA = {
         "state_code": "MN",
         "state_fips": "27",
         "msa_code": "33460",
-        "fred_jobs": "MINN127NA",
-        "fred_prefix": "MINN127",
+        "fred_jobs": "MINN427NA",
+        "fred_prefix": "MINN427",
         "metro_filter": "Minneapolis",
     },
     "detroit": {
@@ -578,8 +586,8 @@ MARKET_DATA = {
         "state_code": "MI",
         "state_fips": "26",
         "msa_code": "19820",
-        "fred_jobs": "DETR126NA",
-        "fred_prefix": "DETR126",
+        "fred_jobs": "DETR826NA",
+        "fred_prefix": "DETR826",
         "metro_filter": "Detroit",
     },
     "columbus": {
@@ -600,8 +608,8 @@ MARKET_DATA = {
         "state_code": "IN",
         "state_fips": "18",
         "msa_code": "26900",
-        "fred_jobs": "INDI118NA",
-        "fred_prefix": "INDI118",
+        "fred_jobs": "INDI918NA",
+        "fred_prefix": "INDI918",
         "metro_filter": "Indianapolis",
     },
     "kansas-city": {
@@ -622,8 +630,8 @@ MARKET_DATA = {
         "state_code": "MO",
         "state_fips": "29",
         "msa_code": "41180",
-        "fred_jobs": "STLO129NA",
-        "fred_prefix": "STLO129",
+        "fred_jobs": "STLNA",
+        "fred_prefix": "STL",
         "metro_filter": "St. Louis",
     },
 }

@@ -144,7 +144,13 @@ async def get_employment(
         
         for key in keys:
             meta = SECTOR_SUFFIXES[key]
-            series_id = f"{prefix}NA" if key == "total_nonfarm" else f"{prefix}{meta['id_suffix']}"
+            # Use explicit fred_sectors override if available, otherwise fallback to prefix+suffix
+            sectors_override = market_config.get("fred_sectors", {})
+            if key == "total_nonfarm":
+                series_id = market_config.get("fred_jobs", f"{prefix}NA")
+            else:
+                series_id = sectors_override.get(meta['id_suffix'], f"{prefix}{meta['id_suffix']}")
+            
             tasks.append(_fetch_fred_series(client, series_id, observation_start=start))
             
         # Execute all requests concurrently
@@ -155,7 +161,11 @@ async def get_employment(
         
         for i, key in enumerate(keys):
             meta = SECTOR_SUFFIXES[key]
-            series_id = f"{prefix}NA" if key == "total_nonfarm" else f"{prefix}{meta['id_suffix']}"
+            sectors_override = market_config.get("fred_sectors", {})
+            if key == "total_nonfarm":
+                series_id = market_config.get("fred_jobs", f"{prefix}NA")
+            else:
+                series_id = sectors_override.get(meta['id_suffix'], f"{prefix}{meta['id_suffix']}")
             obs_res = all_observations[i]
             
             # Handle failed futures gracefully
@@ -212,7 +222,10 @@ async def get_unemployment(
     """Get unemployment rate time series for a market."""
     key = market.lower().strip().replace(" ", "-")
     market_config = MARKET_DATA.get(key, MARKET_DATA["austin"])
-    series_id = f"{market_config['fred_prefix']}UR"
+    
+    # Use explicit override if available
+    sectors_override = market_config.get("fred_sectors", {})
+    series_id = sectors_override.get("UR", f"{market_config['fred_prefix']}UR")
     
     start = (datetime.now() - timedelta(days=years * 365)).strftime("%Y-%m-%d")
 

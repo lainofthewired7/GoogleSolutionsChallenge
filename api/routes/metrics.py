@@ -252,8 +252,8 @@ async def get_jobs(market: str = Query(default="austin")):
     config = get_market_config(market)
     try:
         # Federal Reserve Economic Data (FRED)
-        prefix = config.get("fred_prefix", "AUST948")
-        series_id = f"{prefix}NA" # Total Nonfarm
+        # Use explicit fred_jobs ID if available (some markets use SMS-format IDs)
+        series_id = config.get("fred_jobs", f"{config.get('fred_prefix', 'AUST448')}NA")
         url = "https://api.stlouisfed.org/fred/series/observations"
         params = {
             "series_id": series_id,

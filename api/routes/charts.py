@@ -163,12 +163,12 @@ async def jobs_heatmap(
 
     start = (datetime.now() - timedelta(days=years * 365)).strftime("%Y-%m-%d")
     FRED_BASE = "https://api.stlouisfed.org/fred/series/observations"
-
     try:
         all_data = {}
+        sectors_override = market_config.get("fred_sectors", {})
         async with httpx.AsyncClient() as client:
             for label, suffix in sectors.items():
-                series_id = f"{prefix}{suffix}"
+                series_id = sectors_override.get(suffix, f"{prefix}{suffix}")
                 params = {
                     "series_id": series_id,
                     "api_key": FRED_API_KEY,

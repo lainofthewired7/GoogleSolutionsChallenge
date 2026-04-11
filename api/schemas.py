@@ -67,3 +67,15 @@ class WatchlistItemResponse(BaseModel):
     geo_code: str
     geo_type: str
     created_at: str
+
+
+# === Chatbot schemas ===
+
+class ChatRequest(BaseModel):
+    message: str
+    market_context: Optional[str] = None
+
+
+class ChatResponse(BaseModel):
+    response: str
+    status: str = "success"
