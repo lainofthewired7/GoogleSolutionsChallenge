@@ -7,7 +7,8 @@ import { useRentData } from '../hooks/useRentData';
 import { useAppContext } from '../context/AppContext';
 import GenerateInsightsModal from './GenerateInsightsModal';
 import { useState } from 'react';
-import { exportToPDF } from '../utils/pdfExport';
+import { exportStatSheet } from '../utils/pdfExport';
+import MarketReport from './MarketReport';
 
 export default function RentAnalyticsView() {
   const { selectedMarket } = useAppContext();
@@ -17,7 +18,29 @@ export default function RentAnalyticsView() {
 
   const handleExport = async () => {
     setExporting(true);
-    await exportToPDF('rent-report', `${selectedMarket}-Rent-Performance-Report`);
+    
+    // Gather statistics for the report
+    const latestRent = fmr?.data?.[0]?.value || 'N/A';
+    const rentGrowth = trend?.yoy_growth_pct != null ? `${trend.yoy_growth_pct > 0 ? '+' : ''}${trend.yoy_growth_pct}%` : 'N/A';
+    const vacancyRate = vacancy?.data?.[0]?.value || 'N/A';
+
+    const kpis = [
+      { label: 'Baseline Rent (FMR)', value: latestRent, trend: 'Fair Market Rent (2BR)' },
+      { label: 'Rent Inflation (YoY)', value: rentGrowth, trend: 'Market Flux' },
+      { label: 'Market Vacancy Rate', value: vacancyRate, trend: 'Census ACS' }
+    ];
+
+    await exportStatSheet(
+      <MarketReport 
+        marketName={selectedMarket}
+        type="rent"
+        kpis={kpis}
+        submarkets={heatmap?.data?.sort((a, b) => b.value - a.value).slice(0, 5)}
+        insights={`Analysis of the ${selectedMarket} rental landscape indicates a ${parseFloat(rentGrowth) > 2 ? 'significantly' : 'moderately'} upward rent trajectory. With a current vacancy rate of ${vacancyRate}, the market dynamic remains ${parseFloat(vacancyRate) < 5 ? 'highly competitive' : 'stable'} for prospective residents and investors.`}
+      />,
+      `${selectedMarket}-Rent-Performance-Stat-Sheet`
+    );
+    
     setExporting(false);
   };
 

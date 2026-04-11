@@ -1,5 +1,7 @@
 import jsPDF from 'jspdf';
 import { toPng } from 'html-to-image';
+import { createRoot } from 'react-dom/client';
+import React from 'react';
 
 /**
  * Captures a DOM element and exports it as a PDF.
@@ -16,28 +18,44 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
 
   try {
     // 1. Capture the element as a PNG using html-to-image
-    // This library is much more robust with modern CSS filters and colors.
+    // We add skipFonts: true as a fallback because Google Fonts can cause
+    // a TypeError in html-to-image's font weight parser (CORS related).
     const dataUrl = await toPng(element, {
       quality: 0.95,
-      pixelRatio: 2, // Retain high quality
+      pixelRatio: 2, 
       cacheBust: true,
+      skipFonts: false, // Try with fonts first (index.html has preconnect now)
       style: {
-        // Force the background to be visible during capture if it's transparent
-        background: '#0f172a' 
+        background: '#0f172a',
+        color: '#f8fafc' 
       },
-      // Ensure all filters are processed
       filter: (node) => {
-        // Exclude specific elements like the export button itself if needed
         if (node instanceof HTMLElement && node.innerText?.includes('Export PDF')) return false;
         return true;
       }
+    }).catch(async (err) => {
+        // If it fails with the specific font error, retry without fonts
+        if (err.message?.includes('trim') || err.message?.includes('font')) {
+            console.warn("Font parsing failed, retrying without web fonts...");
+            return toPng(element, {
+                quality: 0.95,
+                pixelRatio: 2,
+                cacheBust: true,
+                skipFonts: true, // Fallback to system fonts
+                style: {
+                    background: '#0f172a',
+                    color: '#f8fafc'
+                }
+            });
+        }
+        throw err;
     });
 
     // 2. Create jsPDF instance
     const pdf = new jsPDF('p', 'mm', 'a4');
     
     // Calculate dimensions to fit the A4 page
-    const imgWidth = 210; // A4 width in mm
+    const imgWidth = 210; 
     const imgHeight = (element.offsetHeight * imgWidth) / element.offsetWidth;
     
     // Add the image to the PDF
@@ -47,9 +65,59 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
     pdf.save(`${filename}.pdf`);
   } catch (error: any) {
     console.error('PDF Export failed:', error);
-    // Fallback if the user's browser is extremely restricted
-    if (error.message?.includes('oklab')) {
-        alert("Your browser is using a PDF engine that doesn't support modern colors. We recommend using Chrome or Edge for the best experience.");
-    }
+    alert(`PDF Export failed: ${error.message || 'Unknown error'}. Try using a Chromium-based browser.`);
+  }
+}
+
+/**
+ * Advanced Stat Sheet Export
+ * Renders a React component off-screen, captures it, and exports.
+ */
+export async function exportStatSheet(
+  component: React.ReactElement,
+  filename: string
+): Promise<void> {
+  const container = document.createElement('div');
+  container.style.position = 'fixed';
+  container.style.left = '-9999px';
+  container.style.top = '0';
+  container.id = 'report-capture-container';
+  document.body.appendChild(container);
+
+  const root = createRoot(container);
+  
+  try {
+    // Render the component
+    root.render(component);
+    
+    // Wait for render/images/fonts
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const element = container.firstChild as HTMLElement;
+    if (!element) throw new Error("Failed to render report component.");
+
+    const dataUrl = await toPng(element, {
+      quality: 1.0,
+      pixelRatio: 3, // Ultra high resolution for print
+      skipFonts: false,
+      backgroundColor: '#ffffff'
+    });
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = 210;
+    const imgHeight = (element.offsetHeight * imgWidth) / element.offsetWidth;
+    
+    pdf.addImage(dataUrl, 'PNG', 0, 0, imgWidth, imgHeight);
+    pdf.save(`${filename}.pdf`);
+
+  } catch (error: any) {
+    console.error('Stat Sheet Export failed:', error);
+    alert(`Report generation failed: ${error.message}`);
+  } finally {
+    // Cleanup
+    setTimeout(() => {
+        root.unmount();
+        document.body.removeChild(container);
+    }, 1000);
   }
 }

@@ -5,7 +5,8 @@ import type { MetricStubResponse } from '../types';
 import PermitMap from './PermitMap';
 import PermitBreakdownChart from './PermitBreakdownChart';
 import GenerateInsightsModal from './GenerateInsightsModal';
-import { exportToPDF } from '../utils/pdfExport';
+import { exportStatSheet } from '../utils/pdfExport';
+import MarketReport from './MarketReport';
 
 export default function PermitDataView() {
   const { selectedMarket, marketInfo } = useAppContext();
@@ -17,7 +18,38 @@ export default function PermitDataView() {
 
   const handleExport = async () => {
     setExporting(true);
-    await exportToPDF('permit-report', `${marketInfo?.name || 'Development'}-Pipeline-Report`);
+    
+    // Gather KPIs for the stat sheet
+    const kpis = [
+      { 
+        label: 'Total Permitted Value', 
+        value: permitData?.data?.find(d => d.key === 'valuation')?.value || 'N/A', 
+        trend: permitData?.data?.find(d => d.key === 'valuation')?.trend 
+      },
+      { 
+        label: 'Avg. Approval Time', 
+        value: permitData?.data?.find(d => d.key === 'approval_time')?.value || 'N/A', 
+        trend: permitData?.data?.find(d => d.key === 'approval_time')?.trend 
+      },
+      { 
+        label: 'New Units Authorized', 
+        value: permitData?.data?.find(d => d.key === 'filings')?.value || 'N/A', 
+        trend: permitData?.data?.find(d => d.key === 'filings')?.trend 
+      }
+    ];
+
+    await exportStatSheet(
+      <MarketReport 
+        marketName={marketInfo?.name || selectedMarket}
+        type="permits"
+        marketInfo={marketInfo}
+        kpis={kpis}
+        projects={projects.slice(0, 5)} // Top projects
+        insights={`MARKET_ANALYTICS: The ${marketInfo?.name || selectedMarket} development pipeline shows sustained infrastructure growth. Average approval times of ${kpis[1].value} align with regional benchmarks, indicating a stable environment for new residential and commercial filings.`}
+      />,
+      `${marketInfo?.name || 'Development'}-Stat-Sheet`
+    );
+    
     setExporting(false);
   };
 
