@@ -1,0 +1,28 @@
+# Projectr Analytics: Real Estate Data Engine Demo Script
+
+[SCENE START]
+
+Visual: Start on the main dashboard with the "Rent Heatmap" tab open. The market dropdown in the top right is set to "Austin".
+
+Action: Move the mouse slowly around the map, dragging it to show the different high and low-rent zones.
+Voiceover: "Building a high-confidence thesis on a real estate market usually means spending hours fighting with spreadsheets. We wanted to fix that. So we built a data ingestion engine that does the heavy lifting for you. What you're looking at right now is a living, breathing picture of Austin, Texas."
+
+Action: Click the Market Dropdown in the top right. Select "Dallas", let it load for a second, then switch back to "Austin".
+Voiceover: "The entire tool is dynamic. If you want to underwrite a different city, you just pick it from the dropdown, and our engine instantly pulls and normalizes raw data on the fly from places like FRED, the Census, HUD, and local city APIs. It maps everything out so you can just analyze, not wrangle data."
+
+Action: Click on the "Permit Data" tab on the left sidebar. Focus on the hotspots where the map lights up.
+Voiceover: "Take building permits, for example. We're hitting city endpoints to pull live construction data and dropping it straight onto the map based on valuation. Instantly, you can see exactly where capital is flowing and where new supply is going to hit the market."
+
+Action: Click over to the "Market Density" tab. Hover near the bottom stats panel.
+Voiceover: "Then there's demographics. With our Market Density view, we overlay population heatmaps directly onto OpenStreetMap. Down at the bottom, we've got a live feed measuring core density and long-term growth rates, giving you immediate context on how crowded or sprawling a submarket really is."
+
+Action: Click the "Migration Heatmap" button right above the map. 
+Voiceover: "If you toggle over to migration flows, you get a completely different angle. Now you're seeing exactly where demand is coming from. Are millennials moving in from California? Are families leaving? You get those answers right away."
+
+Action: Click on the "Job Growth" tab on the left sidebar.
+Voiceover: "And because you can't understand real estate without understanding the broader economy, we wired the dashboard straight into the Federal Reserve's economic database. The engine pulls local employment data to correlate job growth with the housing patterns we just looked at."
+
+Action: Briefly click through the "Rent Performance" and "Market Comparison" tabs to finish out the tour.
+Voiceover: "At the end of the day, whether you're looking at rents, permits, job growth, or migration, the goal is the same. Drop into any neighborhood, look at the map, and instantly get smarter about that market."
+
+[SCENE END]

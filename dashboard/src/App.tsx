@@ -19,6 +19,8 @@ import PermitDataView from './components/PermitDataView';
 import JobGrowthView from './components/JobGrowthView';
 import RentAnalyticsView from './components/RentAnalyticsView';
 
+import DensityView from './components/DensityView';
+
 function Dashboard() {
   const { activeView } = useAppContext();
 
@@ -36,6 +38,7 @@ function Dashboard() {
         {activeView === 'jobs' && <JobGrowthView />}
         {activeView === 'rents' && <RentAnalyticsView />}
         {activeView === 'comparison' && <ComparisonView />}
+        {activeView === 'density' && <DensityView />}
       </main>
     </div>
   );
