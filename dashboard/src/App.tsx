@@ -12,7 +12,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import SettingsPage from './components/SettingsPage';
 import { useAuth } from './context/AuthContext';
 import { useAppContext } from './context/AppContext';
-import Chatbot from './components/Chatbot';
 import './App.css';
 
 import MetricCards from './components/MetricCards';
@@ -66,7 +65,6 @@ export default function App() {
           </Route>
         </Routes>
       </div>
-      <Chatbot />
     </div>
   );
 }

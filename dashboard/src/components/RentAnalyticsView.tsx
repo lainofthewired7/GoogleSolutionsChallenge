@@ -11,7 +11,7 @@ import { exportStatSheet } from '../utils/pdfExport';
 import MarketReport from './MarketReport';
 
 export default function RentAnalyticsView() {
-  const { selectedMarket } = useAppContext();
+  const { selectedMarket, marketInfo } = useAppContext();
   const { fmr, trend, vacancy, heatmap, loading, error } = useRentData(selectedMarket);
   const [insightsOpen, setInsightsOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -32,11 +32,11 @@ export default function RentAnalyticsView() {
 
     await exportStatSheet(
       <MarketReport 
-        marketName={selectedMarket}
+        marketName={marketInfo?.name || selectedMarket}
         type="rent"
         kpis={kpis}
         submarkets={heatmap?.data?.sort((a, b) => b.value - a.value).slice(0, 5)}
-        insights={`Analysis of the ${selectedMarket} rental landscape indicates a ${parseFloat(rentGrowth) > 2 ? 'significantly' : 'moderately'} upward rent trajectory. With a current vacancy rate of ${vacancyRate}, the market dynamic remains ${parseFloat(vacancyRate) < 5 ? 'highly competitive' : 'stable'} for prospective residents and investors.`}
+        insights={`Analysis of the ${marketInfo?.name || selectedMarket} rental landscape indicates a ${parseFloat(rentGrowth) > 2 ? 'significantly' : 'moderately'} upward rent trajectory. With a current vacancy rate of ${vacancyRate}, the market dynamic remains ${parseFloat(vacancyRate) < 5 ? 'highly competitive' : 'stable'} for prospective residents and investors.`}
       />,
       `${selectedMarket}-Rent-Performance-Stat-Sheet`
     );
@@ -81,7 +81,7 @@ export default function RentAnalyticsView() {
       <header className="flex justify-between items-end mb-10 relative z-10">
         <div>
           <nav className="flex gap-2 text-xs font-label text-outline mb-2">
-            <span>Market Intelligence</span> / <span className="text-primary capitalize">{selectedMarket}</span>
+            <span>Market Intelligence</span> / <span className="text-primary">{marketInfo?.name || selectedMarket}</span>
           </nav>
           <h1 className="text-4xl font-extrabold font-headline tracking-tighter text-on-surface">
             Rent Performance <span className="text-primary font-body font-normal text-2xl ml-2">Analytics</span>
@@ -212,7 +212,7 @@ export default function RentAnalyticsView() {
               <h2 className="text-xl font-bold font-headline text-on-surface">Market Velocity</h2>
             </div>
             <p className="text-sm text-on-surface-variant leading-relaxed mb-6">
-              The rental market in <span className="text-on-surface font-bold capitalize">{selectedMarket}</span> shows a {trend?.yoy_growth_pct && trend.yoy_growth_pct > 2 ? 'sustained upward' : 'moderate'} trend in inflation-adjusted rents. Housing pressure remains {parseFloat(vacancyRate) < 5 ? 'tight' : 'stable'} relative to supply.
+              The rental market in <span className="text-on-surface font-bold">{marketInfo?.name || selectedMarket}</span> shows a {trend?.yoy_growth_pct && trend.yoy_growth_pct > 2 ? 'sustained upward' : 'moderate'} trend in inflation-adjusted rents. Housing pressure remains {parseFloat(vacancyRate) < 5 ? 'tight' : 'stable'} relative to supply.
             </p>
           </div>
           <div className="space-y-4">
@@ -223,61 +223,6 @@ export default function RentAnalyticsView() {
           </div>
         </div>
 
-        {/* ZIP-Level Submarket Card */}
-        <div className="col-span-12 lg:col-span-12 bg-surface-container-low rounded-3xl p-8 border border-outline-variant/10 relative overflow-hidden group">
-           <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-              <span className="material-symbols-outlined text-[120px]">location_on</span>
-           </div>
-           
-           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-10">
-              <div>
-                 <h2 className="text-2xl font-black font-headline text-on-surface tracking-tight">Top Submarket Concentration</h2>
-                 <p className="text-sm text-on-surface-variant">Aggregated ZIP-level rental flux (Census ACS ZCTA Estimates)</p>
-              </div>
-              <div className="flex gap-2 items-center">
-                 <button className="bg-primary/10 text-primary text-[10px] font-bold px-4 py-2 rounded-full border border-primary/20 hover:bg-primary/20 transition-colors">VIEW RENT HEATMAP</button>
-                 <button className="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-4 py-2 rounded-full hover:bg-surface-variant transition-colors">DOWNLOAD CSV</button>
-                 <button className="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center hover:bg-surface-variant transition-colors border border-outline-variant/10 shadow-sm">
-                    <span className="material-symbols-outlined text-[14px]">location_on</span>
-                 </button>
-              </div>
-           </div>
-
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              {heatmap?.data && heatmap.data.length > 0 ? (
-                heatmap.data
-                  .sort((a, b) => b.value - a.value)
-                  .slice(0, 5)
-                  .map((item, idx) => (
-                    <div key={item.zip} className="glass-panel p-6 rounded-2xl border border-outline-variant/10 hover:border-primary/40 transition-all group/zip">
-                        <div className="flex items-center justify-between mb-4">
-                           <span className="text-[10px] font-bold text-outline">#{idx + 1}</span>
-                           <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded-full">{item.zip}</span>
-                        </div>
-                        <p className="text-2xl font-black font-headline text-on-surface mb-1">${item.value.toLocaleString()}</p>
-                        <p className="text-[10px] text-outline uppercase tracking-wider">Median Gross Rent</p>
-                        <div className="mt-4 h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
-                           <div className="bg-primary h-full transition-all duration-1000" style={{ width: `${heatmap.data?.[0]?.value ? (item.value / heatmap.data[0].value) * 100 : 0}%` }} />
-                        </div>
-                    </div>
-                  ))
-              ) : (
-                <div className="col-span-5 relative h-[320px] rounded-3xl overflow-hidden border border-outline-variant/10 group flex items-center justify-center bg-surface-container-low">
-                   <img 
-                      src="/assets/rent-heatmap.png" 
-                      alt="Rent Heatmap Stream" 
-                      className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-luminosity grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
-                   />
-                   <div className="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-80" />
-                   <div className="relative text-center p-8 backdrop-blur-sm bg-surface-container-low/40 rounded-2xl border border-white/5 shadow-2xl">
-                      <p className="text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-2 animate-pulse">Initializing Data Stream</p>
-                      <h3 className="text-on-surface font-headline font-bold text-lg mb-1">Submarket Analytics</h3>
-                      <p className="text-on-surface-variant text-xs max-w-[240px]">Connecting to Census ACS ZCTA real-time rental flux indices...</p>
-                   </div>
-                </div>
-              )}
-           </div>
-        </div>
 
       </div>
       
