@@ -6,15 +6,18 @@
 import { useRentData } from '../hooks/useRentData';
 import { useAppContext } from '../context/AppContext';
 import GenerateInsightsModal from './GenerateInsightsModal';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { exportStatSheet } from '../utils/pdfExport';
 import MarketReport from './MarketReport';
+import { generateMarketVelocity } from '../utils/gemini';
 
 export default function RentAnalyticsView() {
   const { selectedMarket, marketInfo } = useAppContext();
   const { fmr, trend, vacancy, heatmap, loading, error } = useRentData(selectedMarket);
   const [insightsOpen, setInsightsOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [velocitySummary, setVelocitySummary] = useState<string | null>(null);
+  const [velocityLoading, setVelocityLoading] = useState(false);
 
   const handleExport = async () => {
     setExporting(true);
@@ -43,6 +46,17 @@ export default function RentAnalyticsView() {
     
     setExporting(false);
   };
+
+  useEffect(() => {
+    if (fmr?.data?.length && trend?.yoy_growth_pct != null) {
+      const context = `Market: ${marketInfo?.name || selectedMarket}. Rent: ${fmr.data[0].value}/mo. Growth: ${trend.yoy_growth_pct}%. Vacancy: ${vacancy?.data?.[0]?.value || 'N/A'}.`;
+      setVelocityLoading(true);
+      generateMarketVelocity(context).then(summary => {
+        setVelocitySummary(summary);
+        setVelocityLoading(false);
+      });
+    }
+  }, [selectedMarket, fmr, trend, vacancy, marketInfo]);
 
   if (loading) {
     return (
@@ -212,7 +226,14 @@ export default function RentAnalyticsView() {
               <h2 className="text-xl font-bold font-headline text-on-surface">Market Velocity</h2>
             </div>
             <p className="text-sm text-on-surface-variant leading-relaxed mb-6">
-              The rental market in <span className="text-on-surface font-bold">{marketInfo?.name || selectedMarket}</span> shows a {trend?.yoy_growth_pct && trend.yoy_growth_pct > 2 ? 'sustained upward' : 'moderate'} trend in inflation-adjusted rents. Housing pressure remains {parseFloat(vacancyRate) < 5 ? 'tight' : 'stable'} relative to supply.
+              {velocityLoading ? (
+                <span className="flex items-center gap-2 animate-pulse text-primary font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
+                  Synthesizing Market Velocity...
+                </span>
+              ) : (
+                velocitySummary || `The rental market in ${marketInfo?.name || selectedMarket} shows a ${trend?.yoy_growth_pct && trend.yoy_growth_pct > 2 ? 'sustained upward' : 'moderate'} trend in inflation-adjusted rents. Housing pressure remains ${parseFloat(vacancyRate) < 5 ? 'tight' : 'stable'} relative to supply.`
+              )}
             </p>
           </div>
           <div className="space-y-4">
@@ -230,7 +251,9 @@ export default function RentAnalyticsView() {
         isOpen={insightsOpen} 
         onClose={() => setInsightsOpen(false)} 
         title="Rent Performance Insights"
+        contextData={`Market: ${marketInfo?.name || selectedMarket}. KPIs: Rent ${latestRent}, Growth ${rentGrowth}, Vacancy ${vacancyRate}. Historical Observations: ${JSON.stringify(trend?.observations?.slice(-12))}`}
       />
     </div>
   );
 }
+ 

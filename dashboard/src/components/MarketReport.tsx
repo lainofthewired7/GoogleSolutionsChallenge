@@ -53,7 +53,7 @@ const MarketReport: React.FC<MarketReportProps> = ({
         </div>
         <div className="text-right">
           <div className="bg-slate-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
-            PROJECTR ANALYTICS
+            INDICIUM
           </div>
           <p className="text-[8px] text-slate-400 mt-2">REPORT_ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}</p>
         </div>
@@ -131,7 +131,7 @@ const MarketReport: React.FC<MarketReportProps> = ({
               <div className="w-8 h-8 rounded bg-teal-500/20 flex items-center justify-center border border-teal-500/30">
                 <span className="material-symbols-outlined text-teal-400 text-sm">auto_awesome</span>
               </div>
-              <h3 className="text-xs font-black uppercase tracking-[0.2em]">Projectr AI Strategic Analysis</h3>
+              <h3 className="text-xs font-black uppercase tracking-[0.2em]">Indicium AI Strategic Analysis</h3>
             </div>
             <div className="text-sm leading-relaxed text-slate-300 font-light whitespace-pre-line">
               {insights}
@@ -149,7 +149,7 @@ const MarketReport: React.FC<MarketReportProps> = ({
 
       {/* Footer */}
       <div className="mt-auto pt-10 text-[8px] text-slate-400 flex justify-between items-end italic">
-        <p>© 2026 Projectr Analytics. All data presented as estimated or aggregated from public indices (FRED, Census ACS).</p>
+        <p>© 2026 Indicium. All data presented as estimated or aggregated from public indices (FRED, Census ACS).</p>
         <p>PAGE 01 / 01</p>
       </div>
     </div>
@@ -157,3 +157,4 @@ const MarketReport: React.FC<MarketReportProps> = ({
 };
 
 export default MarketReport;
+ 

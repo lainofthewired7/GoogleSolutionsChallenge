@@ -5,8 +5,12 @@
  * powered by live FRED API data (BLS employment for Austin MSA).
  */
 
+import { useState, useEffect } from 'react';
 import { useJobGrowthData } from '../hooks/useJobGrowthData';
 import type { ObservationPoint, SectorData } from '../services/fred';
+import GenerateInsightsModal from './GenerateInsightsModal';
+import { generateMarketVelocity } from '../utils/gemini';
+import { useAppContext } from '../context/AppContext';
 
 /* ════════════════════════════════════════════
  *  Helper: build SVG polyline from data
@@ -206,10 +210,14 @@ function HeroChart({
 
 function GrowthProjection({ 
   totalSector, 
-  marketName 
+  marketName,
+  velocitySummary,
+  velocityLoading
 }: { 
   totalSector: SectorData | undefined;
   marketName: string;
+  velocitySummary: string | null;
+  velocityLoading: boolean;
 }) {
   const yoy = totalSector?.yoy_growth_pct;
   const displayPct = yoy != null ? `${yoy > 0 ? '+' : ''}${yoy}%` : '—';
@@ -251,12 +259,14 @@ function GrowthProjection({
           />
         </div>
         <p className="text-on-surface-variant text-xs mt-4 leading-relaxed">
-          Total nonfarm employment for {marketName}.
-          Data sourced from BLS via FRED (
-          {totalSector?.latest_value != null
-            ? `${totalSector.latest_value.toLocaleString()}K employees`
-            : '—'}
-          ).
+          {velocityLoading ? (
+            <span className="flex items-center gap-2 animate-pulse text-primary font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
+              Synthesizing Labor Velocity...
+            </span>
+          ) : (
+             velocitySummary || `Total nonfarm employment for ${marketName}. Data sourced from BLS via FRED.`
+          )}
         </p>
       </div>
     </section>
@@ -535,15 +545,16 @@ function SectorTable({ sectors }: { sectors: Record<string, SectorData> }) {
   );
 }
 
-import { useAppContext } from '../context/AppContext';
-
 /* ════════════════════════════════════════════
  *  Main View Component
  * ════════════════════════════════════════════ */
 
 export default function JobGrowthView() {
-  const { selectedMarket } = useAppContext();
+  const { selectedMarket, marketInfo } = useAppContext();
   const { employment, unemployment, loading, error } = useJobGrowthData(selectedMarket, 5);
+  const [insightsOpen, setInsightsOpen] = useState(false);
+  const [velocitySummary, setVelocitySummary] = useState<string | null>(null);
+  const [velocityLoading, setVelocityLoading] = useState(false);
 
   const sectors = employment?.sectors;
   const infoSector = sectors?.information;
@@ -551,6 +562,17 @@ export default function JobGrowthView() {
   const profSector = sectors?.professional_services;
   const eduSector = sectors?.education_health;
   const totalSector = sectors?.total_nonfarm;
+
+  useEffect(() => {
+    if (totalSector?.latest_value != null && totalSector?.yoy_growth_pct != null) {
+      const context = `Market: ${marketInfo?.name || selectedMarket}. Total Employment: ${totalSector.latest_value}K. Growth: ${totalSector.yoy_growth_pct}%. Unemployment: ${unemployment?.latest_value || 'N/A'}%.`;
+      setVelocityLoading(true);
+      generateMarketVelocity(context).then(summary => {
+        setVelocitySummary(summary);
+        setVelocityLoading(false);
+      });
+    }
+  }, [selectedMarket, totalSector, unemployment, marketInfo]);
 
   return (
     <div className="absolute inset-0 bg-surface text-on-surface z-10 w-full h-full overflow-y-auto">
@@ -569,6 +591,13 @@ export default function JobGrowthView() {
               </p>
             </div>
             <div className="flex gap-3">
+              <button 
+                onClick={() => setInsightsOpen(true)}
+                className="px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg flex items-center gap-2 text-sm font-bold border border-primary/20 transition-all active:scale-95"
+              >
+                <span className="material-symbols-outlined text-sm">auto_awesome</span>
+                Generate Insights
+              </button>
               <div className="px-4 py-2 bg-surface-container-high rounded-lg flex items-center gap-3 text-sm">
                 <span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(129,236,255,0.8)]" />
                 <span className="text-on-surface/80">Live FRED Data</span>
@@ -589,7 +618,12 @@ export default function JobGrowthView() {
                 mfgSector={mfgSector}
                 profSector={profSector}
               />
-              <GrowthProjection totalSector={totalSector} marketName={employment?.market || ''} />
+              <GrowthProjection 
+                totalSector={totalSector} 
+                marketName={employment?.market || ''} 
+                velocitySummary={velocitySummary}
+                velocityLoading={velocityLoading}
+              />
             </>
           )}
 
@@ -636,6 +670,14 @@ export default function JobGrowthView() {
           {sectors && <SectorTable sectors={sectors} />}
         </div>
       </main>
+
+      <GenerateInsightsModal 
+        isOpen={insightsOpen} 
+        onClose={() => setInsightsOpen(false)} 
+        title="Labor Market Insights"
+        contextData={`Market: ${marketInfo?.name || selectedMarket}. Total Employment: ${totalSector?.latest_value}K, Growth: ${totalSector?.yoy_growth_pct}%, Unemployment: ${unemployment?.latest_value}%. Sectors: Information ${sectors?.information?.yoy_growth_pct}%, Mfg ${sectors?.manufacturing?.yoy_growth_pct}%.`}
+      />
     </div>
   );
 }
+ 

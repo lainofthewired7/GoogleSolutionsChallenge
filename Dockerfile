@@ -26,4 +26,7 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Run the application
+# We use --proxy-headers and --forwarded-allow-ips='*' to ensure url_for works correctly behind Cloud Run load balancers
+CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*'"]
+ 

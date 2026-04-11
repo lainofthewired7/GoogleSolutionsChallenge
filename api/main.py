@@ -12,14 +12,14 @@ from starlette.middleware.sessions import SessionMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
-from api.routes import markets, metrics, geojson, auth, watchlist, fred, charts, chatbot
+from api.routes import markets, metrics, geojson, auth, watchlist, fred, charts
 
 # === Rate limiter ===
 limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 
 app = FastAPI(
     title="Indicium API",
-    description="Real-estate data API for the geospatial dashboard",
+    description="Real-estate data API for the Indicium geospatial dashboard",
     version="0.3.0",
 )
 
@@ -68,7 +68,6 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 app.include_router(watchlist.router, prefix="/api/watchlist", tags=["Watchlist"])
 app.include_router(fred.router, prefix="/api/fred", tags=["FRED Data"])
 app.include_router(charts.router, prefix="/api/charts", tags=["Charts"])
-app.include_router(chatbot.router, prefix="/api/chatbot", tags=["AI Chatbot"])
 
 @app.get("/health")
 async def health_check():
@@ -79,3 +78,4 @@ async def health_check():
 # NOTE: This must be LAST — it catches all unmatched routes.
 if os.path.exists("dashboard/dist"):
     app.mount("/", StaticFiles(directory="dashboard/dist", html=True), name="dashboard")
+ 

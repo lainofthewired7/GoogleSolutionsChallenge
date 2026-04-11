@@ -8,6 +8,19 @@ interface GenerateInsightsModalProps {
   title?: string;
 }
 
+/**
+ * Simple helper to parse generic bold text in a line.
+ */
+function parseMarkdownInLine(text: string) {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} className="text-on-surface font-black">{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+}
+
 export default function GenerateInsightsModal({ isOpen, onClose, contextData = "General market data", title = "AI Market Insights" }: GenerateInsightsModalProps) {
   const [loading, setLoading] = useState(true);
   const [insight, setInsight] = useState<string | null>(null);
@@ -69,19 +82,25 @@ export default function GenerateInsightsModal({ isOpen, onClose, contextData = "
             </div>
           ) : (
             <div className="prose prose-invert prose-p:text-on-surface-variant prose-headings:text-on-surface prose-strong:text-on-surface max-w-none text-sm leading-relaxed">
-              {/* Very primitive markdown rendering for the mock text */}
               {insight?.split('\n').map((line, i) => {
-                if (line.startsWith('### ')) return <h3 key={i} className="text-lg font-bold mt-6 mb-2">{line.replace('###', '')}</h3>;
-                if (line.startsWith('## ')) return <h2 key={i} className="text-xl font-headline font-black mb-4 pb-2 border-b border-outline-variant/10 text-primary">{line.replace('##', '')}</h2>;
-                if (line.startsWith('- **')) {
-                   const parts = line.split('**');
-                   if (parts.length >= 3) {
-                     return <li key={i} className="ml-4 list-disc"><strong className="text-primary">{parts[1]}</strong>{parts[2]}</li>;
-                   }
+                const trimmedLine = line.trim();
+                if (trimmedLine.startsWith('### ')) return <h3 key={i} className="text-lg font-bold mt-6 mb-2">{trimmedLine.replace('### ', '')}</h3>;
+                if (trimmedLine.startsWith('## ')) return <h2 key={i} className="text-xl font-headline font-black mb-4 pb-2 border-b border-outline-variant/10 text-primary">{trimmedLine.replace('## ', '')}</h2>;
+                if (trimmedLine.startsWith('# ')) return <h1 key={i} className="text-2xl font-headline font-black mb-4 pb-2 text-primary">{trimmedLine.replace('# ', '')}</h1>;
+                
+                // Bullet points
+                if (trimmedLine.startsWith('- ') || trimmedLine.startsWith('* ')) {
+                  const content = trimmedLine.substring(2);
+                  return (
+                    <li key={i} className="ml-4 list-disc mb-1">
+                      {parseMarkdownInLine(content)}
+                    </li>
+                  );
                 }
-                if (line.startsWith('*Note:')) return <p key={i} className="text-xs text-on-surface-variant italic mt-8 border-t border-outline-variant/10 pt-4 opacity-70">{line.replace(/\*/g, '')}</p>;
-                if (line.trim() === '') return <br key={i} />;
-                return <p key={i} className="mb-2">{line}</p>;
+
+                if (trimmedLine === '') return <div key={i} className="h-4" />;
+
+                return <p key={i} className="mb-2">{parseMarkdownInLine(line)}</p>;
               })}
             </div>
           )}
@@ -112,3 +131,4 @@ export default function GenerateInsightsModal({ isOpen, onClose, contextData = "
     </div>
   );
 }
+ 
