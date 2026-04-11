@@ -1,4 +1,4 @@
-/** TypeScript interfaces for Projectr Analytics.
+/** TypeScript interfaces for Indicium.
  *
  * Source of truth: api/schemas.py (Pydantic models) and db/models.py (SQLAlchemy).
  */

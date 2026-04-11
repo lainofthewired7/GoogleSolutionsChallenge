@@ -1,1 +1,1 @@
-"""Projectr Analytics — REST API."""
+"""Indicium — REST API."""

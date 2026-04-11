@@ -13,7 +13,7 @@ HUD_API_KEY = os.getenv("HUD_API_KEY", "")
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY", "")
 
 # === Database ===
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://projectr:projectr@localhost:5432/projectr_analytics")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://indicium:indicium@localhost:5432/indicium")
 
 # === Target Market ===
 DEFAULT_MARKET = os.getenv("DEFAULT_MARKET", "austin-round-rock-tx")

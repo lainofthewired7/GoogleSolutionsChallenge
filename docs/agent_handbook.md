@@ -1,6 +1,6 @@
 # Agent Handbook — Collaborative Development
 
-This document explains how multiple AI agents can work on different parts of **Projectr Analytics** independently and effectively.
+This document explains how multiple AI agents can work on different parts of **Indicium** independently and effectively.
 
 ## 1. Modular Architecture
 

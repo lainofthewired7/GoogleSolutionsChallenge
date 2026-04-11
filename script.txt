@@ -1,4 +1,4 @@
-# Projectr Analytics: Real Estate Data Engine Demo Script
+# Indicium: Real Estate Data Engine Demo Script
 
 [SCENE START]
 

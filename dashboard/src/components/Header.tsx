@@ -81,7 +81,7 @@ export default function Header() {
       <nav className="fixed top-0 w-full z-[2000] bg-background flex justify-between items-center px-6 h-16 font-headline tracking-tight border-b-outline-variant/10 border-b">
         <div className="flex items-center gap-8">
           <Link to="/" className="text-xl font-bold tracking-tighter text-on-surface hover:opacity-80 transition-opacity">
-            Projectr Analytics
+            Indicium
           </Link>
           <div className="hidden md:flex items-center gap-6">
             <Link

@@ -3,11 +3,11 @@ version: "3.9"
 services:
   db:
     image: postgis/postgis:15-3.3
-    container_name: projectr-db
+    container_name: indicium-db
     environment:
-      POSTGRES_USER: projectr
-      POSTGRES_PASSWORD: projectr
-      POSTGRES_DB: projectr_analytics
+      POSTGRES_USER: indicium
+      POSTGRES_PASSWORD: indicium
+      POSTGRES_DB: indicium
     ports:
       - "5432:5432"
     volumes:
@@ -15,7 +15,7 @@ services:
 
   api:
     build: .
-    container_name: projectr-api
+    container_name: indicium-api
     ports:
       - "8000:8000"
     env_file:
@@ -28,7 +28,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: projectr-redis
+    container_name: indicium-redis
     ports:
       - "6379:6379"
     restart: always

@@ -1,1 +1,1 @@
-"""Projectr Analytics — Data Ingestion Layer."""
+"""Indicium — Data Ingestion Layer."""

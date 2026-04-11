@@ -1,1 +1,1 @@
-"""Projectr Analytics — ETL & Normalization Layer."""
+"""Indicium — ETL & Normalization Layer."""

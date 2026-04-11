@@ -51,7 +51,7 @@ def run(market: str, sources: list[str] | None = None) -> dict:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Projectr Analytics — Data Ingestion")
+    parser = argparse.ArgumentParser(description="Indicium — Data Ingestion")
     parser.add_argument("--market", default="austin", help="Target market (default: austin)")
     parser.add_argument("--source", help="Single source to ingest (default: all)")
     args = parser.parse_args()

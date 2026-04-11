@@ -1,4 +1,4 @@
-# Projectr Analytics
+# Indicium
 
 Real-estate data ingestion engine & geospatial dashboard for the Austin–Round Rock, TX MSA.
 
