@@ -5,10 +5,21 @@
 
 import { useRentData } from '../hooks/useRentData';
 import { useAppContext } from '../context/AppContext';
+import GenerateInsightsModal from './GenerateInsightsModal';
+import { useState } from 'react';
+import { exportToPDF } from '../utils/pdfExport';
 
 export default function RentAnalyticsView() {
   const { selectedMarket } = useAppContext();
   const { fmr, trend, vacancy, heatmap, loading, error } = useRentData(selectedMarket);
+  const [insightsOpen, setInsightsOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async () => {
+    setExporting(true);
+    await exportToPDF('rent-report', `${selectedMarket}-Rent-Performance-Report`);
+    setExporting(false);
+  };
 
   if (loading) {
     return (
@@ -38,7 +49,7 @@ export default function RentAnalyticsView() {
   const vacancyRate = vacancy?.data?.[0]?.value || 'N/A';
 
   return (
-    <div key={selectedMarket} className="flex-1 p-8 overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div id="rent-report" key={selectedMarket} className="flex-1 p-8 overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-700 bg-background text-on-surface">
       {/* Background Accents */}
       <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed bottom-0 left-0 w-[400px] h-[400px] bg-tertiary/5 rounded-full blur-[100px] pointer-events-none" />
@@ -54,10 +65,19 @@ export default function RentAnalyticsView() {
           </h1>
         </div>
         <div className="flex gap-3">
-          <div className="flex items-center bg-surface-container-high px-4 py-2 rounded-xl border border-outline-variant/10">
-            <span className="text-xs font-label text-on-surface-variant mr-3">Index:</span>
-            <span className="text-sm font-semibold text-on-surface">FRED Rent CPI</span>
-          </div>
+          <button 
+            onClick={handleExport}
+            disabled={exporting}
+            className="px-5 py-2 bg-surface-container-highest text-on-surface text-sm font-semibold rounded-md hover:bg-surface-variant transition-colors border border-outline-variant/10 disabled:opacity-50"
+          >
+            {exporting ? 'Exporting...' : 'Export PDF'}
+          </button>
+          <button 
+            onClick={() => setInsightsOpen(true)}
+            className="px-5 py-2 bg-[#006A75] text-white text-sm font-bold rounded-md hover:brightness-110 transition-all shadow-sm"
+          >
+            Generate Insights
+          </button>
         </div>
       </header>
 
@@ -191,9 +211,12 @@ export default function RentAnalyticsView() {
                  <h2 className="text-2xl font-black font-headline text-on-surface tracking-tight">Top Submarket Concentration</h2>
                  <p className="text-sm text-on-surface-variant">Aggregated ZIP-level rental flux (Census ACS ZCTA Estimates)</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
                  <button className="bg-primary/10 text-primary text-[10px] font-bold px-4 py-2 rounded-full border border-primary/20 hover:bg-primary/20 transition-colors">VIEW RENT HEATMAP</button>
-                 <button className="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-4 py-2 rounded-full">DOWNLOAD CSV</button>
+                 <button className="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-4 py-2 rounded-full hover:bg-surface-variant transition-colors">DOWNLOAD CSV</button>
+                 <button className="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center hover:bg-surface-variant transition-colors border border-outline-variant/10 shadow-sm">
+                    <span className="material-symbols-outlined text-[14px]">location_on</span>
+                 </button>
               </div>
            </div>
 
@@ -216,14 +239,30 @@ export default function RentAnalyticsView() {
                     </div>
                   ))
               ) : (
-                <div className="col-span-5 p-12 text-center border-2 border-dashed border-outline-variant/20 rounded-3xl">
-                   <p className="text-outline text-sm uppercase tracking-widest animate-pulse">Initializing Submarket Data Stream...</p>
+                <div className="col-span-5 relative h-[320px] rounded-3xl overflow-hidden border border-outline-variant/10 group flex items-center justify-center bg-surface-container-low">
+                   <img 
+                      src="/assets/rent-heatmap.png" 
+                      alt="Rent Heatmap Stream" 
+                      className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-luminosity grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
+                   />
+                   <div className="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-80" />
+                   <div className="relative text-center p-8 backdrop-blur-sm bg-surface-container-low/40 rounded-2xl border border-white/5 shadow-2xl">
+                      <p className="text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-2 animate-pulse">Initializing Data Stream</p>
+                      <h3 className="text-on-surface font-headline font-bold text-lg mb-1">Submarket Analytics</h3>
+                      <p className="text-on-surface-variant text-xs max-w-[240px]">Connecting to Census ACS ZCTA real-time rental flux indices...</p>
+                   </div>
                 </div>
               )}
            </div>
         </div>
 
       </div>
+      
+      <GenerateInsightsModal 
+        isOpen={insightsOpen} 
+        onClose={() => setInsightsOpen(false)} 
+        title="Rent Performance Insights"
+      />
     </div>
   );
 }

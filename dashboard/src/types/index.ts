@@ -9,6 +9,7 @@ export interface MarketInfo {
   code: string;
   name: string;
   state: string;
+  state_code?: string;
   lat: number;
   lon: number;
 }
@@ -71,7 +72,12 @@ export interface GeoJSONFeatureCollection {
 
 export interface MetricStubResponse {
   market: string;
-  data: { value: string; trend: string }[];
+  data: { 
+    key: string; 
+    value: string; 
+    trend: string;
+    source?: string;
+  }[];
   message?: string;
   zip_code?: string | null;
   limit?: number;
