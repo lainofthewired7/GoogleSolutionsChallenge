@@ -1,6 +1,6 @@
 # Indicium
 
-Real-estate data ingestion engine & geospatial dashboard for the Austin–Round Rock, TX MSA.
+Real-estate data ingestion engine & geospatial dashboard for many places in the United States.
 
 ## Quick Start
 
